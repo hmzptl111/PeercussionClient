@@ -1,0 +1,50 @@
+.user-profile-dropdown {
+  position: relative;
+}
+
+.user-profile-dropdown-button {
+  margin: 0 0.75rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.user-profile-dropdown-list {
+  background: var(--primary-lighter-color);
+  width: 12rem;
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  font-size: 0.85rem;
+  color: var(--primary-dark-color);
+  list-style-type: none;
+}
+
+.user-profile-dropdown-list-item {
+  text-decoration: none;
+  color: var(--primary-dark-color);
+}
+
+.user-profile-dropdown-list-item li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+}
+
+.user-profile-dropdown-list-item li:hover {
+  background-color: var(--primary-light-color);
+}
+
+.user-profile-dropdown-list-item-sign-out {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  color: var(--primary-dark-color);
+  cursor: pointer;
+}
+
+.user-profile-dropdown-list-item-sign-out:hover {
+  background-color: var(--primary-light-color);
+}
