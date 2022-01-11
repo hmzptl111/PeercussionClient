@@ -19,6 +19,7 @@ const SignIn = () => {
             console.log('Please sign in');
             setIsUserNew(true);
         }
+        // eslint-disable-next-line
     }, []);
 
     const handleUsername = e => {

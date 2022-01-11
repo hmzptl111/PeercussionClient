@@ -25,7 +25,7 @@ const CreatePost = () => {
     const [postTitle, setPostTitle] = useState('');
     const [postBody, setPostBody] = useState([]);
     // const postBodyRef = useRef();
-
+    
    useEffect(() => {
     initEditor();
    }, []);
@@ -97,6 +97,7 @@ const CreatePost = () => {
         onChange:  () => {
             editor.current.save()
             .then(data => {
+                console.log(data);
                 setPostBody(data)
             })
         }
@@ -133,17 +134,6 @@ const CreatePost = () => {
             cancelRequestToken();
         }
 
-        // const getSuggestions = async () => {
-        //     if(postCommunity === '') {
-        //         setSuggestedCommunities([]);
-        //         return;
-        //     }
-
-        //     const result = await axios.post('/search/community', {text: postCommunity});
-        //     setSuggestedCommunities(result.data);
-        // };
-        // getSuggestions();
-
     }, [postCommunity]);
 
     const handlePostTitle = e => {
@@ -170,7 +160,7 @@ const CreatePost = () => {
 
         let tempPostInfo = {
             cId: postCId,
-            // cName: postCommunity,
+            cName: postCommunity,
             title: postTitle,
             body: postBody
         }
@@ -193,29 +183,29 @@ const CreatePost = () => {
             <Head />
 
             <form onSubmit = {handleCreatePost}>
-            <input type = 'text' onChange = {handlePostTitle} placeholder = 'title' value = {postTitle} />
+                <input type = 'text' onChange = {handlePostTitle} placeholder = 'title' value = {postTitle} />
 
-            <input type = 'text' onChange = {handlePostCommunity} placeholder = 'community' value = {postCommunity} />
+                <input type = 'text' onChange = {handlePostCommunity} placeholder = 'community' value = {postCommunity} />
 
-            {
-                suggestedCommunities !== [] &&
-                <ul>
-                    {
-                        suggestedCommunities.map(sc => {
-                            let isSetAsPostCommunity = (sc._id === postCId);
-                            
-                            if(isSetAsPostCommunity) return null;
-                            
-                            return <li key = {sc._id} data-c_id = {sc._id} data-c_name = {sc.cName} onClick = {setAsPostCommunity}>{sc.cName}</li>
-                        })
-                    }
-                </ul>
-            }
+                {
+                    suggestedCommunities !== [] &&
+                    <ul>
+                        {
+                            suggestedCommunities.map(sc => {
+                                let isSetAsPostCommunity = (sc._id === postCId);
+                                
+                                if(isSetAsPostCommunity) return null;
+                                
+                                return <li key = {sc._id} data-c_id = {sc._id} data-c_name = {sc.cName} onClick = {setAsPostCommunity}>{sc.cName}</li>
+                            })
+                        }
+                    </ul>
+                }
 
-            <div id = 'editorjs' style = {{border: '1px solid black'}}></div>
+                <div id = 'editorjs' style = {{border: '1px solid black'}}></div>
 
-            <input type = 'submit' value = 'Create' />
-        </form>
+                <input type = 'submit' value = 'Create' />
+            </form>
         </>
     );
 };

@@ -3,23 +3,15 @@ import {Link, useParams} from 'react-router-dom';
 import axios from 'axios';
 
 import Header from './Header';
+import PostFooter from './reusable/PostFooter';
 
 const Community = () => {
     const {cName} = useParams();
-    const [community, setCommunity] = useState({
-        createdAt: null,
-        desc: '',
-        downvotes: 0,
-        followers: 0,
-        cName: '',
-        relatedCommunities: [],
-        updatedAt: null,
-        _id: null
-    });
-    const [postIDs, setPostIDs] = useState([]);
+    const [community, setCommunity] = useState();
     const [posts, setPosts] = useState([]);
-    const [postsOffset, setPostsOffset] = useState(0);
-    const totalPostIDsReturnedInCurrentBatch = useRef(0);
+    // const [postsOffset, setPostsOffset] = useState(0);
+    const postsOffset = useRef(0);
+    // const totalPostIDsReturnedInCurrentBatch = useRef(0);
     const [loading, setLoading] = useState(true);
     const [hasMorePosts, setHasMorePosts] = useState(true);
     const observer = useRef();
@@ -31,95 +23,129 @@ const Community = () => {
 
         observer.current = new IntersectionObserver(entries => {
             if(entries[0].isIntersecting && hasMorePosts) {
-                fetchPostIDs(cName);
+                fetchPosts();
             }
         });
 
         if(node) {
             observer.current.observe(node);
         }
-        //eslint-disable-next-line
+        // eslint-disable-next-line
     }, [loading, hasMorePosts]);
 
-    useEffect(() => {
-        const fetchPosts = () => {
-            if(postIDs.length === 0) return;
-            let newPostIDs = postIDs.slice(-totalPostIDsReturnedInCurrentBatch.current);
-            newPostIDs !== [] && axios.post('/postsThumbnails?postIDs=' + JSON.stringify(newPostIDs))
-                .then(posts => {
-                    setPosts(previousPosts => {
-                        return [
-                            ...previousPosts,
-                            ...posts.data
-                        ]
-                    });
-                    setLoading(false);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-        }
-
-        fetchPosts(postIDs);
-    }, [postIDs]);
-
-    const fetchPostIDs = async (communityName) => {
-        if(!communityName) return;
+    const fetchPosts = async () => {
         setLoading(true);
-        const postIDs = await axios.post('/community/' + communityName + '?fetchPostIDs=true&postOffset=' + postsOffset);
-        if(postIDs.data.length <= 0) {
-            setHasMorePosts(false);
-            setLoading(false);
+        const newPosts = await axios.post(`/community/${cName}`, {
+            getPosts: 'affirmative',
+            postsOffset: postsOffset.current
+        });
+        if(newPosts.data.error) {
+            console.log(posts.data.error);
             return;
-        } else if(postIDs.data.length < 3 && postIDs.data.length > 0) {
-            setHasMorePosts(false);
-            setLoading(false);
         }
-        totalPostIDsReturnedInCurrentBatch.current = postIDs.data.length;
-        setPostIDs(previousState => {
+        
+        // totalPostIDsReturnedInCurrentBatch.current = newPosts.data.length;
+        postsOffset.current += newPosts.data.length;
+        // setPostsOffset(previousState => {
+        //     return previousState + newPosts.data.length;
+        // });
+        
+        console.log(newPosts.data);
+        setPosts(previousState => {
             return [
                 ...previousState,
-                ...postIDs.data
-            ]
+                ...newPosts.data
+            ];
         });
-        setPostsOffset(previousState => {
-            return previousState + postIDs.data.length;
-        })
+        setLoading(false);
+        setHasMorePosts(true);
+        
+        if(newPosts.data.length < 3) {
+            setHasMorePosts(false);
+            return;
+        }
+
     }
-    
+
     useEffect(() => {
-        fetchPostIDs(community.cName);
-        //eslint-disable-next-line
+        console.log(community);
     }, [community]);
 
     useEffect(() => {
+        console.log(cName);
+        postsOffset.current = 0;
+        // setPostsOffset(0);
         setPosts([]);
-        setPostsOffset(0);
-        setPostIDs([]);
-        const getCommunityInfo = async (communityName) => {
-            const community = await axios.post('/community/' + communityName);
-            if(!community.data) return;
-            setCommunity(community.data);   
+        const getCommunityInfo = async () => {
+            const community = await axios.post(`/community/${cName}`);
+            if(community.data.error) {
+                console.log(community.data.error);
+                return;
+            }
+            setCommunity(community.data);
+            fetchPosts();
         }
-    
-        getCommunityInfo(cName);
+        
+        getCommunityInfo();
+        // eslint-disable-next-line
     }, [cName]);
+
+        
+
+    const renderThumbnail = block => {
+        if(block.thumbnail) {
+            return <img key = {block._id} src = {block.thumbnail} alt = {block.title} style = {{width: '100%'}}></img>;
+        }
+    }
 
     return (
         <>
             <Header />
-            <div>{community.cName}</div>
-            <div>
+            <div style = {{paddingTop: '0.25rem', paddingBottom: '0.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <p style = {{marginLeft: '0.25rem'}}>{cName && cName}</p>
+                <button style = {{marginRight: '1.5rem'}}>Follow</button>
+            </div>
+            <div style = {{paddingLeft: '10rem'}}>
                 {
+                    posts &&
                     posts.map((post, index) => {
                         if(posts.length === index + 1) {
-                            return <Link to = {'/p/' + post._id} key = {post._id}>
-                                        <div style = {{border: '1px solid black', paddingTop: '150px', paddingBottom: '150px'}} ref = {lastPostRef}>{post.title}</div>
-                                    </Link>
+                                return <div key = {post._id} style = {{marginTop: '1rem', marginBottom: '1rem', border: '1px solid black', width: '60%'}}>
+                                            <div ref = {lastPostRef}>
+                                                <div>
+                                                    <Link to = {`/u/${post.uName}`}>
+                                                        {post.uName}
+                                                    </Link>
+                                                </div>
+                                                
+                                                <Link to = {'/p/' + post._id}>
+                                                    <h2>{post.title}</h2>
+                                                    
+                                                    {renderThumbnail(post)}
+                                                </Link>
+                                            </div>
+
+                                            <PostFooter pId = {post._id} votes = {post.upvotes - post.downvotes} />
+                                        </div>
+                        } else {
+                            return <div key = {post._id} style = {{marginTop: '1rem', marginBottom: '1rem', border: '1px solid black', width: '60%'}}>
+                                        <div>
+                                            <div>
+                                                <Link to = {`/u/${post.uName}`}>
+                                                    {post.uName}
+                                                </Link>
+                                            </div>
+                                            
+                                            <Link to = {'/p/' + post._id}>
+                                                <h2>{post.title}</h2>
+                                                
+                                                {renderThumbnail(post)}
+                                            </Link>
+                                        </div>
+
+                                        <PostFooter pId = {post._id} votes = {post.upvotes - post.downvotes} />
+                                    </div>
                         }
-                        return <Link to = {'/p/' + post._id} key = {post._id}>
-                                    <div style = {{border: '1px solid black', paddingTop: '150px', paddingBottom: '150px'}}>{post.title}</div>
-                                </Link>
                     })
                 }
             </div>

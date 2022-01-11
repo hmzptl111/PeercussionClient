@@ -4,6 +4,9 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 import Header from './Header';
+import Comment from './Comment';
+
+import PostFooter from './reusable/PostFooter';
 
 const Post = () => {
     const {pId} = useParams();
@@ -11,14 +14,12 @@ const Post = () => {
     const [post, setPost] = useState();
 
     useEffect(() => {
-        console.log(post);
-    }, [post]);
-
-    useEffect(() => {
         const fetchPost = async () => {
             try {
                 const result = await axios.post('/post/' + pId);
+                console.log(result.data);
                 setPost(result.data);
+
             } catch(e) {
                 console.log(e);
             }         
@@ -27,7 +28,7 @@ const Post = () => {
         }
 
         fetchPost();
-    }, [pId]);
+    }, [pId]);    
 
     const renderBlocks = (block) => {
         // return <div>{block.type}</div>;
@@ -140,26 +141,36 @@ const Post = () => {
         }
     }
 
+
     return (
         <>
             <Header />
+
             {!postLoaded && 'Please wait...loading'}
+            
             {
                 post &&
                 <>  
-                    <div>{post.cId}</div>
-                    <div>{post.title}</div>
-                    <div style = {{padding: '10px'}}>
+                    <div>
+                        <div>{post.cId}</div>
+                        <div>{post.title}</div>
+
                         {
                             post.body[0].blocks.map(block => (
                                 renderBlocks(block)
                             ))
                         }
+
                     </div>
                 </>
             }
+
+            {post &&
+            <PostFooter pId = {pId} votes = {post.upvotes - post.downvotes} />}
+
+            <Comment pId = {pId} />
         </>
-    )
+    );
 }
 
 export default Post;
