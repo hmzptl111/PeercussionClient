@@ -5,8 +5,6 @@ import Header from '../Header';
 
 const CreatCommunity = () => {
     const [community, setCommunity] = useState({
-        //fetch the user(moderator) id i.e. uId from session/cookies, this is temporarily hardcoded.
-        // uId: "615d811c287262fe7b459383",
         cName: '',
         desc: '',
         relatedCommunities: []
@@ -52,11 +50,11 @@ const CreatCommunity = () => {
     };
 
     useEffect(() => {
-        let cancelRequestToken;
         if(currentRelatedCommunity === '') {
             setSuggestedCommunities([]);
             return;
         }
+        let cancelRequestToken;
 
         axios.post('/search/community', {text: currentRelatedCommunity}, {
             cancelToken: new axios.CancelToken(c => cancelRequestToken = c)
@@ -73,30 +71,12 @@ const CreatCommunity = () => {
         return () => {
             cancelRequestToken();
         }
-        
-        // const getSuggestions = async () => {
-        //     let cancelRequestToken;
-        //     if(currentRelatedCommunity === '') {
-        //         setSuggestedCommunities([]);
-        //         return;
-        //     }
-
-        //     const result = await axios.post('/search/community', {text: currentRelatedCommunity}, {
-        //         cancelToken: new axios.CancelToken(c => cancelRequestToken = c)
-        //     });  
-        //     console.log(result);
-        //     setSuggestedCommunities(result.data);
-
-        //     return () => {
-        //         cancelRequestToken();
-        //     }
-        // }
-        // getSuggestions();
              
     }, [currentRelatedCommunity]);
 
 
     const addAsRelatedCommunity = e => {
+        setCurrentRelatedCommunity('');
         let newSuggestedCommunities = [];
         setCommunity(previousState => {
             return {
@@ -139,7 +119,7 @@ const CreatCommunity = () => {
             console.log('Community name can\'t be empty');
             return;
         }
-        
+
         const res = await axios.post('/create/community', community);
         console.log(res.data);
 

@@ -1,4 +1,4 @@
-const CreateComment = ({comment, setComment, handleCreateComment = null, handleCreateCommentReply = null, uName, replyTo = null}) => {
+const CreateComment = ({comment, setComment, handleCreateComment = null, handleCreateCommentReply = null, uName, replyTo = null, handleCancelCreateCommentReply = null}) => {
     const handleCommentChange = e => {
         setComment(e.target.value);
     }
@@ -26,6 +26,7 @@ const CreateComment = ({comment, setComment, handleCreateComment = null, handleC
                             <textarea style = {{resize: 'none', width: '100%', height: '5em', padding: '0.25em'}} value = {comment} onChange = {handleCommentChange} placeholder = {`Reply to ${replyTo}`}></textarea>
                             
                             <input type = 'submit' value = 'Comment' />
+                            <button onClick = {handleCancelCreateCommentReply}>Cancel</button>
                         </>
                     }
                 </form>

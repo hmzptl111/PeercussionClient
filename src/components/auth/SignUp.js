@@ -2,6 +2,8 @@ import {useState} from 'react';
 import axios from 'axios';
 import { useHistory } from "react-router-dom";
 
+import BackButton from '../reusable/BackButton';
+
 const SignUp = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -91,15 +93,19 @@ const SignUp = () => {
     }
 
     return (
-        <form onSubmit = {handleSignUp}>
-            <input type = 'text' placeholder = 'username' value = {username} onChange = {handleUsername} />
-            <input type = 'password' placeholder = 'password' value = {password} onChange = {handlePassword} />
-            <input type = 'password' placeholder = 'confirm password' value = {confirmPassword} onChange = {handleConfirmPassword} />
-            <input type = 'text' placeholder = 'email' value = {email} onChange = {handleEmail} />
+        <>
+            <BackButton />
+            
+            <form onSubmit = {handleSignUp}>
+                <input type = 'text' placeholder = 'username' value = {username} onChange = {handleUsername} />
+                <input type = 'password' placeholder = 'password' value = {password} onChange = {handlePassword} />
+                <input type = 'password' placeholder = 'confirm password' value = {confirmPassword} onChange = {handleConfirmPassword} />
+                <input type = 'text' placeholder = 'email' value = {email} onChange = {handleEmail} />
 
 
-            <input type = 'submit' value = 'Sign up' />
-        </form>
+                <input type = 'submit' value = 'Sign up' />
+            </form>
+        </>
     );
 }
 

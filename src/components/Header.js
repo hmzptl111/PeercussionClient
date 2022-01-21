@@ -1,6 +1,7 @@
 import React from 'react';
 import '../styles/Header.css';
 
+// import BackButton from './header/BackButton';
 import Logo from './header/Logo';
 import SearchInput from './header/SearchInput';
 import SignInOutButton from './header/SignInOutButton';
@@ -14,6 +15,7 @@ const Header = () => {
     return(
         <div className = 'header'>
             <div className = 'header-left'>
+                {/* <BackButton /> */}
                 <Logo />
                 <SearchInput />
                 <CreateDropdown />
@@ -24,7 +26,7 @@ const Header = () => {
                     <SignUpButton />
                 </div>
                 <ChatButton />
-                <UserProfileButton />
+                <UserProfileButton  />
                 <MenuButton />
             </div>
         </div>

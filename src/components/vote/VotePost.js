@@ -5,7 +5,7 @@ const VotePost = ({pId, votes}) => {
     const [postVotes, setPostVotes] = useState(votes);
 
     const handlePostUpvote = async () => {
-        const response = await axios.put('/vote', {
+        const response = await axios.put('/votePost', {
             pId: pId,
             vote: 'upvote'
         });
@@ -23,7 +23,7 @@ const VotePost = ({pId, votes}) => {
     }
     
     const handlePostDownvote = async () => {
-        const response = await axios.put('/vote', {
+        const response = await axios.put('/votePost', {
             pId: pId,
             vote: 'downvote'
         });

@@ -23,6 +23,7 @@
 .user-profile-dropdown-list-item {
   text-decoration: none;
   color: var(--primary-dark-color);
+  cursor: pointer;
 }
 
 .user-profile-dropdown-list-item li {

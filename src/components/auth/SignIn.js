@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
 import axios from 'axios';
 
+import BackButton from '../reusable/BackButton';
+
 import { UserAuthStatusContext } from "../../contexts/UserAuthStatus";
 
 const SignIn = () => {
@@ -55,12 +57,16 @@ const SignIn = () => {
     }
 
     return (
-        <form onSubmit = {handleSignIn}>
-            <input type = 'text' placeholder = 'username' value = {username} onChange = {handleUsername} />
-            <input type = 'password' placeholder = 'password' value = {password} onChange = {handlePassword} />
+        <>
+            <BackButton />
 
-            <input type = 'submit' value = 'Sign in' />
-        </form>
+            <form onSubmit = {handleSignIn}>
+                <input type = 'text' placeholder = 'username' value = {username} onChange = {handleUsername} />
+                <input type = 'password' placeholder = 'password' value = {password} onChange = {handlePassword} />
+
+                <input type = 'submit' value = 'Sign in' />
+            </form>
+        </>
     );
 };
 

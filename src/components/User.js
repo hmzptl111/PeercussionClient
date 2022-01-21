@@ -1,21 +1,57 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import UserProfileNav from "./reusable/UserProfileNav";
-import UserProfileTab from "./reusable/UserProfileTab";
+
+import UserProfileNav from './profile/UserProfileNav';
+import UserProfileTab from './profile/UserProfileTab';
 
 import Header from "./Header";
+import PageBanner from "./reusable/PageBanner";
+
+import axios from 'axios';
 
 const User = () => {
     const {uName} = useParams();
-    const [currentTab, setCurrentTab] = useState('posts');
-    
-    //display other stuff
+    const [user, setUser] = useState();
+    const [isAccountPrivateAndNotFriend, setIsAccountPrivateAndNotFriend] = useState();
+
+    useEffect(() => {
+        console.log(user);
+    }, [user]);
+
+    useEffect(() => {
+        const getUserInfo = async () => {
+            const user = await axios.post(`/user/${uName}`);
+            if(user.status === 200) {
+                if(user.data.error) {
+                    setIsAccountPrivateAndNotFriend(true);
+                } else {
+                    setIsAccountPrivateAndNotFriend(false);
+                }
+                setUser(user.data);
+            }
+        }
+        
+        getUserInfo();
+        // eslint-disable-next-line
+    }, [uName]);
+
     return (
         <>
             <Header />
-            {uName}
-            <UserProfileNav setCurrentTab = {setCurrentTab} />
-            <UserProfileTab currentTab = {currentTab} />
+            
+            {
+                user &&
+                <PageBanner uName = {uName} type = 'user' target = {user._id} />
+            }
+
+            {
+                !isAccountPrivateAndNotFriend ?
+                <>
+                    <UserProfileNav uName = {uName} />
+                    <UserProfileTab uName = {uName} />
+                </>:
+                'This account is private'
+            }
         </>
     );
 }

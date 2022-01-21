@@ -1,14 +1,15 @@
-import {useEffect, useRef, useState} from 'react';
+import {useContext, useEffect, useRef, useState} from 'react';
 import {Link} from 'react-router-dom';
+
+import {UserAuthStatusContext} from '../contexts/UserAuthStatus';
 
 import axios from 'axios';
 
 import CreateComment from './create/CreateComment';
+import VoteComment from './vote/VoteComment';
 
-import Cookies from 'js-cookie';
-
-
-const Comment = ({pId}) => {
+const Comment = ({pId, pTitle, cId, cName, setPost}) => {
+    const {user} = useContext(UserAuthStatusContext);
     
     const [postComments, setPostComments] = useState([]);
     const [commentsOffset, setCommentsOffset] = useState(0);
@@ -20,8 +21,6 @@ const Comment = ({pId}) => {
     const [commentReply, setCommentReply] = useState('');
     const replyTo = useRef('');
 
-    const uId = Cookies.get('uId');
-    const uName = Cookies.get('uName');
 
     useEffect(() => {
         handleLoadMoreComments();
@@ -52,26 +51,43 @@ const Comment = ({pId}) => {
             setHasMoreComments(false);
             return;
         }
-
     }
 
     const handleLoadCommentReplies = async (e, postComment) => {
         e.preventDefault();
-
-        const newComments = await axios.post('/comments', {
-            replyTo: postComment._id
-        });
-        console.log(newComments.data);
-        setPostComments(previousState => {
-            let postComments = [...previousState];
-            for(let i = 0; i < postComments.length; i++) {
-                if(postComments[i] === postComment) {
-                    postComments[i].replies = [...newComments.data];
-                    break;
+        console.log(e.target);
+        console.log(postComment);
+        if(e.target.textContent === 'Hide replies') {
+            e.target.textContent = `${postComment.replies.length} Replies`;
+            postComment.replies = [];
+            setPostComments(previousState => {
+                let postComments = [...previousState];
+                for(let i = 0; i < postComments.length; i++) {
+                    if(postComments[i] === postComment) {
+                        postComments[i].replies = [];
+                        break;
+                    }
                 }
-            }
-            return postComments;
-        });
+                return postComments;
+            });
+        } else {
+            e.target.textContent = 'Hide replies';
+            const newComments = await axios.post('/comments', {
+                replyTo: postComment._id
+            });
+            console.log(newComments.data);
+            setPostComments(previousState => {
+                let postComments = [...previousState];
+                for(let i = 0; i < postComments.length; i++) {
+                    if(postComments[i] === postComment) {
+                        postComments[i].replies = [...newComments.data];
+                        break;
+                    }
+                }
+                return postComments;
+            });
+        }
+
     }
 
     const handleCreateComment = async (e) => {
@@ -79,16 +95,22 @@ const Comment = ({pId}) => {
 
         const payload = {
             pId: pId,
-            uId: uId,
-            uName: uName,
+            pTitle: pTitle,
+            cId: cId,
+            cName: cName,
             comment: comment
         };
 
         const response = await axios.post('/createComment', payload);
         console.log(response.data);
-        console.log(response.data._id);
-        console.log(response.data.uId);
 
+        setPost(previousState => {
+            return {
+                ...previousState,
+                totalComments: previousState.totalComments + 1
+            };
+        });
+        
         setComment('');
 
         setPostComments(previousState => {
@@ -104,8 +126,9 @@ const Comment = ({pId}) => {
 
         const payload = {
             pId: pId,
-            uId: uId,
-            uName: uName,
+            pTitle: pTitle,
+            cId: cId,
+            cName: cName,
             comment: commentReply,
             replyTo: replyTo.current
         };
@@ -128,6 +151,7 @@ const Comment = ({pId}) => {
         setPostComments(currentPostComments);
 
         setCommentReply('');
+        handleCancelCreateCommentReply(e, postComment._id);
     }
     
     const handleCommentReply = (e, cId) => {
@@ -142,40 +166,70 @@ const Comment = ({pId}) => {
         document.getElementById(`${cId}-reply`).style.display = 'block';
     }
 
+
+    const handleCancelCreateCommentReply = (e, cId) => {
+        e.preventDefault();
+
+        document.getElementById(`${cId}-reply`).style.display = 'none';
+        setCommentReply('');
+    }
+
     useEffect(() => {
         console.log(postComments);
     }, [postComments]);
 
     return (
         <div>
-                <CreateComment comment = {comment} setComment = {setComment} handleCreateComment = {handleCreateComment} uName = {uName} />
+            {
+                user &&
+                <CreateComment comment = {comment} setComment = {setComment} handleCreateComment = {handleCreateComment} uName = {user.uName} />
+
+            }
                 {
                     postComments.map(c => {
                         return <div key = {c._id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
                                     <div>
-                                        <Link to = {`/u/${c.uName}`}>{c.uName}</Link>
+                                        <Link to = {`/u/${c.uName}`} style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
+                                            {
+                                                c.uProfilePicture &&
+                                                <img src = {`/uploads/profilePictures/${c.uProfilePicture}`} width = '20em' height = '20em' style = {{borderRadius: '50%'}} alt = '' />
+                                            }
+                                            <p>{c.uName}</p>
+                                            </Link>
                                     </div>
                                     
                                     {c.comment}
-                                    
-                                    <button onClick = {e => handleLoadCommentReplies(e, c)}>{c.replies.length} Replies</button>
-                                    <button onClick = {e => handleCommentReply(e, c._id)}>Reply</button>
+
+                                    <div>
+                                        <button onClick = {e => handleLoadCommentReplies(e, c)}>{c.replies.length} Replies</button>
+                                        <button onClick = {e => handleCommentReply(e, c._id)}>Reply</button>
+                                        
+                                        <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} />
+                                    </div>
                                     
                                     <div id = {`${c._id}-reply`} className = 'comment-reply' style = {{display: 'none'}}>
-                                        <CreateComment comment = {commentReply} setComment = {setCommentReply} handleCreateCommentReply = {e => handleCreateCommentReply(e, c)} uName = {uName} replyTo = {c.uName} />
+                                        <CreateComment comment = {commentReply} setComment = {setCommentReply} handleCreateCommentReply = {e => handleCreateCommentReply(e, c)} uName = {user.uName} replyTo = {c.uName} handleCancelCreateCommentReply = {e => handleCancelCreateCommentReply(e, c._id)} />
                                     </div>
 
                                     {
+                                        c.replies !== [] &&
                                         <div style = {{paddingLeft: '1em'}}>
                                             {
                                                 c.replies.map(reply => {
-                                                    if(!reply.comment) return;
-                                                    return <div key = {reply._id}>
+                                                    if(!reply.comment) return null;
+                                                    return <div key = {reply._id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
                                                         <div>
-                                                            <Link to = {`/u/${reply.uName}`}>{reply.uName}</Link>
+                                                            <Link to = {`/u/${reply.uName}`} style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
+                                                            {
+                                                                reply.uProfilePicture &&
+                                                                <img src = {`/uploads/profilePictures/${reply.uProfilePicture}`} width = '20em' height = '20em' style = {{borderRadius: '50%'}} alt = '' />
+                                                            }
+                                                                <span>{reply.uName}</span>
+                                                                </Link>
                                                         </div>
                                                         
                                                         <div>{reply.comment}</div>
+                                                        <VoteComment cId = {reply._id} votes = {reply.upvotes - reply.downvotes} />
                                                     </div>
                                                 })
                                             }
@@ -185,9 +239,8 @@ const Comment = ({pId}) => {
                     })
                 }
                 {
-                    hasMoreComments ?
-                    <button onClick = {handleLoadMoreComments}>Load more</button>:
-                    'All comments loaded'
+                    hasMoreComments &&
+                    <button onClick = {handleLoadMoreComments}>Load more</button>
                 }
             </div>
     );
