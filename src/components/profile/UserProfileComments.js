@@ -35,7 +35,7 @@ const UserProfileComments = ({uName}) => {
 
                                 <span>
                                     {
-                                        <Link to = {`/c/${c.cName}`}>{c.cName}</Link>
+                                        <Link to = {`/c/${c.cName}`}>c/{c.cName}</Link>
                                     }
                                 </span>
                             </div>

@@ -4,32 +4,55 @@ import { UserProfileCurrentTabContext } from "../../contexts/UserProfileCurrentT
 
 import UserProfilePosts from "./UserProfilePosts";
 import UserProfileFriends from "./UserProfileFriends";
-import UserProfileComments from "./UserProfileComments";
+import UserProfileCommunities from './UserProfileCommunities';
 import UserProfilePendingRequests from "./UserProfilePendingRequests";
+import UserProfileUpvotedPosts from './UserProfileUpvotedPosts';
+// import UserProfileDownvotedPosts from './UserProfileDownvotedPosts';
+import UserProfileComments from "./UserProfileComments";
+import UserProfileAbout from "./UserProfileAbout";
 
 
-const UserProfileTab = ({uName}) => {
+const UserProfileTab = ({user}) => {
     const {currentTab} = useContext(UserProfileCurrentTabContext);
 
     return (
         <>
             {
                 currentTab === 'Posts' &&
-                <UserProfilePosts uName = {uName} />
+                <UserProfilePosts uName = {user.username} />
             }
             {
                 currentTab === 'Friends' &&
-                <UserProfileFriends uName = {uName} />
+                <UserProfileFriends uName = {user.username} />
             }
             {
-                currentTab === 'Comments' &&
-                <UserProfileComments uName = {uName} />
+                currentTab === 'Moderates Communities' &&
+                <UserProfileCommunities uName = {user.username} type = 'moderates' />
+            }
+            {
+                currentTab === 'Following Communities' &&
+                <UserProfileCommunities uName = {user.username} type = 'following' />
             }
             {
                 currentTab === 'Pending Requests' &&
                 <UserProfilePendingRequests />
             }
-            {currentTab === 'About' && 'viewing about'}
+            {
+                currentTab === 'Upvoted Posts' &&
+                <UserProfileUpvotedPosts uName = {user.username} />
+            }
+            {/* {
+                currentTab === 'Downvoted Posts' &&
+                <UserProfileDownvotedPosts />
+            } */}
+            {
+                currentTab === 'Comments' &&
+                <UserProfileComments uName = {user.username} />
+            }
+            {
+                currentTab === 'About' && 
+                <UserProfileAbout uName = {user.username} />
+            }
         </>
     );
 }

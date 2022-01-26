@@ -11,12 +11,16 @@ const UserProfileNav = ({uName}) => {
         <div>
             <button onClick = {() => setCurrentTab('Posts')}>Posts</button>
             <button onClick = {() => setCurrentTab('Friends')}>Friends</button>
+            <button onClick = {() => setCurrentTab('Moderates Communities')}>Moderates Communities</button>
+            <button onClick = {() => setCurrentTab('Following Communities')}>Following Communities</button>
 
             {
                 user && uName === user.uName &&
                 <button onClick = {() => setCurrentTab('Pending Requests')}>Pending Requests</button>
             }
 
+            <button onClick = {() => setCurrentTab('Upvoted Posts')}>Upvoted Posts</button>
+            {/* <button onClick = {() => setCurrentTab('Downvoted Posts')}>Downvoted Posts</button> */}
             <button onClick = {() => setCurrentTab('Comments')}>Comments</button>
             <button onClick = {() => setCurrentTab('About')}>About</button>
         </div>

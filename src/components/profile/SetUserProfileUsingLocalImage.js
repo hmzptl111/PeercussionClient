@@ -10,6 +10,7 @@ const SetUserProfileUsingLocalImage = () => {
     const [imageFromDevice, setImageFromDevice] = useState(false);
     
     const handleImageFromDeviceSelected = e => {
+        if(!e.target.files[0]) return;
         console.log(e.target.files[0]);
 
         imageFromDevicePreviewRef.current.src = URL.createObjectURL(e.target.files[0]);
@@ -36,6 +37,11 @@ const SetUserProfileUsingLocalImage = () => {
         const response = await axios.post('/setProfilePictureUsingLocalImage', profilePicture);
         if(response.status === 200) {
             console.log(response.data.message);
+            imageFromDevicePreviewRef.current.src = '';
+            imageFromDevicePreviewRef.current.style.display = 'none';
+
+            setHasSelected(false);
+            setImageFromDevice(null);
         }
     }
     

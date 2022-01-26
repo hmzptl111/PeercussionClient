@@ -2,13 +2,6 @@
   position: relative;
 }
 
-.user-profile-dropdown-button {
-  margin: 0 0.75rem;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
 .user-profile-dropdown-list {
   background: var(--primary-lighter-color);
   width: 12rem;
@@ -48,4 +41,15 @@
 
 .user-profile-dropdown-list-item-sign-out:hover {
   background-color: var(--primary-light-color);
+}
+
+.default-user-profile {
+  margin: 0 0.75rem;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background-color: var(--primary-medium-color);
+  color: var(--white-color);
 }

@@ -5,6 +5,9 @@ import '../../styles/header/SearchInput.css';
 
 import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 
+import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
+import InitialsIcon from '../reusable/InitialsIcon';
+
 import axios from 'axios';
 
 const SearchInput = () => {
@@ -102,10 +105,11 @@ const SearchInput = () => {
                                     <div key = {community.cName} onClick={handleCommunitySuggestionClicked}>
                                         <Link to={'/c/' + community.cName} className = 'search-suggestion-community-link' style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
                                         {
-                                            community.cThumbnail &&
-                                            <img src = {`/uploads/communityThumbnails/${community.cThumbnail}`} width = '30' height = '30' alt = '' />
+                                            community.cThumbnail ?
+                                            <GeneralProfileIcon imageSource = 'communityThumbnails' imageID = {community.cThumbnail} />:
+                                            <InitialsIcon initial = {community.cName[0]} />
                                         }
-                                            <div className = 'search-suggestion-community'>{community.cName}</div>
+                                            <div className = 'search-suggestion-text'>{community.cName}</div>
                                         </Link>
                                     </div>
                                 ))
@@ -121,10 +125,11 @@ const SearchInput = () => {
                                     <div key = {user.username} onClick={handleCommunitySuggestionClicked}>
                                         <Link to={'/u/' + user.username} className = 'search-suggestion-community-link' style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
                                             {
-                                                user.profilePicture &&
-                                                <img src = {`/uploads/profilePictures/${user.profilePicture}`} width = '30' height = '30' alt = '' />
+                                                user.profilePicture ?
+                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {user.profilePicture} />:
+                                                <InitialsIcon initial = {user.username[0]} />
                                             }
-                                            <span className = 'search-suggestion-community'>{user.username}</span>
+                                            <div className = 'search-suggestion-text'>{user.username}</div>
                                         </Link>
                                     </div>
                                 ))

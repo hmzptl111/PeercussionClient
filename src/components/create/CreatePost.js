@@ -2,6 +2,8 @@ import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 // import '../../styles/create/CreatePost.css';
 
+import { useHistory } from 'react-router-dom';
+
 import {default as Head} from '../Header';
 
 import EditorJs from '@editorjs/editorjs';
@@ -25,6 +27,10 @@ const CreatePost = () => {
     const [postTitle, setPostTitle] = useState('');
     const [postBody, setPostBody] = useState([]);
     // const postBodyRef = useRef();
+
+    const [isPostCommunitySelected, setIsPostCommunitySelected] = useState(false);
+
+    let history = useHistory();
     
    useEffect(() => {
     initEditor();
@@ -112,6 +118,8 @@ const CreatePost = () => {
     }
 
     useEffect(() => {
+        if(isPostCommunitySelected) return;
+
         let cancelRequestToken;
         if(postCommunity === '') {
             setSuggestedCommunities([]);
@@ -134,17 +142,20 @@ const CreatePost = () => {
             cancelRequestToken();
         }
 
+        // eslint-disable-next-line
     }, [postCommunity]);
 
     const handlePostTitle = e => {
         setPostTitle(e.target.value);
     }
     
-    const setAsPostCommunity = e => {
-        setPostCId(e.target.dataset.c_id);
+    const setAsPostCommunity = (e, cId, cName) => {
+        setPostCId(cId);
 
-        setPostCommunity(e.target.dataset.c_name);
+        setPostCommunity(cName);
         setSuggestedCommunities([]);
+
+        setIsPostCommunitySelected(true);
     }
 
     const handlePostCommunity = e => {
@@ -166,17 +177,27 @@ const CreatePost = () => {
         }
 
         console.log(tempPostInfo);
-        await axios.post('/create/post', tempPostInfo);
+        const response = await axios.post('/create/post', tempPostInfo);
 
+        
         setPostBody(null);
         setPostTitle('');
         setPostCId(null);
         setPostCommunity('');
 
-        document.querySelector('#editorjs').innerHTML = '';
-        initEditor();
+        if(response.status === 200) {
+            history.push(`/p/${response.data.pId}`);
+        }
+
+        // document.querySelector('#editorjs').innerHTML = '';
+        // initEditor();
     };
 
+    const handleClearPostCommunity = () => {
+        setPostCommunity('');
+        setSuggestedCommunities([]);
+        setIsPostCommunitySelected(false);
+    }
 
     return(
         <>
@@ -185,7 +206,11 @@ const CreatePost = () => {
             <form onSubmit = {handleCreatePost}>
                 <input type = 'text' onChange = {handlePostTitle} placeholder = 'title' value = {postTitle} />
 
-                <input type = 'text' onChange = {handlePostCommunity} placeholder = 'community' value = {postCommunity} />
+                {
+                    isPostCommunitySelected ?
+                    <button onClick = {handleClearPostCommunity}>Clear Community</button>:
+                    <input type = 'text' onChange = {handlePostCommunity} placeholder = 'community' value = {postCommunity} />
+                }
 
                 {
                     suggestedCommunities !== [] &&
@@ -196,7 +221,7 @@ const CreatePost = () => {
                                 
                                 if(isSetAsPostCommunity) return null;
                                 
-                                return <li key = {sc._id} data-c_id = {sc._id} data-c_name = {sc.cName} onClick = {setAsPostCommunity}>{sc.cName}</li>
+                                return <li key = {sc._id} data-c_id = {sc._id} onClick = {e => setAsPostCommunity(e, sc._id, sc.cName)}>{sc.cName}</li>
                             })
                         }
                     </ul>

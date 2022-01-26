@@ -1,0 +1,10 @@
+.default-initials-icon {
+    background-color: var(--primary-light-color);
+    width: 1.5em;
+    height: 1.5em;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin: 0 0.5rem;
+    color: var(--primary-medium-color);
+}

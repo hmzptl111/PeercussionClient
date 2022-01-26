@@ -4,7 +4,7 @@
   display: flex;
   justify-content: right;
   align-items: center;
-  border-bottom: 1px solid var(--primary-light-color);
+  /* border-bottom: 1px solid var(--primary-light-color); */
   padding: 0.5rem;
 }
 

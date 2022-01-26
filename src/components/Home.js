@@ -7,10 +7,6 @@ const Home = () => {
     let history = useHistory();
 
     useEffect(() => {
-        // if(history.location.state && history.location.state.from === 'SignUp') {
-        //     console.log(history.location.pathname);
-        //     console.log('Please set up a profile picture');
-        // } else 
         if(history.location.state && history.location.state.from === 'SignIn') {
             console.log(history.location.pathname);
             if(history.location.state.isUserNew) {
@@ -19,6 +15,7 @@ const Home = () => {
             }
             console.log('Welcome back');
         }
+
         // eslint-disable-next-line
     }, []);
 

@@ -45,10 +45,10 @@ const User = () => {
             }
 
             {
-                !isAccountPrivateAndNotFriend ?
+                user && !isAccountPrivateAndNotFriend ?
                 <>
                     <UserProfileNav uName = {uName} />
-                    <UserProfileTab uName = {uName} />
+                    <UserProfileTab user = {user} />
                 </>:
                 'This account is private'
             }

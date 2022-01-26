@@ -9,7 +9,7 @@ const ChatButton = () => {
     return(
             isUserSignedIn &&
             <button className = 'chat-button'>
-                <a href = '/#'>
+                <a href = '/chat'>
                     <ChatIcon />
                 </a>
             </button>

@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react"
 import {UserAuthStatusContext} from '../../contexts/UserAuthStatus';
 
+import {Link} from 'react-router-dom';
+
 import Follow from '../reusable/Follow';
 
 import axios from 'axios';
@@ -44,7 +46,7 @@ const UserProfileFriends = ({uName}) => {
                 userFriends.length > 0 ?
                 userFriends.map(friend => {
                     return <div key = {friend._id} style = {{width: '50%', border: '1px solid grey', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                {friend.username}
+                                <Link to = {`/u/${friend.username}`}>{friend.username}</Link>
 
                                 {
                                     friend.username !== user.uName &&

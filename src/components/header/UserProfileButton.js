@@ -5,10 +5,14 @@ import '../../styles/header/UserProfileButton.css';
 
 import {Link} from 'react-router-dom';
 
+import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
+
 import axios from 'axios';
 
-import {ReactComponent as UserProfileIcon} from '../../images/user_default_profile.svg';
+// import {ReactComponent as UserProfileIcon} from '../../images/user_default_profile.svg';
 import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
+
+import InitialsIcon from '../reusable/InitialsIcon';
 
 import {ReactComponent as UserProfileIconSmall} from '../../images/user_default_profile_small.svg';
 import {ReactComponent as ViewUserProfilePicture} from '../../images/view_profile_picture.svg';
@@ -91,16 +95,15 @@ const UserProfileButton = () => {
         history.push('/profilePicture/view');
     }
 
+
     return(
         isUserSignedIn &&
         <div className = 'user-profile-dropdown' ref = {userProfileRef}>
             <div onClick = {() => setIsDropdownOpen(oldState => !oldState)} style = {{cursor: 'pointer'}}>
                 {
                     profilePicture ?
-                    <img src = {profilePicture} width = '22.5em' height = '22.5em' style = {{borderRadius: '50%', marginLeft: '0.5em', marginRight: '0.5em'}} alt = '' />:
-                    <button className = 'user-profile-dropdown-button'>
-                        <UserProfileIcon />
-                    </button>
+                    <GeneralProfileIcon imageSource = 'profilePictures' imageID = {profilePicture} />:
+                    <InitialsIcon initial = {user.uName[0]} isUpperCase = {true} />
                 }
             </div>
             {
