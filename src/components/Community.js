@@ -4,18 +4,24 @@ import axios from 'axios';
 
 import Header from './Header';
 import PageBanner from './reusable/PageBanner';
-import PostThumbnail from './reusable/PostThumbnail';
+
+import CommunityNav from './community/CommunityNav';
+import CommunityTab from './community/CommunityTab';
 
 const Community = () => {
     const {cName} = useParams();
     const [community, setCommunity] = useState();
+    const [isRestricted, setIsRestricted] = useState(false);
     
     useEffect(() => {
         console.log(cName);
         
         const getCommunityInfo = async () => {
             const community = await axios.post(`/community/${cName}`);
-            if(community.status === 200) {
+            if(community.data.error) {
+                setIsRestricted(true);
+                return;
+            } else if(community.status === 200) {
                 setCommunity(community.data);
             }
         }
@@ -33,13 +39,14 @@ const Community = () => {
             <Header />
 
             {
-                community &&
-                <PageBanner cName = {cName} cThumbnail = {community.cThumbnail} type = 'community' target = {community._id} />
-            }
-            
-            {
-                cName &&
-                <PostThumbnail cName = {cName} />
+                community && !isRestricted ?
+                <>
+                    <PageBanner cName = {cName} cThumbnail = {community.cThumbnail} type = 'community' target = {community._id} />
+
+                    <CommunityNav />
+                    <CommunityTab community = {community} />
+                </>:
+                'You are restricted from accessing this community'
             }
         </>
     )

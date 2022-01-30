@@ -10,7 +10,7 @@ import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 
 
 const SignOutButton = () => {
-    const {setIsUserSignedIn} = useContext(UserAuthStatusContext);
+    const {setUser, setIsUserSignedIn} = useContext(UserAuthStatusContext);
     let history = useHistory();
     
     const handleSignOut = async (e) => {
@@ -19,6 +19,7 @@ const SignOutButton = () => {
         const response = await axios.post('/signOut');
         if(response.status === 200) {
             setIsUserSignedIn(false);
+            setUser(null);
             console.log(response.data.message);
             history.push('/');
         } else {

@@ -1,5 +1,11 @@
-const UserProfileAbout = ({uName}) => {
-    return `about: ${uName}`;
+const UserProfileAbout = ({about}) => {
+    return <>
+        {
+            about ?
+            <pre>{about}</pre>:
+            'Looks empty!'
+        }
+    </>
 }
 
 export default UserProfileAbout;

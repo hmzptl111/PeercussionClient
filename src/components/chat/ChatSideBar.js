@@ -20,13 +20,21 @@ const ChatSideBar = ({rooms, setCurrentChat}) => {
                 {
                     rooms &&
                     rooms.map(u => (
-                        <div key = {u.uId} onClick = {() => handleCurrentChatChange(u)} style = {{width: '100%', border: '1px solid black', display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
-                            {
-                                u.uProfilePicture ?
-                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {u.uProfilePicture} />:
-                                <InitialsIcon initial = {u.uName[0]} isUpperCase = {true} />
-                            }
-                            <div>{u.uName}</div>
+                        <div key = {u.uId} onClick = {() => handleCurrentChatChange(u)} style = {{width: '100%', border: '1px solid black', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                            <div style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
+                                {
+                                    u.uProfilePicture ?
+                                    <GeneralProfileIcon imageSource = 'profilePictures' imageID = {u.uProfilePicture} />:
+                                    <InitialsIcon initial = {u.uName[0]} isUpperCase = {true} />
+                                }
+                                <div>{u.uName}</div>
+                            </div>
+                            <div>
+                                {
+                                    u.isUserOnline &&
+                                    'Online'
+                                }
+                            </div>
                         </div>
                     ))
                 }

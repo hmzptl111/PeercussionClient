@@ -64,7 +64,7 @@ const SearchInput = () => {
         //eslint-disable-next-line
     }, [searchText]);
 
-    const handleCommunitySuggestionClicked = () => {
+    const handleSuggestionClicked = () => {
         setIsSuggestionsOpen(false);
 
         setSearchText('');
@@ -102,7 +102,7 @@ const SearchInput = () => {
                             <div style = {{fontSize: '0.8em'}}>communities</div>
                             {
                                 communitySuggestions.map(community => (
-                                    <div key = {community.cName} onClick={handleCommunitySuggestionClicked}>
+                                    <div key = {community.cName} onClick={handleSuggestionClicked}>
                                         <Link to={'/c/' + community.cName} className = 'search-suggestion-community-link' style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
                                         {
                                             community.cThumbnail ?
@@ -122,7 +122,7 @@ const SearchInput = () => {
                             <div style = {{fontSize: '0.8em'}}>users</div>
                             {
                                 userSuggestions.map(user => (
-                                    <div key = {user.username} onClick={handleCommunitySuggestionClicked}>
+                                    <div key = {user.username} onClick={handleSuggestionClicked}>
                                         <Link to={'/u/' + user.username} className = 'search-suggestion-community-link' style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
                                             {
                                                 user.profilePicture ?

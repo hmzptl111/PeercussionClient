@@ -1,10 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import '../../styles/header/MenuButton.css';
 import {ReactComponent as MenuIcon} from '../../images/menu.svg';
 
 import UserStatusControl from './../reusable/UserStatusControl';
+import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 
 const MenuButton = () => {
+    const {isUserSignedIn} = useContext(UserAuthStatusContext);
     const menuRef = useRef();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -30,7 +32,10 @@ const MenuButton = () => {
             {
                 isMenuOpen &&
                 <ul className = 'menu-dropdown-list'>
-                    <UserStatusControl />
+                    {
+                        isUserSignedIn &&
+                        <UserStatusControl />
+                    }
                     <a href = '/#' className = 'menu-dropdown-list-item'>
                         <li>
                             Privacy Policy

@@ -24,7 +24,8 @@ export const SocketProvider = ({children}) => {
         });
     }, [socket]);
 
-    useEffect(() => {        
+    useEffect(() => {       
+        if(!user) return; 
         if(isUserOnline) {
             const query = {
                 uId: user.uId,
@@ -43,7 +44,7 @@ export const SocketProvider = ({children}) => {
         }
 
         //eslint-disable-next-line
-    }, [isUserOnline]);
+    }, [user, isUserOnline]);
     
 
     return (

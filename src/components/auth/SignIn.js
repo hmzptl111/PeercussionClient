@@ -12,7 +12,7 @@ const SignIn = () => {
     //
     const [isUserNew, setIsUserNew] = useState(false);
     //
-    const {setIsUserSignedIn} = useContext(UserAuthStatusContext);
+    const {setUser, setIsUserSignedIn} = useContext(UserAuthStatusContext);
     let history = useHistory();
 
     useEffect(() => {
@@ -47,10 +47,11 @@ const SignIn = () => {
         
         const result = await axios.post('/signIn', payload);
         if(result.status === 200) {
-            //if user's already signed in, sign out from that account
-            //...
-            //sign in with the new account
             console.log(result.data.message);
+            setUser({
+                uId: result.data.uId,
+                uName: result.data.uName
+            });
             setIsUserSignedIn(true);
             history.push('/', {from: 'SignIn', isUserNew: isUserNew});
         }
@@ -60,7 +61,7 @@ const SignIn = () => {
         <>
             <BackButton />
 
-            <form onSubmit = {handleSignIn}>
+            <form onSubmit = {handleSignIn} style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
                 <input type = 'text' placeholder = 'username' value = {username} onChange = {handleUsername} />
                 <input type = 'password' placeholder = 'password' value = {password} onChange = {handlePassword} />
 

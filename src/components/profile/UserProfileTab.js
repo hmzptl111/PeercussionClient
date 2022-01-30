@@ -4,7 +4,7 @@ import { UserProfileCurrentTabContext } from "../../contexts/UserProfileCurrentT
 
 import UserProfilePosts from "./UserProfilePosts";
 import UserProfileFriends from "./UserProfileFriends";
-import UserProfileCommunities from './UserProfileCommunities';
+import GetCommunities from '../reusable/GetCommunities';
 import UserProfilePendingRequests from "./UserProfilePendingRequests";
 import UserProfileUpvotedPosts from './UserProfileUpvotedPosts';
 // import UserProfileDownvotedPosts from './UserProfileDownvotedPosts';
@@ -27,11 +27,11 @@ const UserProfileTab = ({user}) => {
             }
             {
                 currentTab === 'Moderates Communities' &&
-                <UserProfileCommunities uName = {user.username} type = 'moderates' />
+                <GetCommunities uName = {user.username} type = 'moderates' />
             }
             {
                 currentTab === 'Following Communities' &&
-                <UserProfileCommunities uName = {user.username} type = 'following' />
+                <GetCommunities uName = {user.username} type = 'following' />
             }
             {
                 currentTab === 'Pending Requests' &&
@@ -51,7 +51,7 @@ const UserProfileTab = ({user}) => {
             }
             {
                 currentTab === 'About' && 
-                <UserProfileAbout uName = {user.username} />
+                <UserProfileAbout about = {user.about} />
             }
         </>
     );

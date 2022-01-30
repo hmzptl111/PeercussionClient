@@ -81,10 +81,11 @@ const CreatCommunity = () => {
         setCommunity(previousState => {
             return {
                 ...previousState,
-                relatedCommunities: [...previousState.relatedCommunities, {
-                    id: e.target.dataset.c_id,
-                    name: e.target.dataset.c_name
-                }]
+                relatedCommunities: [...previousState.relatedCommunities, e.target.dataset.c_id]
+                // relatedCommunities: [...previousState.relatedCommunities, {
+                //     cId: e.target.dataset.c_id,
+                //     cName: e.target.dataset.c_name
+                // }]
             }
         });
         suggestedCommunities.forEach(suggestedCommunity => {

@@ -1,6 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import Follow from './Follow';
+
+import Popup from 'reactjs-popup';
+import 'reactjs-popup/dist/index.css';
+
+import ChatShare from '../chat/ChatShare';
 
 import axios from 'axios';
 
@@ -54,21 +59,27 @@ const PageBanner = ({cName, cThumbnail, uName, type, target}) => {
         }
 
         <div style = {{paddingTop: '0.25rem', paddingBottom: '0.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                    <p style = {{marginLeft: '0.25rem'}}>
-                        {cName && `c/${cName}`}
-                        {uName && `u/${uName}`}
-                    </p>
+            <p style = {{marginLeft: '0.25rem'}}>
+                {cName && `c/${cName}`}
+                {uName && `u/${uName}`}
+            </p>
 
-                    {
-                        isOwner === 'no' &&
-                        <Follow followingStatus = {followingStatus} setFollowingStatus = {setFollowingStatus} type = {type} target = {target} />
-                    }
+            <div>
+                {
+                    isOwner === 'no' &&
+                    <Follow followingStatus = {followingStatus} setFollowingStatus = {setFollowingStatus} type = {type} target = {target} />
+                }
 
-                    {
-                        cName && isOwner === 'yes' &&
-                        <input type = 'file' onChange = {handleImageFromDeviceSelected} />
-                    }
-                </div>
+                {
+                    cName && isOwner === 'yes' &&
+                    <input type = 'file' onChange = {handleImageFromDeviceSelected} />
+                }
+
+                <Popup trigger = {<button>Share</button>} modal = {true}>
+                    <ChatShare cName = {cName} />
+                </Popup>
+            </div>
+        </div>
     </>
 }
 

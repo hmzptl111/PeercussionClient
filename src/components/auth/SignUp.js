@@ -9,6 +9,7 @@ const SignUp = () => {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
+    const [about, setAbout] = useState('');
     let history = useHistory();
 
     const handleUsername = e => {
@@ -25,6 +26,10 @@ const SignUp = () => {
     
     const handleEmail = e => {
         setEmail(e.target.value);
+    }
+
+    const handleAbout = e => {
+        setAbout(e.target.value);
     }
     
     const handleSignUp = async (e) => {
@@ -64,7 +69,8 @@ const SignUp = () => {
         const payload = {
             username: username,
             password: password,
-            email: email
+            email: email,
+            about: about
         }
         const result = await axios.post('/signUp', payload);
         
@@ -78,6 +84,7 @@ const SignUp = () => {
         setPassword('');
         setConfirmPassword('');
         setEmail('');
+        setAbout('');
         
         console.log('signed in successfully');
 
@@ -96,11 +103,12 @@ const SignUp = () => {
         <>
             <BackButton />
             
-            <form onSubmit = {handleSignUp}>
+            <form onSubmit = {handleSignUp} style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
                 <input type = 'text' placeholder = 'username' value = {username} onChange = {handleUsername} />
                 <input type = 'password' placeholder = 'password' value = {password} onChange = {handlePassword} />
                 <input type = 'password' placeholder = 'confirm password' value = {confirmPassword} onChange = {handleConfirmPassword} />
                 <input type = 'text' placeholder = 'email' value = {email} onChange = {handleEmail} />
+                <textarea placeholder = 'write something about yourself' value = {about} onChange = {handleAbout} />
 
 
                 <input type = 'submit' value = 'Sign up' />

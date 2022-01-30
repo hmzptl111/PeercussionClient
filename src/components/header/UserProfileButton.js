@@ -35,17 +35,19 @@ const UserProfileButton = () => {
     const {setCurrentTab} = useContext(UserProfileCurrentTabContext);
 
     useEffect(() => {
+        if(!isUserSignedIn || !user) return;
+
         const getUserProfilePicture = async () => {
-            if(!user) return;
             const response = await axios.post('/getProfilePicture', {uName: user.uName});
             if(response.status === 200) {
+                console.log(response.data);
                 setProfilePicture(response.data.url);
             }
         }
 
         getUserProfilePicture();
         //eslint-disable-next-line
-    }, [user]);
+    }, [user, isUserSignedIn]);
 
     useEffect(() => {
         const checkIfClickedOutside = e => {
@@ -97,7 +99,7 @@ const UserProfileButton = () => {
 
 
     return(
-        isUserSignedIn &&
+        user && isUserSignedIn &&
         <div className = 'user-profile-dropdown' ref = {userProfileRef}>
             <div onClick = {() => setIsDropdownOpen(oldState => !oldState)} style = {{cursor: 'pointer'}}>
                 {

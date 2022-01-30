@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import Follow from '../reusable/Follow';
+import Follow from './Follow';
 
 import axios from 'axios';
 
-const UserProfileCommunities = ({uName, type}) => {
+const GetCommunities = ({uName, cName, type}) => {
     const [communities, setCommunities] = useState();
 
     useEffect(() => {
@@ -14,6 +14,8 @@ const UserProfileCommunities = ({uName, type}) => {
                 response = await axios.post('/getModeratesCommunities', {uName: uName});
             } else if(type === 'following') {
                 response = await axios.post('/getFollowingCommunities', {uName: uName});
+            } else if(type === 'related') {
+                response = await axios.post('/getRelatedCommunities', {cName: cName});
             }
 
             if(response.status === 200) {
@@ -24,7 +26,7 @@ const UserProfileCommunities = ({uName, type}) => {
 
         getCommunities();
         // eslint-disable-next-line
-    }, [uName, type]);
+    }, [uName, cName, type]);
 
     const handleSetFollowingStatus = (newFollowingStatus, cId) => {
         setCommunities(previousState => {
@@ -52,15 +54,9 @@ const UserProfileCommunities = ({uName, type}) => {
                         }
                     </div>
                 )):
-                <>
-                    {
-                        type === 'moderates' ?
-                        `${uName} does not moderate any community`:
-                        `${uName} does not follow any community`
-                    }
-                </>
+                'No community found'
             }
         </>
 }
 
-export default UserProfileCommunities;
+export default GetCommunities;

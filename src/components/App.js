@@ -6,6 +6,7 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import { UserAuthStatusProvider } from '../contexts/UserAuthStatus';
 import { UserStatusProvider } from '../contexts/UserStatus';
 import { UserProfileCurrentTabProvider } from '../contexts/UserProfileCurrentTab';
+import {CommunityCurrentTabProvider} from '../contexts/CommunityCurrentTab';
 import {UserRoomsProvider} from '../contexts/UserRooms';
 import {SocketProvider} from '../contexts/Socket';
 
@@ -32,21 +33,23 @@ function App() {
             <Switch>
               <Route exact path = '/signup' component = {SignUp}></Route>
               <Route exact path = '/signin' component = {SignIn}></Route>
+              <CommunityCurrentTabProvider>
               <UserProfileCurrentTabProvider>
-                <Route exact path = '/' component = {Home}></Route>
-                <Route exact path = '/create/post' component = {CreatePost}></Route>
-                <Route exact path = '/create/community' component = {CreateCommunity}></Route>
                 <SocketProvider>
                   <UserRoomsProvider>
+                    <Route exact path = '/' component = {Home}></Route>
+                    <Route exact path = '/create/post' component = {CreatePost}></Route>
+                    <Route exact path = '/create/community' component = {CreateCommunity}></Route>
                     <Route exact path = '/chat' component = {Chat}></Route>
+                    <Route path = '/u/:uName' component = {User}></Route>
+                    <Route path = '/c/:cName' component = {Community}></Route>
+                    <Route path = '/p/:pId' component = {Post}></Route>
+                    {/* action = [view, edit] */}
+                    <Route path = '/profilePicture/:action' component = {UserProfilePicture}></Route>
                   </UserRoomsProvider>
                 </SocketProvider>
-                <Route path = '/u/:uName' component = {User}></Route>
-                <Route path = '/c/:cName' component = {Community}></Route>
-                <Route path = '/p/:pId' component = {Post}></Route>
-                {/* action = [view, edit] */}
-                <Route path = '/profilePicture/:action' component = {UserProfilePicture}></Route>
               </UserProfileCurrentTabProvider>
+              </CommunityCurrentTabProvider>
             </Switch>
           </UserStatusProvider>
         </UserAuthStatusProvider>
