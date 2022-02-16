@@ -9,6 +9,9 @@ import PageBanner from "./reusable/PageBanner";
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import { PopUp, PopUpQueue } from "./reusable/PopUp";
+
 const User = () => {
     const {uName} = useParams();
     const [user, setUser] = useState();
@@ -21,14 +24,22 @@ const User = () => {
     useEffect(() => {
         const getUserInfo = async () => {
             const user = await axios.post(`/user/${uName}`);
-            if(user.status === 200) {
-                if(user.data.error) {
+            
+            
+            if(user.data.error) {
+                let error = user.data.error;
+                if(user.data.error.message) {
+                    error = user.data.error.message;
                     setIsAccountPrivateAndNotFriend(true);
-                } else {
-                    setIsAccountPrivateAndNotFriend(false);
+                    setUser(user.data.error);
                 }
-                setUser(user.data);
+                let errorPopup = PopUp('Something went wrong', error);
+                PopUpQueue(errorPopup);
+                return;
             }
+            setIsAccountPrivateAndNotFriend(false);
+
+            setUser(user.data.message);
         }
         
         getUserInfo();
@@ -41,7 +52,7 @@ const User = () => {
             
             {
                 user &&
-                <PageBanner uName = {uName} type = 'user' target = {user._id} />
+                <PageBanner uName = {uName} uProfilePicture = {user.profilePicture} type = 'user' target = {user._id} />
             }
 
             {
@@ -52,6 +63,8 @@ const User = () => {
                 </>:
                 'This account is private'
             }
+
+            <Popup />
         </>
     );
 }

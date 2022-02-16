@@ -6,6 +6,9 @@ import {UserAuthStatusContext} from '../contexts/UserAuthStatus';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../components/reusable/PopUp';
+
 export const UserRoomsContext = createContext();
 
 export const UserRoomsProvider = ({children}) => {
@@ -19,10 +22,15 @@ export const UserRoomsProvider = ({children}) => {
 
     const getRooms = async () => {
         const response = await axios.post('/getChatRooms');
-        if(response.status === 200) {
-            console.log(response.data);
-            setRooms(response.data);
+
+        if(response.data.error) {
+            let errorPopup = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(errorPopup);
+            return;
         }
+
+        console.log(response.data.message);
+        setRooms(response.data.message);
     }
 
     useEffect(() => {
@@ -63,9 +71,9 @@ export const UserRoomsProvider = ({children}) => {
 
     useEffect(() => {
         if(!rooms || !socket) return;
+
         let userRooms = [];
         for(let room of rooms) {
-            console.log(room);
             userRooms.push(room.room);
         }
         
@@ -76,11 +84,13 @@ export const UserRoomsProvider = ({children}) => {
         if(!user || !isUserOnline) return;
 
         getRooms();
-
         //eslint-disable-next-line
     }, [user]);
 
-    return <UserRoomsContext.Provider value = {{rooms, currentChat, setCurrentChat}}>
-            {children}
+    return <UserRoomsContext.Provider value = {{rooms, setRooms, currentChat, setCurrentChat}}>
+            {
+                children
+            }
+            <Popup />
         </UserRoomsContext.Provider>
 }

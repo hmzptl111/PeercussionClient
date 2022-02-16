@@ -8,6 +8,12 @@ import axios from 'axios';
 import CreateComment from './create/CreateComment';
 import VoteComment from './vote/VoteComment';
 
+import GeneralProfileIcon from './reusable/GeneralProfileIcon';
+import InitialsIcon from './reusable/InitialsIcon';
+
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from './reusable/PopUp';
+
 const Comment = ({pId, pTitle, cId, cName, setPost}) => {
     const {user} = useContext(UserAuthStatusContext);
     
@@ -33,21 +39,26 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
             pId: pId,
             commentsOffset: commentsOffset
         });
+
+        if(newComments.data.error) {
+            let errorPopup = PopUp('Something went wrong', newComments.data.error);
+            PopUpQueue(errorPopup);
+            return;
+        }
         
-        totalCommentsReturnedInCurrentBatch.current = newComments.data.length;
+        totalCommentsReturnedInCurrentBatch.current = newComments.data.message.length;
         setCommentsOffset(previousState => {
-            return previousState + newComments.data.length;
+            return previousState + newComments.data.message.length;
         });
-        console.log(newComments.data);
         
         setPostComments(previousState => {
             return [
                 ...previousState,
-                ...newComments.data
+                ...newComments.data.message
             ];
         });
         
-        if(newComments.data.length < 3) {
+        if(newComments.data.message.length < 3) {
             setHasMoreComments(false);
             return;
         }
@@ -55,8 +66,7 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
 
     const handleLoadCommentReplies = async (e, postComment) => {
         e.preventDefault();
-        console.log(e.target);
-        console.log(postComment);
+
         if(e.target.textContent === 'Hide replies') {
             e.target.textContent = `${postComment.replies.length} Replies`;
             postComment.replies = [];
@@ -75,12 +85,18 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
             const newComments = await axios.post('/comments', {
                 replyTo: postComment._id
             });
-            console.log(newComments.data);
+
+            if(newComments.data.error) {
+                let errorPopup = PopUp('Something went wrong', newComments.data.error);
+                PopUpQueue(errorPopup);
+                return;
+            }
+
             setPostComments(previousState => {
                 let postComments = [...previousState];
                 for(let i = 0; i < postComments.length; i++) {
                     if(postComments[i] === postComment) {
-                        postComments[i].replies = [...newComments.data];
+                        postComments[i].replies = [...newComments.data.message];
                         break;
                     }
                 }
@@ -102,7 +118,12 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
         };
 
         const response = await axios.post('/createComment', payload);
-        console.log(response.data);
+
+        if(response.data.error) {
+            let errorPopup = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(errorPopup);
+            return;
+        }
 
         setPost(previousState => {
             return {
@@ -115,7 +136,7 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
 
         setPostComments(previousState => {
             return [
-                response.data,
+                response.data.message,
                 ...previousState,
             ];
         });
@@ -134,18 +155,19 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
         };
 
         const newReply = await axios.post('/createComment', payload);
-        console.log(newReply.data);
 
-        console.log(postComment);
-        console.log(postComments);
+        if(newReply.data.error) {
+            let errorPopup = PopUp('Something went wrong', newReply.data.error);
+            PopUpQueue(errorPopup);
+            return;
+        }
 
         let currentPostComments = postComments;
-        // let previousPostComments = [...previousState];
         for(let i = 0; i < currentPostComments.length; i++) {
             if(currentPostComments[i] === postComment) {
                 let currentComment = currentPostComments[i];
                 let currentCommentReplies = currentComment.replies;
-                currentComment.replies = [newReply.data, ...currentCommentReplies];
+                currentComment.replies = [newReply.data.message, ...currentCommentReplies];
             }
         }
         setPostComments(currentPostComments);
@@ -178,72 +200,74 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
         console.log(postComments);
     }, [postComments]);
 
-    return (
+    return <>
         <div>
+            <CreateComment comment = {comment} setComment = {setComment} handleCreateComment = {handleCreateComment} uName = {user && user.uName} />
+
             {
-                user &&
-                <CreateComment comment = {comment} setComment = {setComment} handleCreateComment = {handleCreateComment} uName = {user.uName} />
+                postComments.map(c => {
+                    return <div key = {c._id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
+                                <div>
+                                    <Link to = {`/u/${c.uName}`} style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
+                                        {
+                                            c.uProfilePicture ?
+                                            // <img src = {`/uploads/profilePictures/${c.uProfilePicture}`} width = '20em' height = '20em' style = {{borderRadius: '50%'}} alt = '' />
+                                            <GeneralProfileIcon imageSource = 'profilePictures' imageID = {c.uProfilePicture} />:
+                                            <InitialsIcon initial = {c.uName[0]} />
+                                        }
+                                        <p>{c.uName}</p>
+                                        </Link>
+                                </div>
+                                
+                                {c.comment}
 
-            }
-                {
-                    postComments.map(c => {
-                        return <div key = {c._id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
-                                    <div>
-                                        <Link to = {`/u/${c.uName}`} style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
-                                            {
-                                                c.uProfilePicture &&
-                                                <img src = {`/uploads/profilePictures/${c.uProfilePicture}`} width = '20em' height = '20em' style = {{borderRadius: '50%'}} alt = '' />
-                                            }
-                                            <p>{c.uName}</p>
-                                            </Link>
-                                    </div>
+                                <div>
+                                    <button onClick = {e => handleLoadCommentReplies(e, c)}>{c.replies.length} Replies</button>
+                                    <button onClick = {e => handleCommentReply(e, c._id)}>Reply</button>
                                     
-                                    {c.comment}
+                                    <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} />
+                                </div>
+                                
+                                <div id = {`${c._id}-reply`} className = 'comment-reply' style = {{display: 'none'}}>
+                                    <CreateComment comment = {commentReply} setComment = {setCommentReply} handleCreateCommentReply = {e => handleCreateCommentReply(e, c)} uName = {user && user.uName} replyTo = {c.uName} handleCancelCreateCommentReply = {e => handleCancelCreateCommentReply(e, c._id)} />
+                                </div>
 
-                                    <div>
-                                        <button onClick = {e => handleLoadCommentReplies(e, c)}>{c.replies.length} Replies</button>
-                                        <button onClick = {e => handleCommentReply(e, c._id)}>Reply</button>
-                                        
-                                        <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} />
-                                    </div>
-                                    
-                                    <div id = {`${c._id}-reply`} className = 'comment-reply' style = {{display: 'none'}}>
-                                        <CreateComment comment = {commentReply} setComment = {setCommentReply} handleCreateCommentReply = {e => handleCreateCommentReply(e, c)} uName = {user.uName} replyTo = {c.uName} handleCancelCreateCommentReply = {e => handleCancelCreateCommentReply(e, c._id)} />
-                                    </div>
-
-                                    {
-                                        c.replies !== [] &&
-                                        <div style = {{paddingLeft: '1em'}}>
-                                            {
-                                                c.replies.map(reply => {
-                                                    if(!reply.comment) return null;
-                                                    return <div key = {reply._id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
-                                                        <div>
-                                                            <Link to = {`/u/${reply.uName}`} style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
-                                                            {
-                                                                reply.uProfilePicture &&
-                                                                <img src = {`/uploads/profilePictures/${reply.uProfilePicture}`} width = '20em' height = '20em' style = {{borderRadius: '50%'}} alt = '' />
-                                                            }
-                                                                <span>{reply.uName}</span>
-                                                                </Link>
-                                                        </div>
-                                                        
-                                                        <div>{reply.comment}</div>
-                                                        <VoteComment cId = {reply._id} votes = {reply.upvotes - reply.downvotes} />
+                                {
+                                    c.replies !== [] &&
+                                    <div style = {{paddingLeft: '1em'}}>
+                                        {
+                                            c.replies.map(reply => {
+                                                if(!reply.comment) return null;
+                                                return <div key = {reply._id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
+                                                    <div>
+                                                        <Link to = {`/u/${reply.uName}`} style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
+                                                        {
+                                                            reply.uProfilePicture ?
+                                                            <GeneralProfileIcon imageSource = 'profilePictures' imageID = {reply.uProfilePicture} />:
+                                                            <InitialsIcon initial = {c.uName[0]} />
+                                                        }
+                                                            <span>{reply.uName}</span>
+                                                            </Link>
                                                     </div>
-                                                })
-                                            }
-                                        </div>
-                                    }
-                                </div>;
-                    })
-                }
-                {
-                    hasMoreComments &&
-                    <button onClick = {handleLoadMoreComments}>Load more</button>
-                }
-            </div>
-    );
+                                                    
+                                                    <div>{reply.comment}</div>
+                                                    <VoteComment cId = {reply._id} votes = {reply.upvotes - reply.downvotes} />
+                                                </div>
+                                            })
+                                        }
+                                    </div>
+                                }
+                            </div>;
+                })
+            }
+            {
+                hasMoreComments &&
+                <button onClick = {handleLoadMoreComments}>Load more</button>
+            }
+        </div>
+
+        <Popup />
+    </>
 }
 
 export default Comment;

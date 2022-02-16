@@ -1,11 +1,9 @@
 import '../../styles/reusable/InitialsIcon.css';
 
-const InitialsIcon = ({initial, isUpperCase = false, isComment = false}) => {
-    return <div className = 'default-initials-icon' style = {{width: isComment && '2em', height: isComment && '2em'}}>
+const InitialsIcon = ({initial}) => {
+    return <div className = 'default-initials-icon' >
             {
-                isUpperCase ?
-                initial.toUpperCase():
-                initial
+                initial.toUpperCase()
             }
         </div>;
 }

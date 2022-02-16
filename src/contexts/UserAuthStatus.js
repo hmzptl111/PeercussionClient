@@ -14,14 +14,16 @@ export const UserAuthStatusProvider = ({children}) => {
     useEffect(() => {
         const checkUserAuthStatus = async () => {
             const response = await axios.post('/checkUserAuthStatus');
-            if(response.status === 200) {
-                if(response.data.isAuth) {
-                    setUser({
-                        uId: response.data.uId,
-                        uName: response.data.uName
-                    });
-                    setIsUserSignedIn(true);
-                }
+
+            if(response.data.error) {
+                setUser(null);
+                setIsUserSignedIn(false);
+            } else if(response.data.message && response.data.message.isAuth) {
+                setUser({
+                    uId: response.data.message.uId,
+                    uName: response.data.message.uName
+                });
+                setIsUserSignedIn(true);
             }
         }   
 

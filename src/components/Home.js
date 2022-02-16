@@ -1,28 +1,42 @@
 import { useEffect } from 'react';
 import {useHistory} from 'react-router-dom';
 
+import { Link } from 'react-router-dom';
+
 import Header from './Header';
+
+import PostThumbnail from './reusable/PostThumbnail';
+
+import {ReactComponent as EditProfilePicture} from '../images/edit_profile_picture.svg';
+
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../components/reusable/PopUp';
 
 const Home = () => {
     let history = useHistory();
-
+    
     useEffect(() => {
         if(history.location.state && history.location.state.from === 'SignIn') {
-            console.log(history.location.pathname);
             if(history.location.state.isUserNew) {
-                console.log('Please set up a profile picture');
+                let profilePicturePopup = PopUp('Set up your Profile Picture',
+                <Link to = {'/profilePicture/edit'}>
+                    <EditProfilePicture />
+                </Link>
+                );
+                PopUpQueue(profilePicturePopup);
                 return;
             }
-            console.log('Welcome back');
         }
-
         // eslint-disable-next-line
     }, []);
 
     return (
         <>
             <Header />
-            Home
+
+            <PostThumbnail home = {true} />
+
+            <Popup />
         </>
     );
 };

@@ -3,7 +3,7 @@ import { createContext, useState } from 'react';
 export const UserStatusContext = createContext();
 
 export const UserStatusProvider = ({children}) => {
-    const [isUserOnline, setIsUserOnline] = useState(false);
+    const [isUserOnline, setIsUserOnline] = useState(true);
 
     return(
         <UserStatusContext.Provider value = {{isUserOnline, setIsUserOnline}}>

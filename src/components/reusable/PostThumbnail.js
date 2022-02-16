@@ -5,7 +5,10 @@ import axios from "axios";
 
 import PostFooter from "./PostFooter"
 
-const PostThumbnail = ({cName, uName, getUserUpvotedPosts = false}) => {
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
+const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
     const [posts, setPosts] = useState([]);
 
     const [loading, setLoading] = useState(true);
@@ -21,7 +24,11 @@ const PostThumbnail = ({cName, uName, getUserUpvotedPosts = false}) => {
         setLoading(true);
         let newPosts;
         
-        if(cName) {
+        if(home) {
+            newPosts = await axios.post('/postThumbnail/home', {
+                postsOffset: postsOffset.current
+            }, {signal: signal});
+        } else if(cName) {
             newPosts = await axios.post('/postThumbnail/community', {
                 communityName: cName,
                 postsOffset: postsOffset.current
@@ -41,22 +48,23 @@ const PostThumbnail = ({cName, uName, getUserUpvotedPosts = false}) => {
         }
 
         if(newPosts.data.error) {
-            console.log(posts.data.error);
+            let errorPopup = PopUp('Something went wrong', newPosts.data.error);
+            PopUpQueue(errorPopup);
             return;
         }
         
-        postsOffset.current += newPosts.data.length;        
-        console.log(newPosts.data);
+        postsOffset.current += newPosts.data.message.length;        
+        console.log(newPosts.data.message);
 
         setPosts(previousState => {
             return [
                 ...previousState,
-                ...newPosts.data
+                ...newPosts.data.message
             ];
         });
         setLoading(false);
         
-        if(newPosts.data.length < 3) {
+        if(newPosts.data.message.length < 3) {
             setHasMorePosts(false);
             return;
         }
@@ -97,7 +105,8 @@ const PostThumbnail = ({cName, uName, getUserUpvotedPosts = false}) => {
         // eslint-disable-next-line
     }, [cName, uName]);
 
-    return <div>
+    return <>
+            <div style = {{display: 'flex', flexWrap: 'wrap', gap: '5rem', justifyContent: 'center', alignItems: 'center'}}>
                 {
                     posts.length > 0 ?
                     posts.map((post, index) => {
@@ -110,7 +119,7 @@ const PostThumbnail = ({cName, uName, getUserUpvotedPosts = false}) => {
                                                     </Link>
 
                                                     {
-                                                        uName &&
+                                                        !cName &&
                                                         <Link to = {`/c/${post.cName}`}>
                                                             {`c/${post.cName}`}
                                                         </Link>
@@ -135,7 +144,7 @@ const PostThumbnail = ({cName, uName, getUserUpvotedPosts = false}) => {
                                                 </Link>
 
                                                 {
-                                                    uName &&
+                                                    !cName &&
                                                     <Link to = {`/c/${post.cName}`}>
                                                         {`c/${post.cName}`}
                                                     </Link>
@@ -155,13 +164,15 @@ const PostThumbnail = ({cName, uName, getUserUpvotedPosts = false}) => {
                     }):
                     'No posts'
                 }
-
-                {loading && 'Please wait...loading'}
-                {
-                    !hasMorePosts && posts.length > 0 &&
-                    'You\'ve reached the end'
-                }
             </div>
+            {loading && 'Please wait...loading'}
+            {
+                !hasMorePosts && posts.length > 0 &&
+                'You\'ve reached the end'
+            }
+
+            <Popup />
+            </>
 }
 
 export default PostThumbnail;

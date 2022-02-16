@@ -4,6 +4,9 @@ import Follow from './Follow';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 const GetCommunities = ({uName, cName, type}) => {
     const [communities, setCommunities] = useState();
 
@@ -18,10 +21,13 @@ const GetCommunities = ({uName, cName, type}) => {
                 response = await axios.post('/getRelatedCommunities', {cName: cName});
             }
 
-            if(response.status === 200) {
-                console.log(response.data);
-                setCommunities(response.data);
+            if(response.data.error) {
+                let errorPopup = PopUp('Something went wrong', response.data.error);
+                PopUpQueue(errorPopup);
+                return;
             }
+            
+            setCommunities(response.data.message);
         }
 
         getCommunities();
@@ -56,6 +62,8 @@ const GetCommunities = ({uName, cName, type}) => {
                 )):
                 'No community found'
             }
+
+            <Popup />
         </>
 }
 

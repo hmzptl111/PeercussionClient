@@ -19,6 +19,9 @@ import InlineCode from '@editorjs/inline-code';
 import Underline from '@editorjs/underline';
 import ImageTool from '@editorjs/image';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 const CreatePost = () => {
     let editor = useRef();
     const [postCId, setPostCId] = useState();
@@ -46,7 +49,6 @@ const CreatePost = () => {
                 inlineToolbar: true,
                 shortcut: 'CMD+SHIFT+H'
             },
-            // link: Link //use links for mentions like @user123
             list: {
                 class: List,
                 inlineToolbar: true,
@@ -99,17 +101,18 @@ const CreatePost = () => {
                 }
             }
         },
-        // onReady: () => console.log('Editor.js is ready'),
         onChange:  () => {
             editor.current.save()
             .then(data => {
-                console.log(data);
                 setPostBody(data)
             })
+            .catch(err => {
+                let postBodyError = PopUp('Something went wrong', err);
+                PopUpQueue(postBodyError);
+            });
         }
     });
    }
-
    
 
     const containsSpecialChar = str => {
@@ -135,7 +138,8 @@ const CreatePost = () => {
         })
         .catch(err => {
             if(axios.isCancel(err)) return;
-            console.log(err);
+            let genericError = PopUp('Something went wrong', err);
+            PopUpQueue(genericError);
         });
 
         return () => {
@@ -161,13 +165,31 @@ const CreatePost = () => {
     const handlePostCommunity = e => {
         const isInvalid = containsSpecialChar(e.target.value.substr(-1));
         
-        if(isInvalid) return;
+        if(isInvalid) {
+            let invalidPostCommunityNameError = PopUp('Invalid type', 'Special characters are invalid');
+            PopUpQueue(invalidPostCommunityNameError);
+            return;
+        }
 
         setPostCommunity(e.target.value);
     }
 
-    const handleCreatePost = async (e) => {
-        e.preventDefault();
+        const handleCreatePost = async (e) => {
+            e.preventDefault();
+
+        if(postTitle === '') {
+            let postTitleError = PopUp('Something went wrong', 'Post title cannot be empty');
+            PopUpQueue(postTitleError);
+            return;
+        } else if(postTitle.length > 100) {
+            let postTitleError = PopUp('Something went wrong', 'Post title should not exceed 100 characters');
+            PopUpQueue(postTitleError);
+            return;
+        } else if(!postCId) {
+            let postTitleError = PopUp('Something went wrong', 'Please choose a valid community to post');
+            PopUpQueue(postTitleError);
+            return;
+        }
 
         let tempPostInfo = {
             cId: postCId,
@@ -175,22 +197,20 @@ const CreatePost = () => {
             title: postTitle,
             body: postBody
         }
-
-        console.log(tempPostInfo);
+    
         const response = await axios.post('/create/post', tempPostInfo);
+        if(response.data.error) {
+            let genericError = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(genericError);
+            return;
+        }
 
-        
         setPostBody(null);
         setPostTitle('');
         setPostCId(null);
         setPostCommunity('');
-
-        if(response.status === 200) {
-            history.push(`/p/${response.data.pId}`);
-        }
-
-        // document.querySelector('#editorjs').innerHTML = '';
-        // initEditor();
+    
+        history.push(`/p/${response.data.message}`);
     };
 
     const handleClearPostCommunity = () => {
@@ -208,7 +228,10 @@ const CreatePost = () => {
 
                 {
                     isPostCommunitySelected ?
-                    <button onClick = {handleClearPostCommunity}>Clear Community</button>:
+                    <button onClick = {handleClearPostCommunity}>
+                        <span>{postCommunity}</span>
+                        <span>&times;</span>
+                    </button>:
                     <input type = 'text' onChange = {handlePostCommunity} placeholder = 'community' value = {postCommunity} />
                 }
 
@@ -231,6 +254,8 @@ const CreatePost = () => {
 
                 <input type = 'submit' value = 'Create' />
             </form>
+
+            <Popup />
         </>
     );
 };

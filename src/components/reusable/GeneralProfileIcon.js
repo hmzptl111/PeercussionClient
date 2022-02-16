@@ -1,10 +1,10 @@
 import '../../styles/reusable/GeneralProfileIcon.css';
 
-const GeneralProfileIcon = ({imageSource, imageID, isComment = false}) => {
+const GeneralProfileIcon = ({imageSource, imageID}) => {
     return <>
             {
                 imageSource && imageID &&
-                <img src = {`/uploads/${imageSource}/${imageID}`} style = {{width: isComment && '2em', height: isComment && '2em'}} className = 'profile-icon' alt = '' />
+                <img src = {`/uploads/${imageSource}/${imageID}`} className = 'profile-icon' alt = '' />
             }
         </>
 }

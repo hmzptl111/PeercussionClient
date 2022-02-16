@@ -2,6 +2,10 @@ import {useEffect, useRef, useState} from 'react';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
+import {Link} from 'react-router-dom';
 
 const SetUserProfileUsingCamera = () => {
     navigator.getMedia =    navigator.getUserMedia ||
@@ -26,7 +30,8 @@ const SetUserProfileUsingCamera = () => {
             videoRef.current.play();
         }, (err) => {
             if(err) {
-                console.log(`Something went wrong: ${err}`);
+                let errorPopup = PopUp('Something went wrong', err);
+                PopUpQueue(errorPopup);
                 return;
             }
         });
@@ -62,15 +67,27 @@ const SetUserProfileUsingCamera = () => {
     }
 
     const handleSetProfilePicture = async () => {
-        console.log(canvasRef.current.toDataURL('image/jpeg'));
+        // console.log(canvasRef.current.toDataURL('image/jpeg'));
         const payload = {
             profilePicture: canvasRef.current.toDataURL('image/jpeg')
         }
         const response = await axios.post('/setProfilePictureFromCamera', payload);
-        if(response.status === 200) {
-            console.log(response.data.message);
-            setIsUserProfileSet(true);
+        // if(response.status === 200) {
+        //     console.log(response.data.message);
+        //     setIsUserProfileSet(true);
+        // }
+        if(response.data.error) {
+            let errorPopup = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(errorPopup);
+            return;
         }
+
+        setIsUserProfileSet(true);
+        let successPopup = PopUp('Profile picture updated',
+            <Link to = '/profilePicture/view'>View updated profile picture</Link>
+        );
+        PopUpQueue(successPopup);
+        return;
     }
 
     return <>
@@ -92,6 +109,8 @@ const SetUserProfileUsingCamera = () => {
                 hasCaptured && !isUserProfileSet &&
                 <button onClick={handleSetProfilePicture}>Set Profile Picture</button>
             }
+
+            <Popup />
         </>
 }
 

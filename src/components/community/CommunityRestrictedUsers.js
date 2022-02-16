@@ -7,6 +7,9 @@ import InitialsIcon from '../reusable/InitialsIcon';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import { PopUp, PopUpQueue } from '../reusable/PopUp';
+
 const CommunityRestrictedUsers = ({cName, isModerator}) => {
     const {user} = useContext(UserAuthStatusContext);
 
@@ -25,10 +28,14 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
     useEffect(() => {
         const getRestrictedUsers = async () => {
             const response = await axios.post('/getRestrictedUsers', {cName: cName});
-            if(response.status === 200) {
-                console.log(response.data);
-                setRestrictedUsers(response.data);
+            
+            if(response.data.error) {
+                let genericError = PopUp('Something went wrong', response.data.error);
+                PopUpQueue(genericError);
+                return;
             }
+
+            setRestrictedUsers(response.data.message);
         }
 
         getRestrictedUsers();
@@ -44,12 +51,11 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
         }, {
             cancelToken: new axios.CancelToken(c => cancelRequestToken = c)
         }).then(res => {
-            console.log(res.data);
             let users;
             if(user) {
-                users = res.data.filter(u => u._id !== user.uId);
+                users = res.data.message.filter(u => u._id !== user.uId);
             } else {
-                users = res.data;
+                users = res.data.message;
             }
 
             for(let i = 0; i < users.length; i++) {
@@ -64,7 +70,9 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
             setUserSuggestions(users);
         }).catch(err => {
             if(axios.isCancel(err)) return;
-            console.log(err);
+
+            let genericError = PopUp('Something went wrong', err);
+            PopUpQueue(genericError);
         });
 
         return () => cancelRequestToken();
@@ -102,26 +110,34 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
         }
         if(user.isRestricted) {
             const response = await axios.post('/restrictUser/unrestrict', payload);
-            if(response.status === 200) {
-                console.log(response.data);
-                setRestrictedUsers(previousState => {
-                    let updatedRestrictedUsers = previousState.filter(u => u._id !== user._id);
-                    return updatedRestrictedUsers;
-                });
+            
+            if(response.data.error) {
+                let errorPopup = PopUp('Something went wrong', response.data.error);
+                PopUpQueue(errorPopup);
+                return;
             }
+
+            setRestrictedUsers(previousState => {
+                let updatedRestrictedUsers = previousState.filter(u => u._id !== user._id);
+                return updatedRestrictedUsers;
+            });
         } else {
             const response = await axios.post('/restrictUser/restrict', payload);
-            if(response.status === 200) {
-                console.log(response.data);
-                setRestrictedUsers(previousState => {
-                    const newRestrictedUser = {
-                        _id: user._id,
-                        username: user.username
-                    }
-                    let updatedRestrictedUsers = [...previousState, newRestrictedUser];
-                    return updatedRestrictedUsers;
-                });
+            
+            if(response.data.error) {
+                let errorPopup = PopUp('Something went wrong', response.data.error);
+                PopUpQueue(errorPopup);
+                return;
             }
+
+            setRestrictedUsers(previousState => {
+                const newRestrictedUser = {
+                    _id: user._id,
+                    username: user.username
+                }
+                let updatedRestrictedUsers = [...previousState, newRestrictedUser];
+                return updatedRestrictedUsers;
+            });
         }
       }
 
@@ -131,13 +147,17 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
             cName: cName
         }
         const response = await axios.post('/restrictUser/unrestrict', payload);
-            if(response.status === 200) {
-                console.log(response.data);
-                setRestrictedUsers(previousState => {
-                    let updatedRestrictedUsers = previousState.filter(u => u._id !== user._id);
-                    return updatedRestrictedUsers;
-                });
-            }
+
+        if(response.data.error) {
+            let errorPopup = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(errorPopup);
+            return;
+        }
+
+        setRestrictedUsers(previousState => {
+            let updatedRestrictedUsers = previousState.filter(u => u._id !== user._id);
+            return updatedRestrictedUsers;
+        });
       }
 
     return(
@@ -189,6 +209,8 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
                 )):
                 'No users restricted'
             }
+
+            <Popup />
         </>
     );
 };

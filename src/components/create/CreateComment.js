@@ -10,7 +10,7 @@ const CreateComment = ({comment, setComment, handleCreateComment = null, handleC
                 <form onSubmit = {handleCreateComment}>
                     {
                         <>
-                            <textarea style = {{resize: 'none', width: '100%', height: '10em', padding: '0.25em'}} value = {comment} onChange = {handleCommentChange} placeholder = {`Add a comment, ${uName}`}></textarea>
+                            <textarea style = {{resize: 'none', width: '100%', height: '10em', padding: '0.25em'}} value = {comment} onChange = {handleCommentChange} placeholder = {`Add a comment${uName && `, ${uName}`}`}></textarea>
                             
                             <input type = 'submit' value = 'Comment' />
                         </>

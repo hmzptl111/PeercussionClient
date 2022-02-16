@@ -2,6 +2,10 @@ import {useRef, useState} from 'react';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
+import {Link} from 'react-router-dom';
 
 const SetUserProfileUsingLocalImage = () => {
     const imageFromDevicePreviewRef = useRef();
@@ -30,19 +34,24 @@ const SetUserProfileUsingLocalImage = () => {
 
         profilePicture.set('profilePictureUsingLocalImage', imageFromDevice);
 
-        // for(let entry of profilePicture.entries()) {
-        //     console.log(entry[0]+', '+entry[1]);
-        // }
-
         const response = await axios.post('/setProfilePictureUsingLocalImage', profilePicture);
-        if(response.status === 200) {
-            console.log(response.data.message);
-            imageFromDevicePreviewRef.current.src = '';
-            imageFromDevicePreviewRef.current.style.display = 'none';
 
-            setHasSelected(false);
-            setImageFromDevice(null);
+        if(response.data.error) {
+            let errorPopup = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(errorPopup);
+            return;
         }
+
+        imageFromDevicePreviewRef.current.src = '';
+        imageFromDevicePreviewRef.current.style.display = 'none';
+
+        setHasSelected(false);
+        setImageFromDevice(null);
+
+        let successPopup = PopUp('Profile picture updated',
+            <Link to = '/profilePicture/view'>View updated profile picture</Link>
+        );
+        PopUpQueue(successPopup);
     }
     
     return <>
@@ -54,6 +63,8 @@ const SetUserProfileUsingLocalImage = () => {
                 hasSelected &&
                 <button onClick={handleSetProfilePictureFromDevice}>Set Profile Picture</button>
             }
+
+            <Popup />
         </>
 }
 

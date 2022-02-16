@@ -5,7 +5,7 @@ import { SocketContext } from "../../contexts/Socket"
 import { UserStatusContext } from "../../contexts/UserStatus";
 import { UserRoomsContext } from "../../contexts/UserRooms";
 
-const ChatShare = ({pId, pTitle, pThumbnail, uName, pCName, cName}) => {
+const ChatShare = ({post, community, user}) => {
     const {socket} = useContext(SocketContext);
     const {isUserOnline, setIsUserOnline} = useContext(UserStatusContext);
     const {rooms, setCurrentChat} = useContext(UserRoomsContext);
@@ -13,6 +13,8 @@ const ChatShare = ({pId, pTitle, pThumbnail, uName, pCName, cName}) => {
     let history = useHistory();
 
     const handleSharePost = (room) => {
+        if(!room) return;
+
         if(!socket || !isUserOnline) {
             setIsUserOnline(true);
         }
@@ -21,18 +23,10 @@ const ChatShare = ({pId, pTitle, pThumbnail, uName, pCName, cName}) => {
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
 
-        const postShareBody = {
-            pId: pId,
-            pTitle: pTitle,
-            pThumbnail: pThumbnail,
-            uName: uName,
-            cName: pCName
-        }
-
         const payload = {
-            type: pId ? 'post' : 'community',
+            type: (post && 'post') || (community && 'community') || (user && 'user'),
             time: `${hours}:${minutes}`,
-            message: pId ? postShareBody : cName,
+            message: (post && post) || (community && community) || (user && user),
             roomID: room.room
         }
         socket.emit('message', payload, room.room);
@@ -46,8 +40,7 @@ const ChatShare = ({pId, pTitle, pThumbnail, uName, pCName, cName}) => {
             {
                 rooms.length > 0 ?
                 <>
-                    <div>Share {pId ? 'post' : 'community'} to</div>
-                    <ul style = {{listStyleType: 'none', marginTop: '1em'}}>
+                    <ul style = {{listStyleType: 'none'}}>
                         {
                             rooms.map(room => {
                                 return <li key = {room.room} onClick = {() => handleSharePost(room)} style = {{cursor: 'pointer'}}>{room.uName}</li>

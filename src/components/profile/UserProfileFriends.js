@@ -7,6 +7,9 @@ import Follow from '../reusable/Follow';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 const UserProfileFriends = ({uName}) => {
     const [userFriends, setUserFriends] = useState([]);
     const {user} = useContext(UserAuthStatusContext);
@@ -18,9 +21,15 @@ const UserProfileFriends = ({uName}) => {
             console.log(uName);
             const {signal} = controller;
             const response = await axios.post('/getFriends', {uName: uName}, {signal: signal});
-            console.log(response.data);
+            
+            if(response.data.error) {
+                let errorPopup = PopUp('Something went wrong', response.data.error);
+                PopUpQueue(errorPopup);
+                return;
+            }
 
-            setUserFriends(response.data);
+            console.log(response.data.message);
+            setUserFriends(response.data.message);
         }
 
         getFriends();
@@ -41,7 +50,8 @@ const UserProfileFriends = ({uName}) => {
         });
     }
 
-    return <div>
+    return <>
+        <div>
             {
                 userFriends.length > 0 ?
                 userFriends.map(friend => {
@@ -49,14 +59,17 @@ const UserProfileFriends = ({uName}) => {
                                 <Link to = {`/u/${friend.username}`}>{friend.username}</Link>
 
                                 {
-                                    friend.username !== user.uName &&
+                                    (friend.username !== (user && user.uName)) &&
                                     <Follow followingStatus = {friend.isFriend} setFollowingStatus = {handleSetFollowingStatus} friendsList = {true} type = 'user' target = {friend._id} />
-                                }   
+                                }
                             </div>
                 }):
                 'No friends'
             }
         </div>
+
+        <Popup />
+    </>
 }
 
 export default UserProfileFriends;

@@ -8,31 +8,35 @@ import PageBanner from './reusable/PageBanner';
 import CommunityNav from './community/CommunityNav';
 import CommunityTab from './community/CommunityTab';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from './reusable/PopUp';
+
 const Community = () => {
     const {cName} = useParams();
     const [community, setCommunity] = useState();
     const [isRestricted, setIsRestricted] = useState(false);
     
     useEffect(() => {
-        console.log(cName);
-        
         const getCommunityInfo = async () => {
             const community = await axios.post(`/community/${cName}`);
-            if(community.data.error) {
+
+            if(community.data.error === 'restricted') {
                 setIsRestricted(true);
                 return;
-            } else if(community.status === 200) {
-                setCommunity(community.data);
             }
+
+            if(community.data.error) {
+                let errorPopup = PopUp('Something went wrong', community.data.error);
+                PopUpQueue(errorPopup);
+                return;
+            }
+
+            setCommunity(community.data.message);
         }
         
         getCommunityInfo();
         // eslint-disable-next-line
     }, [cName]);
-
-    useEffect(() => {
-        console.log(community);
-    }, [community]);
 
     return (
         <>
@@ -48,6 +52,8 @@ const Community = () => {
                 </>:
                 'You are restricted from accessing this community'
             }
+
+            <Popup />
         </>
     )
 };

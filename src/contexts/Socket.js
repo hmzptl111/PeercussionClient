@@ -27,13 +27,8 @@ export const SocketProvider = ({children}) => {
     useEffect(() => {       
         if(!user) return; 
         if(isUserOnline) {
-            const query = {
-                uId: user.uId,
-                uName: user.uName
-            }
             const response = io('http://localhost:3001/', {
-                transports : ['websocket', 'polling', 'flashsocket'],
-                query: query
+                transports : ['websocket', 'polling', 'flashsocket']
             });
             console.log(response);
             setSocket(response);
@@ -48,7 +43,7 @@ export const SocketProvider = ({children}) => {
     
 
     return (
-            <SocketContext.Provider value = {{socket}}>
+            <SocketContext.Provider value = {{socket, setSocket}}>
                 {children}
             </SocketContext.Provider>
     );

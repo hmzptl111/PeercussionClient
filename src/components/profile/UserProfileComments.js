@@ -5,22 +5,31 @@ import VoteComment from '../vote/VoteComment';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 const UserProfileComments = ({uName}) => {
     const [userComments, setUserComments] = useState([]);
 
     useEffect(() => {
         const getComments = async () => {
             const comments = await axios.post('/getComments', {uName: uName});
-            console.log(comments.data);
-            setUserComments(comments.data);
+
+            if(comments.data.error) {
+                let errorPopup = PopUp('Something went wrong', comments.data.error);
+                PopUpQueue(errorPopup);
+                return;
+            }
+
+            setUserComments(comments.data.message);
         }
 
         getComments();
-
         //eslint-disable-next-line
     }, [uName]);
 
-    return <div>
+    return <>
+        <div>
                 {
                     userComments.length > 0 ?
                     userComments.map(c => {
@@ -51,6 +60,9 @@ const UserProfileComments = ({uName}) => {
                     'No comments'
                 }
         </div>
+
+        <Popup />
+    </>
 }
 
 export default UserProfileComments;

@@ -22,6 +22,7 @@ import User from './User';
 import UserProfilePicture from './profile/UserProfilePicture';
 import Chat from './Chat';
 
+
 function App() {
 
   return (

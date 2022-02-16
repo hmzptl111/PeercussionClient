@@ -11,6 +11,9 @@ import axios from 'axios';
 
 import {Link} from 'react-router-dom';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 const ChatFrame = () => {
     const {currentChat} = useContext(UserRoomsContext);
     const [messageText, setMessageText] = useState('');
@@ -26,28 +29,6 @@ const ChatFrame = () => {
         
         lastMessageRef.current.scrollIntoView();
     }, [messages]);
-
-    // const getPost = async (message) => {
-    //     console.log(message);
-    //     const post = await axios.post(`/post/${message.message}`);
-    //     if(post.status === 200) {
-    //         console.log(post.data);
-    //         const newMessage = {
-    //             type: message.type,
-    //             time: message.time,
-    //             sender: message.sender,
-    //             pId: post.data._id,
-    //             pTitle: post.data.title,
-    //             pThumbnail: post.data.thumbnail,
-    //             uName: post.data.uName,
-    //             cName: post.data.cName
-    //         }
-    //         console.log(newMessage);
-    //         return new Promise((resolve, reject) => {
-    //             resolve(newMessage);
-    //         });
-    //     }
-    // }
 
     useEffect(() => {
         if(!user || !socket) return;
@@ -69,9 +50,12 @@ const ChatFrame = () => {
         console.log(currentChat);
         const getChats = async () => {
             const response = await axios.post('/getChats', {roomID: currentChat.room});
-            if(response.status === 200) {
-                setMessages(response.data);
+            if(response.data.error) {
+                let errorPopup = PopUp('Something went wrong', response.data.error);
+                PopUpQueue(errorPopup);
+                return;
             }
+            setMessages(response.data.message);
         }
 
         getChats();
@@ -239,8 +223,45 @@ const ChatFrame = () => {
                                             m.type === 'community' &&
                                             <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}} ref = {lastMessageRef}>
                                                 <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                    <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                    <Link to = {`c/${m.message}`}>Follow c/{m.message}</Link>
+                                                    <Link to = {`c/${m.message.cName}`} style = {{border: '1px solid black', width: '50%'}}>
+                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
+                                                        <div style = {{maxWidth: '100%'}}>
+                                                            <div style = {{display: 'flex', justifyContent: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', flexDirection: 'column'}}>
+                                                            {/* <div>{m.message.uName}</div> */}
+                                                                <div>Follow {`c/${m.message.cName}`}</div>
+                                                            
+                                                            {
+                                                                m.message.cThumbnail &&
+                                                                <div>
+                                                                    <img src = {`/uploads/communityThumbnails/${m.message.cThumbnail}`} alt = '' height = '300' width = '100%' />
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        </div>
+                                                    </Link>
+                                                    
+                                                </div>
+                                            </div>
+                                        }
+                                        {
+                                            m.type === 'user' &&
+                                            <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}} ref = {lastMessageRef}>
+                                                <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
+                                                    <Link to = {`u/${m.message.uName}`} style = {{border: '1px solid black', width: '50%'}}>
+                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
+                                                        <div style = {{maxWidth: '100%'}}>
+                                                            <div style = {{display: 'flex', justifyContent: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', flexDirection: 'column'}}>
+                                                                <div>Follow {`u/${m.message.uName}`}</div>
+                                                            
+                                                                {
+                                                                    m.message.uProfilePicture &&
+                                                                    <div>
+                                                                        <img src = {`/uploads/profilePictures/${m.message.uProfilePicture}`} alt = '' height = '300' width = '100%' />
+                                                                    </div>
+                                                                }
+                                                        </div>
+                                                        </div>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         }
@@ -303,8 +324,44 @@ const ChatFrame = () => {
                                             m.type === 'community' &&
                                             <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}}>
                                                 <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                    <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                    <Link to = {`c/${m.message}`}>Follow c/{m.message}</Link>
+                                                    <Link to = {`c/${m.message.cName}`} style = {{border: '1px solid black', width: '50%'}}>
+                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
+                                                        <div style = {{maxWidth: '100%'}}>
+                                                            <div style = {{display: 'flex', justifyContent: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', flexDirection: 'column'}}>
+                                                            {/* <div>{m.message.uName}</div> */}
+                                                                <div>Follow {`c/${m.message.cName}`}</div>
+                                                            
+                                                            {
+                                                                m.message.cThumbnail &&
+                                                                <div>
+                                                                    <img src = {`/uploads/communityThumbnails/${m.message.cThumbnail}`} alt = '' height = '300' width = '100%' />
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        </div>
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        }
+                                        {
+                                            m.type === 'user' &&
+                                            <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}}>
+                                                <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
+                                                    <Link to = {`u/${m.message.uName}`} style = {{border: '1px solid black', width: '50%'}}>
+                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
+                                                        <div style = {{maxWidth: '100%'}}>
+                                                            <div style = {{display: 'flex', justifyContent: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', flexDirection: 'column'}}>
+                                                                <div>Follow {`u/${m.message.uName}`}</div>
+                                                            
+                                                                {
+                                                                    m.message.uProfilePicture &&
+                                                                    <div>
+                                                                        <img src = {`/uploads/profilePictures/${m.message.uProfilePicture}`} alt = '' height = '300' width = '100%' />
+                                                                    </div>
+                                                                }
+                                                        </div>
+                                                        </div>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         }

@@ -10,6 +10,9 @@ import InitialsIcon from '../reusable/InitialsIcon';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 const SearchInput = () => {
     const {user} = useContext(UserAuthStatusContext);
 
@@ -35,11 +38,11 @@ const SearchInput = () => {
         }, {
             cancelToken: new axios.CancelToken(c => cancelRequestToken = c)
         }).then(res => {
-            console.log(res.data);
-            setCommunitySuggestions(res.data);
+            setCommunitySuggestions(res.data.message);
         }).catch(err => {
             if(axios.isCancel(err)) return;
-            console.log(err);
+            let errorPopup = PopUp('Something went wrong', err);
+            PopUpQueue(errorPopup);
         })   
         
         axios.post('/search/user', {
@@ -47,17 +50,17 @@ const SearchInput = () => {
         }, {
             cancelToken: new axios.CancelToken(c => cancelRequestToken = c)
         }).then(res => {
-            console.log(res.data);
             let users;
             if(user) {
-                users = res.data.filter(u => u._id !== user.uId);
+                users = res.data.message.filter(u => u._id !== user.uId);
             } else {
-                users = res.data;
+                users = res.data.message;
             }
             setUserSuggestions(users);
         }).catch(err => {
             if(axios.isCancel(err)) return;
-            console.log(err);
+            let errorPopup = PopUp('Something went wrong', err);
+            PopUpQueue(errorPopup);
         }) 
 
         return () => cancelRequestToken();
@@ -90,7 +93,8 @@ const SearchInput = () => {
 
 
     return(
-        <div className = 'search' ref = {searchRef}>
+        <>
+            <div className = 'search' ref = {searchRef}>
             <input type = 'text' placeholder = 'Search for communities and users' className = 'search-input' onChange = {handleSearchTextChange} value = {searchText} onFocus={handleSearchTextFocus} />
 
             {
@@ -139,6 +143,9 @@ const SearchInput = () => {
                 </div>
             }
         </div>
+
+        <Popup />
+        </>
     );
 };
 

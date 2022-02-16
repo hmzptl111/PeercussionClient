@@ -7,6 +7,9 @@ import BackButton from '../reusable/BackButton';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 const ViewUserProfilePicture = () => {
     const [doesUserHaveProfilePicture, setDoesUserHaveProfilePicture] = useState(false);
     const userProfilePictureRef = useRef();
@@ -14,6 +17,8 @@ const ViewUserProfilePicture = () => {
     const {user} = useContext(UserAuthStatusContext);
 
     useEffect(() => {
+        if(!user) return;
+
         const getUserProfilePicture = async () => {
             const payload = {
                 uName: user.uName
@@ -21,32 +26,35 @@ const ViewUserProfilePicture = () => {
             const response = await axios.post('/getProfilePicture',  payload);
             console.log(response.data);
 
-            if(response.status === 404) {
-                console.log('oops, cant find');
+            if(response.data.error) {
+                let errorPopup = PopUp('Something went wrong', response.data.error);
+                PopUpQueue(errorPopup);
                 return;
             }
 
-            if(response.data.message) {
+            if(response.data.message === 'no pp found') {
                 setDoesUserHaveProfilePicture(false);
                 return;
             }
 
             setDoesUserHaveProfilePicture(true);
-            userProfilePictureRef.current.setAttribute('src', response.data.url);
+            userProfilePictureRef.current.setAttribute('src', `/uploads/profilePictures/${response.data.message}`);
         }
 
         getUserProfilePicture();
         // eslint-disable-next-line
-    }, []);
+    }, [user]);
 
     const handleRemoveProfilePicture = async () => {
         const response = await axios.post('/removeProfilePicture');
 
-        console.log(response);
-        if(response.status === 200) {
-            setDoesUserHaveProfilePicture(false);
-            // userProfilePictureRef.current.setAttribute('src', '');
+        if(response.data.error) {
+            let errorPopup = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(errorPopup);
+            return;
         }
+
+        setDoesUserHaveProfilePicture(false);
     }
 
     return <>
@@ -57,7 +65,7 @@ const ViewUserProfilePicture = () => {
                         
                         doesUserHaveProfilePicture ?
                         <div style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
-                            <img ref = {userProfilePictureRef} alt = ''></img>
+                            <img ref = {userProfilePictureRef} alt = '' height = '400' width = '300'></img>
                             <button onClick = {handleRemoveProfilePicture} style = {{marginTop: '1em'}}>Remove Profile Picture</button>
                         </div>:
                         <div>
@@ -69,6 +77,8 @@ const ViewUserProfilePicture = () => {
 
                     }
                 </div>
+
+                <Popup />
         </>
 }
 

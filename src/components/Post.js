@@ -9,6 +9,9 @@ import Comment from './Comment';
 
 import PostFooter from './reusable/PostFooter';
 
+import Popup from 'react-popup';
+import { PopUp, PopUpQueue } from './reusable/PopUp';
+
 const Post = () => {
     const {pId} = useParams();
     const [postLoaded, setPostLoaded] = useState(false);
@@ -16,15 +19,15 @@ const Post = () => {
 
     useEffect(() => {
         const fetchPost = async () => {
-            try {
-                const result = await axios.post('/post/' + pId);
-                console.log(result.data);
-                setPost(result.data);
+            const result = await axios.post('/post/' + pId);
 
-            } catch(e) {
-                console.log(e);
-            }         
+            if(result.data.error) {
+                let errorPopup = PopUp('Something went wrong', result.data.error);
+                PopUpQueue(errorPopup);
+                return;
+            }
 
+            setPost(result.data.message);
             setPostLoaded(true);
         }
 
@@ -56,7 +59,7 @@ const Post = () => {
             
             case 'image':
                 return <div key = {block.id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
-                            <img src = {block.data.file.url} alt = {block.data.caption}  style = {{width: '100%'}}></img>
+                            <img src = {block.data.file.url} alt = {block.data.caption}  style = {{width: '40%'}}></img>
                             <div><i>{block.data.caption}</i></div>
                     </div>;
 
@@ -152,7 +155,7 @@ const Post = () => {
             
             {
                 post &&
-                <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center', maxWidth: '98%'}}>
                     <Link to = {`/u/${post.uName}`}>
                         {post.uName}
                     </Link>
@@ -165,10 +168,10 @@ const Post = () => {
             {
                 post &&
                 <div style = {{marginTop: '2em'}}>
-                    <h3>{post.title}</h3>
+                    <h3>{post.title && post.title}</h3>
 
                     {
-                        post.body[0].blocks.map(block => (
+                        post.body[0] && post.body[0].blocks.map(block => (
                             renderBlocks(block)
                         ))
                     }
@@ -179,11 +182,13 @@ const Post = () => {
             {
                 post &&
                 <>
-                    <PostFooter pId = {pId} totalComments = {post.totalComments} votes = {post.upvotes - post.downvotes} />
+                    <PostFooter pId = {pId} pTitle = {post.title} pThumbnail = {post.thumbnail} uName = {post.uName} pCName = {post.cName} totalComments = {post.totalComments} votes = {post.upvotes - post.downvotes} />
 
                     <Comment pId = {pId} pTitle = {post.title} cId = {post.cId} cName = {post.cName} setPost = {setPost} />
                 </>
             }
+
+            <Popup />
         </>
     );
 }

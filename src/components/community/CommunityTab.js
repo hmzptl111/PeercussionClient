@@ -24,7 +24,7 @@ const CommunityTab = ({community}) => {
             }
             {
                 currentTab === 'Restricted Users' &&
-                <CommunityRestrictedUsers cName = {community.cName} isModerator = {community.mId === user.uId} />
+                <CommunityRestrictedUsers cName = {community.cName} isModerator = {user ? community.mId === user.uId: false} />
             }
             {
                 currentTab === 'Description' && 

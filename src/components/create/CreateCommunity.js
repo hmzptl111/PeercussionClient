@@ -1,7 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 
+import { useHistory } from 'react-router-dom';
+
 import Header from '../Header';
+
+import Popup from 'react-popup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 const CreatCommunity = () => {
     const [community, setCommunity] = useState({
@@ -14,6 +19,8 @@ const CreatCommunity = () => {
 
     const currentRelatedCommunityRef = useRef();
 
+    let history = useHistory();
+
     const containsSpecialChar = str => {
         const pattern = /\W/g;
         return pattern.test(str);
@@ -22,7 +29,11 @@ const CreatCommunity = () => {
     const handleCommunityName = e => {
         const isInvalid = containsSpecialChar(e.target.value.substr(-1));
         
-        if(isInvalid) return;
+        if(isInvalid) {
+            let invalidCommunityNameError = PopUp('Invalid type', 'Special characters are invalid');
+            PopUpQueue(invalidCommunityNameError);
+            return;
+        }
 
         setCommunity(previousState => {
             return {
@@ -44,7 +55,11 @@ const CreatCommunity = () => {
     const handleRelatedCommunities = e => {
         const isInvalid = containsSpecialChar(e.target.value.substr(-1));
         
-        if(isInvalid) return;
+        if(isInvalid) {
+            let invalidRelatedCommunityNameError = PopUp('Invalid type', 'Special characters are invalid');
+            PopUpQueue(invalidRelatedCommunityNameError);
+            return;
+        }
         
         setCurrentRelatedCommunity(e.target.value);
     };
@@ -54,6 +69,7 @@ const CreatCommunity = () => {
             setSuggestedCommunities([]);
             return;
         }
+
         let cancelRequestToken;
 
         axios.post('/search/community', {text: currentRelatedCommunity}, {
@@ -65,7 +81,9 @@ const CreatCommunity = () => {
         })
         .catch(err => {
             if(axios.isCancel(err)) return;
-            console.log(err);
+
+            let genericError = PopUp('Something went wrong', err);
+            PopUpQueue(genericError);
         })
 
         return () => {
@@ -77,22 +95,24 @@ const CreatCommunity = () => {
 
     const addAsRelatedCommunity = e => {
         setCurrentRelatedCommunity('');
+
         let newSuggestedCommunities = [];
         setCommunity(previousState => {
             return {
                 ...previousState,
-                relatedCommunities: [...previousState.relatedCommunities, e.target.dataset.c_id]
-                // relatedCommunities: [...previousState.relatedCommunities, {
-                //     cId: e.target.dataset.c_id,
-                //     cName: e.target.dataset.c_name
-                // }]
+                relatedCommunities: [...previousState.relatedCommunities, {
+                    cId: e.target.dataset.c_id,
+                    cName: e.target.dataset.c_name
+                }]
             }
         });
+
         suggestedCommunities.forEach(suggestedCommunity => {
             if(suggestedCommunity._id !== e.target.id) {
                 newSuggestedCommunities = [...newSuggestedCommunities, suggestedCommunity];
             }
         });
+
         setSuggestedCommunities(newSuggestedCommunities);
 
         currentRelatedCommunityRef.current.focus();
@@ -101,10 +121,11 @@ const CreatCommunity = () => {
     const removeFromRelatedCommunities = e => {
         let tempRelatedCommunities = [];
         community.relatedCommunities.forEach(relatedCommunity => {
-            if(relatedCommunity.id !== e.target.dataset.c_id) {
+            if(relatedCommunity.cId !== e.target.dataset.c_id) {
                 tempRelatedCommunities = [...tempRelatedCommunities, relatedCommunity];
             }
         });
+
         setCommunity(previousState => {
             return {
                 ...previousState,
@@ -117,12 +138,25 @@ const CreatCommunity = () => {
         e.preventDefault();
 
         if(community.cName === '') {
-            console.log('Community name can\'t be empty');
+            let communityNameError = PopUp('Something went wrong', 'Community name cannot be empty');
+            PopUpQueue(communityNameError);
             return;
         }
 
-        const res = await axios.post('/create/community', community);
-        console.log(res.data);
+        let newRelatedCommunities = [];
+        for(let i = 0; i < community.relatedCommunities.length; i++) {
+            newRelatedCommunities.push(community.relatedCommunities[i].cId);
+        }
+
+        let newCommunity = community;
+        newCommunity.relatedCommunities = newRelatedCommunities;
+
+        const res = await axios.post('/create/community', newCommunity);
+        if(res.data.error) {
+            let genericError = PopUp('Something went wrong', res.data.error);
+            PopUpQueue(genericError);
+            return;
+        }
 
         setCommunity({
             cName: '',
@@ -131,12 +165,14 @@ const CreatCommunity = () => {
         });
         setCurrentRelatedCommunity('');
         setSuggestedCommunities([]);
+
+        history.push(`/c/${res.data.message}`);
     };
 
     return(
         <>
             <Header />
-            <form onSubmit = {handleCreateCommunity}>
+            <form onSubmit = {handleCreateCommunity} style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                 <input type = 'text' onChange = {handleCommunityName} value = {community.cName} placeholder = 'name' />
 
                 <textarea onChange = {handleCommunityDesc} value = {community.desc} placeholder = 'write a few words about the community' style={{resize: "none"}}></textarea>
@@ -149,7 +185,7 @@ const CreatCommunity = () => {
                         {
                             suggestedCommunities.map(sc => {
                                 let isARelatedCommunity = community.relatedCommunities.some(rc => (
-                                    rc.id === sc._id
+                                    rc.cId === sc._id
                                 ));
                                 
                                 if(isARelatedCommunity) return null;
@@ -167,14 +203,14 @@ const CreatCommunity = () => {
                     <div className = 'related_communities'>
                         {
                             community.relatedCommunities.map(relatedCommunity => {
-                                return (
-                                    <div key = {relatedCommunity.id} data-c_id = {relatedCommunity.id} className = 'related_community' onClick = {removeFromRelatedCommunities}>{relatedCommunity.name}</div>
-                                )
+                                return <div key = {relatedCommunity.cId} data-c_id = {relatedCommunity.cId} className = 'related_community' onClick = {removeFromRelatedCommunities}>{relatedCommunity.cName}</div>
                             })
                         }
                     </div>
                 }
             </form>
+
+            <Popup />
         </>
     );
 };
