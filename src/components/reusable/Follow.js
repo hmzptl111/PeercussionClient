@@ -1,3 +1,8 @@
+import '../../styles/reusable/Follow.css';
+
+import {ReactComponent as FollowIcon} from '../../images/plus.svg';
+import { ReactComponent as UnfollowIcon } from '../../images/close_small.svg';
+
 import {useEffect, useState} from 'react';
 
 import axios from "axios";
@@ -88,7 +93,17 @@ const Follow = ({followingStatus, setFollowingStatus, type, target}) => {
     }
 
     return <>
-        <button onClick = {handleFollow}>{buttonText}</button>
+        <div onClick = {handleFollow} className = 'follow'>
+            {
+                buttonText
+            }
+            {
+
+                followingStatus === 'yes' ?
+                <UnfollowIcon />:
+                <FollowIcon />
+            }
+        </div>
         <Popup />
     </>
 }

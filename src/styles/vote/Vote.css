@@ -1,0 +1,25 @@
+.votes {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0.25rem;
+    font-size: 0.8rem;
+}
+
+.vote {
+    cursor: pointer;
+    padding: 0 0.25rem;
+}
+
+.vote:hover {
+    border-radius: 0.2rem;
+    background: var(--primary-light-color);
+}
+
+.downvote {
+    transform: rotate(180deg);
+}
+
+.vote-count {
+    padding: 0 0.25rem;
+}

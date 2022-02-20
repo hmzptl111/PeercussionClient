@@ -21,14 +21,16 @@ const UserStatusControl = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isUserOnline]);
 
-    return(
-        <li className = 'user-status-control'>
-            {isUserOnline ? 'Online' : 'Offline'}
-            <div ref = {userStatusControlPill} className = 'user-status-control-pill' onClick = {() => {setIsUserOnline(!isUserOnline)}}>
-                <span ref = {userStatusControlCircle} className = 'user-status-control-circle'></span>
+    return <div className = 'user-status-control' onClick = {() => {setIsUserOnline(!isUserOnline)}}>
+                {
+                    isUserOnline ?
+                    <span>Online</span>:
+                    <span>Offline</span>
+                }
+                <div ref = {userStatusControlPill} className = 'user-status-control-pill'>
+                    <span ref = {userStatusControlCircle} className = 'user-status-control-circle'></span>
+                </div>
             </div>
-        </li>
-    );
 };
 
 export default UserStatusControl;

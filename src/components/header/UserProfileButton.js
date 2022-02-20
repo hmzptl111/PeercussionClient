@@ -3,7 +3,7 @@ import { UserProfileCurrentTabContext } from '../../contexts/UserProfileCurrentT
 import { useHistory } from 'react-router-dom';
 import '../../styles/header/UserProfileButton.css';
 
-import {Link} from 'react-router-dom';
+import ChatShare from '../chat/ChatShare';
 
 import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
 
@@ -27,6 +27,8 @@ import {ReactComponent as SignOutIcon} from '../../images/sign_out.svg';
 
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
+import {ReactComponent as CloseIcon} from '../../images/close.svg';
 
 const UserProfileButton = () => {
     const userProfileRef = useRef();
@@ -110,12 +112,21 @@ const UserProfileButton = () => {
         history.push('/profilePicture/view');
     }
 
+    const handleShare = () => {
+        const shareUserProfile = {
+            uName: user.uName,
+            uProfilePicture: user.uProfilePicture
+        }
+
+        let sharePopup = PopUp('Share user profile with', <ChatShare user = {shareUserProfile && shareUserProfile} />);
+        PopUpQueue(sharePopup);
+    }
 
     return <>
         {
             user && isUserSignedIn &&
             <div className = 'user-profile-dropdown' ref = {userProfileRef}>
-                <div onClick = {() => setIsDropdownOpen(oldState => !oldState)} style = {{cursor: 'pointer'}}>
+                <div onClick = {() => setIsDropdownOpen(oldState => !oldState)} className = 'user-profile-dropdown-button'>
                     {
                         profilePicture ?
                         <GeneralProfileIcon imageSource = 'profilePictures' imageID = {profilePicture} />:
@@ -124,30 +135,26 @@ const UserProfileButton = () => {
                 </div>
                 {
                     isdropdownOpen &&
-                    <ul className = 'user-profile-dropdown-list'>
+                    <div className = 'user-profile-dropdown-list'>
+                        <div className='menu-dropdown-close' onClick = {() => setIsDropdownOpen(false)}>
+                            <CloseIcon />
+                        </div>
+
                         <div onClick = {handleRedirectToUserProfile} className = 'user-profile-dropdown-list-item'>
-                            <li>
-                                User Profile
-                                <UserProfileIconSmall />
-                            </li>
+                            User Profile
+                            <UserProfileIconSmall />
                         </div>
                         <div onClick = {handleRedirectToUserProfileFriendsTab} className = 'user-profile-dropdown-list-item'>
-                            <li>
-                                Friends
-                                <CommunityIcon />
-                            </li>
+                            Friends
+                            <CommunityIcon />
                         </div>
                         <div onClick = {handleRedirectToViewUserProfilePicture} className = 'user-profile-dropdown-list-item'>
-                            <li>
-                                View Profile Picture
-                                <ViewUserProfilePicture />
-                            </li>
+                            View Profile Picture
+                            <ViewUserProfilePicture />
                         </div>
                         <div onClick = {handleRedirectToEditUserProfilePicture} className = 'user-profile-dropdown-list-item'>
-                            <li>
-                                Edit Profile Picture
-                                <EditUserProfileIcon />
-                            </li>
+                            Edit Profile Picture
+                            <EditUserProfileIcon />
                         </div>
                         {/* <Link to = '/#' className = 'user-profile-dropdown-list-item'>
                             <li>
@@ -155,17 +162,15 @@ const UserProfileButton = () => {
                                 <DraftIcon />
                             </li>
                         </Link> */}
-                        <Link to = '/#' className = 'user-profile-dropdown-list-item'>
-                            <li>
-                                Share Profile
-                                <ShareIcon />
-                            </li>
-                        </Link>
-                        <li className = 'user-profile-dropdown-list-item-sign-out' onClick = {handleSignOut}>
+                        <div className = 'user-profile-dropdown-list-item' onClick = {handleShare}>
+                            Share Profile
+                            <ShareIcon />
+                        </div>
+                        <div className = 'user-profile-dropdown-list-item user-profile-dropdown-list-item-sign-out' onClick = {handleSignOut}>
                             Sign out
                             <SignOutIcon />
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 }
             </div>
         }

@@ -1,4 +1,9 @@
+import '../../styles/reusable/GetCommunities.css';
+import '../../styles/community/CommunityRestrictedUsers.css';
+
 import React, { useContext, useEffect, useRef, useState } from 'react';
+
+import { Link } from 'react-router-dom';
 
 import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 
@@ -9,6 +14,9 @@ import axios from 'axios';
 
 import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
+
+import {ReactComponent as RestrictIcon} from '../../images/restricted.svg';
+import {ReactComponent as UnrestrictIcon} from '../../images/unrestricted.svg';
 
 const CommunityRestrictedUsers = ({cName, isModerator}) => {
     const {user} = useContext(UserAuthStatusContext);
@@ -133,7 +141,8 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
             setRestrictedUsers(previousState => {
                 const newRestrictedUser = {
                     _id: user._id,
-                    username: user.username
+                    username: user.username,
+                    profilePicture: user.profilePicture
                 }
                 let updatedRestrictedUsers = [...previousState, newRestrictedUser];
                 return updatedRestrictedUsers;
@@ -165,32 +174,37 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
             {
                 isModerator &&
                 <div ref = {searchRef}>
-                    <input type = 'text' placeholder = 'Search user to restrict' onChange = {handleSearchTextChange} value = {searchText} onFocus={handleSearchTextFocus} />
+                    <input type = 'text' placeholder = 'Search user to restrict' onChange = {handleSearchTextChange} value = {searchText} onFocus={handleSearchTextFocus} className = 'search-input' />
         
                     {
                         searchText && isSuggestionsOpen &&
-                        <div>           
+                        <div>      
                             {
                                 userSuggestions && userSuggestions.length > 0 &&
-                                <>
+                                <div className = 'list-container'>
                                     {
                                         userSuggestions.map(user => (
-                                            <div key = {user.username} onClick={handleSuggestionClicked}>
-                                                <div style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
-                                                    <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                                            !user.isRestricted &&
+                                                <div className = 'list' key = {user.username} onClick={handleSuggestionClicked}>
+                                                    <Link to = {`/u/${user.username}`} className = 'list-info'>
                                                         {
                                                             user.profilePicture ?
                                                             <GeneralProfileIcon imageSource = 'profilePictures' imageID = {user.profilePicture} />:
                                                             <InitialsIcon initial = {user.username[0]} />
                                                         }
-                                                        <div>{user.username}</div>
-                                                    </div>
-                                                    <button onClick = {() => handleUserRestrict(user)}>{!user.isRestricted ? 'Restrict' : 'Unrestrict'}</button>
+                                                        <span className = 'list-info-text'>{user.username}</span>
+                                                    </Link>
+
+                                                    {
+                                                        <div className = 'list-button' onClick = {() => handleUserRestrict(user)}>
+                                                            Restrict
+                                                            <RestrictIcon />
+                                                        </div>
+                                                    }
                                                 </div>
-                                            </div>
                                         ))
                                     }
-                                </>
+                                </div>
                             }
                         </div>
                     }
@@ -198,15 +212,30 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
             }
             {
                 restrictedUsers.length > 0 ?
-                restrictedUsers.map(u => (
-                    <div key = {u._id}>
-                        {u.username}
-                        {
-                            isModerator &&
-                            <button onClick = {() => handleUserUnrestrict(u)}>Unrestrict</button>
-                        }
-                    </div>
-                )):
+                <div className = 'list-container'>
+                    {
+                        restrictedUsers.map(u => (
+                            <div className = 'list' key = {u._id}>
+                                <Link to = {`/u/${u.username}`} className = 'list-info'>
+                                    {
+                                        u.profilePicture ?
+                                        <GeneralProfileIcon imageSource = 'profilePictures' imageID = {u.profilePicture} />:
+                                        <InitialsIcon initial = {u.username[0]} />
+                                    }
+                                    <span className = 'list-info-text'>{u.username}</span>
+                                </Link>
+                                    
+                                {
+                                    isModerator &&
+                                    <div onClick = {() => handleUserUnrestrict(u)} className = 'list-button'>
+                                        Unrestrict
+                                        <UnrestrictIcon />
+                                    </div>
+                                }
+                            </div>
+                        ))
+                    }
+                </div>:
                 'No users restricted'
             }
 

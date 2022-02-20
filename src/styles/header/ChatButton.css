@@ -1,5 +1,14 @@
 .chat-button {
-  margin: 0 0.75rem;
-  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid black; */
   background: none;
+  padding: 0.25rem;
+  border-radius: 50%;
+}
+
+.chat-button:hover {
+  background: var(--primary-light-color);
+
 }

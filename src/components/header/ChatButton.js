@@ -1,18 +1,23 @@
 import React, {useContext} from 'react';
 import '../../styles/header/ChatButton.css';
 import {ReactComponent as ChatIcon} from '../../images/chat.svg';
+import {ReactComponent as ChatIconSmall} from '../../images/chat_small.svg';
 import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 
-const ChatButton = () => {
+import { Link } from 'react-router-dom';
+
+const ChatButton = ({isSmall = false}) => {
     const {isUserSignedIn} = useContext(UserAuthStatusContext);
 
     return(
             isUserSignedIn &&
-            <button className = 'chat-button'>
-                <a href = '/chat'>
+            <Link to = '/chat' className = 'chat-button'>
+                {
+                    isSmall ?
+                    <ChatIconSmall />:
                     <ChatIcon />
-                </a>
-            </button>
+                }
+            </Link>
     );
 };
 

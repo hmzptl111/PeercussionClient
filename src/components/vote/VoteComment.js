@@ -1,11 +1,17 @@
 import {useState} from 'react';
 import axios from 'axios';
 
+import Vote from './Vote';
+
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
-const VoteComment = ({cId, votes}) => {
+
+const VoteComment = ({cId, votes, isUpvoted, isDownvoted}) => {
     const [commentVotes, setCommentVotes] = useState(votes);
+
+    const [isCommentUpvoted, setIsCommentUpvoted] = useState(isUpvoted);
+    const [isCommentDownvoted, setIsCommentDownvoted] = useState(isDownvoted);
 
     const handleCommentUpvote = async () => {
         const response = await axios.put('/voteComment', {
@@ -19,6 +25,7 @@ const VoteComment = ({cId, votes}) => {
             return;
         }
 
+        setIsCommentUpvoted(oldState => !oldState);
         let code = response.data.message;
         if(code === 1) {
             setCommentVotes(previousState => (previousState + 1));
@@ -41,6 +48,7 @@ const VoteComment = ({cId, votes}) => {
             return;
         }
 
+        setIsCommentDownvoted(oldState => !oldState);
         let code = response.data.message;
         if(code === 4) {
             setCommentVotes(previousState => (previousState - 1));
@@ -51,15 +59,11 @@ const VoteComment = ({cId, votes}) => {
         }
     }
     
-    return (
-        <>
-            <button onClick = {handleCommentUpvote}>Upvote</button>
-            {commentVotes}
-            <button onClick = {handleCommentDownvote}>Downvote</button>
+    return <>
+            <Vote handleUpvote = {handleCommentUpvote} handleDownvote = {handleCommentDownvote} voteCount = {commentVotes} isSubjectUpvoted = {isCommentUpvoted} isSubjectDownvoted = {isCommentDownvoted} setIsUpvoted = {setIsCommentUpvoted} setIsDownvoted = {setIsCommentDownvoted} />
 
             <Popup />
         </>
-    )
 }
 
 export default VoteComment;

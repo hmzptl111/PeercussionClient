@@ -1,7 +1,7 @@
 import '../../styles/reusable/InitialsIcon.css';
 
-const InitialsIcon = ({initial}) => {
-    return <div className = 'default-initials-icon' >
+const InitialsIcon = ({initial, isBig}) => {
+    return <div className = {isBig ? 'default-initials-icon-big': 'default-initials-icon'} >
             {
                 initial.toUpperCase()
             }

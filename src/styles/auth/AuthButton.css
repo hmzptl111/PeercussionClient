@@ -1,0 +1,21 @@
+.auth-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: none;
+    /* border: 1px solid var(--primary-dark-color); */
+    color: var(--primary-dark-color);
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    background: var(--primary-light-color);
+  }
+  
+.auth-button:hover {
+border-radius: 0.25rem;
+}
+
+.auth-dark-button {
+    background: var(--primary-background-color);
+}

@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+
 import axios from 'axios';
 
 import BackButton from '../reusable/BackButton';
@@ -9,6 +10,10 @@ import { UserAuthStatusContext } from "../../contexts/UserAuthStatus";
 import Popup from 'react-popup';
 import 'react-popup/dist/index.css';
 import { PopUp, PopUpQueue } from "../reusable/PopUp";
+
+import Logo from '../header/Logo';
+
+import '../../styles/auth/Auth.css';
 
 const SignIn = () => {
     const [username, setUsername] = useState('');
@@ -71,28 +76,50 @@ const SignIn = () => {
         }
     }
 
-    return (
-        <>
-            <BackButton />
+    return <div className = 'container'>
 
-            {
-                genericError &&
-                <h4>{genericError}</h4>
-            }
+                <div className = 'container-auth'>
 
-            <form onSubmit = {handleSignIn} style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
-                <input type = 'text' placeholder = 'username or email' value = {username} onChange = {handleUsername} />
+                    <form onSubmit = {handleSignIn} className = 'auth-card'>
+                        <BackButton />
+
+                        <div className = 'auth-card-header'>
+                            <div className = 'auth-card-header-logo'>
+                                <Logo />
+                            </div>
+                            <div className = 'auth-card-header-text'>
+                                Sign in to your account
+                            </div>
+                        </div>
+
+                        {
+                            genericError &&
+                            <h5 className = 'generic-error'>{genericError}</h5>
+                        }
+                        
+                        <div className = 'auth-card-item'>
+                            <input type = 'text' placeholder = 'Username or Email' value = {username} onChange = {handleUsername} className = 'auth-card-item-input' />
+                        </div>
+                            
+                            
+                        <div className = 'auth-card-item'>
+                            <input type = 'password' placeholder = 'Password' value = {password} onChange = {handlePassword} className = 'auth-card-item-input' />
+                        </div>
+                    
+
+                        <div className = 'auth-footer'>
+                            <Link to = '/signup' className = 'auth-footer-sign-in'>Sign up</Link>
+
+                            <input type = 'submit' value = 'Sign in' className = 'auth-footer-submit' />
+                        </div>
+                    </form>
+                </div>
+
                 
 
-                <input type = 'password' placeholder = 'password' value = {password} onChange = {handlePassword} />
-                
 
-                <input type = 'submit' value = 'Sign in' />
-            </form>
-
-            <Popup />
-        </>
-    );
+                <Popup />
+            </div>
 };
 
 export default SignIn;

@@ -65,7 +65,7 @@ const ViewUserProfilePicture = () => {
                         
                         doesUserHaveProfilePicture ?
                         <div style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
-                            <img ref = {userProfilePictureRef} alt = '' height = '400' width = '300'></img>
+                            <img ref = {userProfilePictureRef} alt = '' height = '300' width = '300'></img>
                             <button onClick = {handleRemoveProfilePicture} style = {{marginTop: '1em'}}>Remove Profile Picture</button>
                         </div>:
                         <div>

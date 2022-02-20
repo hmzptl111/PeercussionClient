@@ -1,5 +1,7 @@
+import '../styles/Comment.css';
+
 import {useContext, useEffect, useRef, useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 
 import {UserAuthStatusContext} from '../contexts/UserAuthStatus';
 
@@ -27,10 +29,15 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
     const [commentReply, setCommentReply] = useState('');
     const replyTo = useRef('');
 
+    let history = useHistory();
+    const commentsSectionRef = useRef();
 
     useEffect(() => {
         handleLoadMoreComments();
 
+        if(history.location.hash === '#comments') {
+            commentsSectionRef.current.scrollIntoView();
+        }
         // eslint-disable-next-line
     }, [pId]);
 
@@ -58,7 +65,7 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
             ];
         });
         
-        if(newComments.data.message.length < 3) {
+        if(newComments.data.message.length < 20) {
             setHasMoreComments(false);
             return;
         }
@@ -68,7 +75,7 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
         e.preventDefault();
 
         if(e.target.textContent === 'Hide replies') {
-            e.target.textContent = `${postComment.replies.length} Replies`;
+            e.target.textContent = `${postComment.replies.length === 0 ? 'No': postComment.replies.length} Replies`;
             postComment.replies = [];
             setPostComments(previousState => {
                 let postComments = [...previousState];
@@ -201,31 +208,41 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
     }, [postComments]);
 
     return <>
-        <div>
+        <div ref = {commentsSectionRef} className = 'comments-container'>
             <CreateComment comment = {comment} setComment = {setComment} handleCreateComment = {handleCreateComment} uName = {user && user.uName} />
 
             {
                 postComments.map(c => {
-                    return <div key = {c._id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
-                                <div>
-                                    <Link to = {`/u/${c.uName}`} style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
-                                        {
-                                            c.uProfilePicture ?
-                                            // <img src = {`/uploads/profilePictures/${c.uProfilePicture}`} width = '20em' height = '20em' style = {{borderRadius: '50%'}} alt = '' />
-                                            <GeneralProfileIcon imageSource = 'profilePictures' imageID = {c.uProfilePicture} />:
-                                            <InitialsIcon initial = {c.uName[0]} />
-                                        }
-                                        <p>{c.uName}</p>
+                    return <div className = 'comments'>
+                                <div className = 'comment'>
+                                    <div className = 'comment-body'>
+                                        <Link to = {`/u/${c.uName}`} className = 'commenter-link'>
+                                            {
+                                                c.uProfilePicture ?
+                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {c.uProfilePicture} />:
+                                                <InitialsIcon initial = {c.uName[0]} />
+                                            }
                                         </Link>
-                                </div>
-                                
-                                {c.comment}
 
-                                <div>
-                                    <button onClick = {e => handleLoadCommentReplies(e, c)}>{c.replies.length} Replies</button>
-                                    <button onClick = {e => handleCommentReply(e, c._id)}>Reply</button>
-                                    
-                                    <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} />
+                                        <div className = 'comment-text'>
+                                            <Link to = {`/u/${c.uName}`} className = 'commenter-link'>
+                                                <span className = 'commenter-name'>{c.uName}</span>
+                                            </Link>
+                                            
+                                            <div className = 'comment-text-content'>{c.comment}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className = 'comment-footer'>
+                                        <div onClick = {e => c.replies.length !== 0 && handleLoadCommentReplies(e, c)} className = 'comment-footer-button'>
+                                            {c.replies.length === 0 ? `No`: c.replies.length} Replies
+                                        </div>
+                                        <div onClick = {e => handleCommentReply(e, c._id)} className = 'comment-footer-button'>
+                                            Reply
+                                        </div>
+                                        
+                                        <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} isUpvoted = {c.isUpvoted} isDownvoted = {c.isDownvoted} />
+                                    </div>
                                 </div>
                                 
                                 <div id = {`${c._id}-reply`} className = 'comment-reply' style = {{display: 'none'}}>
@@ -238,20 +255,28 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
                                         {
                                             c.replies.map(reply => {
                                                 if(!reply.comment) return null;
-                                                return <div key = {reply._id} style = {{marginTop: '0.5em', marginBottom: '0.5em'}}>
-                                                    <div>
-                                                        <Link to = {`/u/${reply.uName}`} style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
-                                                        {
-                                                            reply.uProfilePicture ?
-                                                            <GeneralProfileIcon imageSource = 'profilePictures' imageID = {reply.uProfilePicture} />:
-                                                            <InitialsIcon initial = {c.uName[0]} />
-                                                        }
-                                                            <span>{reply.uName}</span>
+                                                return <div className = 'comment reply'>
+                                                    <div className = 'comment-body'>
+                                                        <Link to = {`/u/${reply.uName}`} className = 'commenter-link'>
+                                                            {
+                                                                reply.uProfilePicture ?
+                                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {reply.uProfilePicture} />:
+                                                                <InitialsIcon initial = {c.uName[0]} />
+                                                            }
                                                             </Link>
+
+                                                        <div className = 'comment-text'>
+                                                            <Link to = {`/u/${reply.uName}`} className = 'commenter-link'>
+                                                                    <span className = 'commenter-name'>{reply.uName}</span>
+                                                            </Link>
+                                                            
+                                                            <div className = 'comment-text-content'>
+                                                                {reply.comment}
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    
-                                                    <div>{reply.comment}</div>
-                                                    <VoteComment cId = {reply._id} votes = {reply.upvotes - reply.downvotes} />
+
+                                                    <VoteComment cId = {reply._id} votes = {reply.upvotes - reply.downvotes} isUpvoted = {reply.isUpvoted} isDownvoted = {reply.isDownvoted} />
                                                 </div>
                                             })
                                         }
@@ -262,7 +287,9 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
             }
             {
                 hasMoreComments &&
-                <button onClick = {handleLoadMoreComments}>Load more</button>
+                <div onClick = {handleLoadMoreComments} className = 'load-more-comments'>
+                    <div className = 'load-more-comments-button'>Load more</div>
+                </div>
             }
         </div>
 

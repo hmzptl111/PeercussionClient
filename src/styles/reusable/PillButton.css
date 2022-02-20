@@ -1,5 +1,4 @@
 .pill {
-  /* width: 6.25rem; */
   padding: 0.45rem 1.5rem;
   border: 1px solid var(--primary-light-color);
   border-radius: 1.25rem;
@@ -10,8 +9,5 @@
   justify-content: center;
   align-items: center;
   cursor: pointer;
-}
-
-.remove-pill {
-  margin-left: 0.75rem;
+  gap: 0.5rem;
 }

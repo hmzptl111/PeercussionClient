@@ -1,11 +1,13 @@
 import {useEffect, useRef, useState} from 'react';
 
+import { useHistory } from 'react-router-dom';
+
 import axios from 'axios';
 
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
-import {Link} from 'react-router-dom';
+import {ReactComponent as ViewProfilePicture} from '../../images/user_default_profile.svg';
 
 const SetUserProfileUsingCamera = () => {
     navigator.getMedia =    navigator.getUserMedia ||
@@ -19,6 +21,8 @@ const SetUserProfileUsingCamera = () => {
     const [hasCaptured, setHasCaptured] = useState(false);
     const [isUserProfileSet, setIsUserProfileSet] = useState(false);
     
+    let history = useHistory();
+
     useEffect(() => {
         let streamTrack;
         navigator.getMedia({
@@ -66,16 +70,17 @@ const SetUserProfileUsingCamera = () => {
         
     }
 
+    const handleViewProfilePicture = () => {
+        Popup.close();
+        history.push('/profilePicture/view');
+    }
+
     const handleSetProfilePicture = async () => {
-        // console.log(canvasRef.current.toDataURL('image/jpeg'));
         const payload = {
             profilePicture: canvasRef.current.toDataURL('image/jpeg')
         }
         const response = await axios.post('/setProfilePictureFromCamera', payload);
-        // if(response.status === 200) {
-        //     console.log(response.data.message);
-        //     setIsUserProfileSet(true);
-        // }
+
         if(response.data.error) {
             let errorPopup = PopUp('Something went wrong', response.data.error);
             PopUpQueue(errorPopup);
@@ -84,18 +89,21 @@ const SetUserProfileUsingCamera = () => {
 
         setIsUserProfileSet(true);
         let successPopup = PopUp('Profile picture updated',
-            <Link to = '/profilePicture/view'>View updated profile picture</Link>
+            <div to = '/profilePicture/view' onClick = {handleViewProfilePicture} style = {{cursor: 'pointer'}}>
+                <ViewProfilePicture />
+                View updated profile picture
+            </div>
         );
         PopUpQueue(successPopup);
         return;
     }
 
     return <>
-            <video ref = {videoRef} width = '400' height = '300'></video>
+            <video ref = {videoRef} width = '300' height = '300'></video>
 
-            <canvas ref = {canvasRef} width = '400' height = '300' style = {{display: 'none'}}></canvas>
+            <canvas ref = {canvasRef} width = '300' height = '300' style = {{display: 'none'}}></canvas>
             
-            <img ref = {imageRef} width = '400' height = '300' style = {{display: 'none'}} alt = ''></img>
+            <img ref = {imageRef} width = '300' height = '300' style = {{display: 'none'}} alt = ''></img>
             
             <button onClick = {handleCapture}>
                 {

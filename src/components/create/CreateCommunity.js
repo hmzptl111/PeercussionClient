@@ -1,12 +1,20 @@
+import '../../styles/create/Create.css';
+
 import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 
 import { useHistory } from 'react-router-dom';
 
-import Header from '../Header';
+// import Header from '../Header';
+import {ReactComponent as RemoveIcon} from '../../images/close_small.svg';
+
+import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
+import InitialsIcon from '../reusable/InitialsIcon';
 
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
+import BackButton from '../reusable/BackButton';
 
 const CreatCommunity = () => {
     const [community, setCommunity] = useState({
@@ -16,8 +24,10 @@ const CreatCommunity = () => {
     });
     const [currentRelatedCommunity, setCurrentRelatedCommunity] = useState('');
     const [suggestedCommunities, setSuggestedCommunities] = useState([]);
+    const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(true);
 
     const currentRelatedCommunityRef = useRef();
+    const searchRef = useRef();
 
     let history = useHistory();
 
@@ -77,7 +87,7 @@ const CreatCommunity = () => {
         })
         .then(result => {
             console.log(result);
-            setSuggestedCommunities(result.data);
+            setSuggestedCommunities(result.data.message);
         })
         .catch(err => {
             if(axios.isCancel(err)) return;
@@ -93,7 +103,7 @@ const CreatCommunity = () => {
     }, [currentRelatedCommunity]);
 
 
-    const addAsRelatedCommunity = e => {
+    const addAsRelatedCommunity = (relatedCommunityID, relatedCommunityName) => {
         setCurrentRelatedCommunity('');
 
         let newSuggestedCommunities = [];
@@ -101,14 +111,14 @@ const CreatCommunity = () => {
             return {
                 ...previousState,
                 relatedCommunities: [...previousState.relatedCommunities, {
-                    cId: e.target.dataset.c_id,
-                    cName: e.target.dataset.c_name
+                    cId: relatedCommunityID,
+                    cName: relatedCommunityName
                 }]
             }
         });
 
         suggestedCommunities.forEach(suggestedCommunity => {
-            if(suggestedCommunity._id !== e.target.id) {
+            if(suggestedCommunity._id !== relatedCommunityID) {
                 newSuggestedCommunities = [...newSuggestedCommunities, suggestedCommunity];
             }
         });
@@ -118,10 +128,11 @@ const CreatCommunity = () => {
         currentRelatedCommunityRef.current.focus();
     };
 
-    const removeFromRelatedCommunities = e => {
+    const removeFromRelatedCommunities = (relatedCommunityCID) => {
+        console.log('remove');
         let tempRelatedCommunities = [];
         community.relatedCommunities.forEach(relatedCommunity => {
-            if(relatedCommunity.cId !== e.target.dataset.c_id) {
+            if(relatedCommunity.cId !== relatedCommunityCID) {
                 tempRelatedCommunities = [...tempRelatedCommunities, relatedCommunity];
             }
         });
@@ -169,49 +180,108 @@ const CreatCommunity = () => {
         history.push(`/c/${res.data.message}`);
     };
 
+    const handleSearchTextFocus = () => {
+        setIsSuggestionsOpen(true);
+
+        // searchRef.current.classList.add('search-input-focus');
+    }
+
+    const handleSearchTextBlur = () => {
+
+        // searchRef.current.classList.remove('search-input-focus');
+    }
+
+    useEffect(() => {
+        const checkIfClickedOutside = e => {
+            console.log(e.target);
+          if(isSuggestionsOpen && searchRef.current && !searchRef.current.contains(e.target)) {
+            setIsSuggestionsOpen(false);
+            console.log('closed');
+            return;
+          }
+          console.log('clicked inside');
+        }
+    
+        if(!isSuggestionsOpen) {
+            document.removeEventListener('mousedown', checkIfClickedOutside);
+            console.log('e l removed');
+        } else {
+            document.addEventListener('mousedown', checkIfClickedOutside);
+            console.log('e l attached');
+        }
+
+        return () => {
+          document.removeEventListener('mousedown', checkIfClickedOutside);
+        }
+    }, [isSuggestionsOpen]);
+
     return(
-        <>
-            <Header />
-            <form onSubmit = {handleCreateCommunity} style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                <input type = 'text' onChange = {handleCommunityName} value = {community.cName} placeholder = 'name' />
+        <div className = 'create-container'>
+            {/* <Header /> */}
 
-                <textarea onChange = {handleCommunityDesc} value = {community.desc} placeholder = 'write a few words about the community' style={{resize: "none"}}></textarea>
+            <form onSubmit = {handleCreateCommunity} className = 'create'>
+                <div className = 'create-back'>
+                    <BackButton />
+                </div>
 
-                <input type = 'text' onChange = {handleRelatedCommunities} value = {currentRelatedCommunity} placeholder = 'related community' ref = {currentRelatedCommunityRef} />
-                    
-                {
-                    suggestedCommunities !== [] &&
-                    <ul>
+                <div className = 'create-title'>Create a community</div>
+                
+                <div className = 'create-header create-header-community'>
+                    <input type = 'text' onChange = {handleCommunityName} value = {community.cName} placeholder = 'Community name' className = 'create-input' />
+
+                    <div className = 'search' ref = {searchRef}>
+                        <input type = 'text' onChange = {handleRelatedCommunities} value = {currentRelatedCommunity} placeholder = 'Search to add related communities' ref = {currentRelatedCommunityRef} className = 'search-input' onFocus = {handleSearchTextFocus} onBlur = {handleSearchTextBlur} />
+
                         {
-                            suggestedCommunities.map(sc => {
-                                let isARelatedCommunity = community.relatedCommunities.some(rc => (
-                                    rc.cId === sc._id
-                                ));
-                                
-                                if(isARelatedCommunity) return null;
-                                
-                                return <li key = {sc._id} data-c_id = {sc._id} data-c_name = {sc.cName} onClick = {addAsRelatedCommunity}>{sc.cName}</li>
-                            })
-                        }
-                    </ul>
-                }
-
-                <input type = 'submit' value = 'Create' />
-        
-                {
-                    community.relatedCommunities.length > 0 &&
-                    <div className = 'related_communities'>
-                        {
-                            community.relatedCommunities.map(relatedCommunity => {
-                                return <div key = {relatedCommunity.cId} data-c_id = {relatedCommunity.cId} className = 'related_community' onClick = {removeFromRelatedCommunities}>{relatedCommunity.cName}</div>
-                            })
+                            isSuggestionsOpen && suggestedCommunities.length > 0 &&
+                            <div className = 'search-suggestions'>
+                                {
+                                    suggestedCommunities.map(sc => {
+                                        let isARelatedCommunity = community.relatedCommunities.some(rc => (
+                                            rc.cId === sc._id
+                                        ));
+                                        
+                                        if(isARelatedCommunity) return null;
+                                        
+                                        return <div key = {sc._id} onClick = {() => addAsRelatedCommunity(sc._id, sc.cName)} className = 'search-suggestion-item'>
+                                                {
+                                                    sc.cThumbnail ?
+                                                    <GeneralProfileIcon imageSource = 'communityThumbnails' imageID = {sc.cThumbnail} />:
+                                                    <InitialsIcon initial = {sc.cName[0]} />
+                                                }
+                                                <div className = 'search-suggestion-text'>{sc.cName}</div>
+                                        </div>
+                                    })
+                                }
+                            </div>
                         }
                     </div>
-                }
+                </div>
+
+
+                <textarea onChange = {handleCommunityDesc} value = {community.desc} placeholder = 'About community' className = 'create-input create-description'></textarea>
+
+                <div className = 'create-submit'>
+                    <input type = 'submit' value = 'Create' className = 'create-input create-submit-button' />
+                </div>
             </form>
 
+            {
+                community.relatedCommunities.length > 0 &&
+                <div className = 'related-communities-list'>
+                    {
+                        community.relatedCommunities.map(relatedCommunity => {
+                            return <div key = {relatedCommunity.cId} className = 'related-community' onClick = {() => removeFromRelatedCommunities(relatedCommunity.cId)}>
+                                <span className = 'related-community-text'>{relatedCommunity.cName}</span>
+                                <RemoveIcon />
+                            </div>
+                        })
+                    }
+                </div>
+            }
+
             <Popup />
-        </>
+        </div>
     );
 };
 

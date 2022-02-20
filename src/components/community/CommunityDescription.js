@@ -1,11 +1,13 @@
+import '../../styles/community/CommunityDescription.css';
+
 const CommunityDescription = ({desc}) => {
-    return <>
+    return <div className = 'description'>
         {
             desc ?
-            desc :
-            'No description'
+            <pre>{desc}</pre> :
+            'Community has no description'
         }
-    </>
+    </div>
 }
 
 export default CommunityDescription;

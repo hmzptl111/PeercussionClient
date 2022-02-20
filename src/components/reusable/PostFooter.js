@@ -1,3 +1,10 @@
+import '../../styles/reusable/PostFooter.css';
+
+import { Link } from 'react-router-dom';
+
+import {ReactComponent as ShareIcon} from '../../images/share.svg';
+import {ReactComponent as CommentIcon} from '../../images/comment.svg';
+
 import VotePost from '../vote/VotePost';
 
 import ChatShare from '../chat/ChatShare';
@@ -5,7 +12,9 @@ import ChatShare from '../chat/ChatShare';
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from './PopUp';
 
-const PostFooter = ({pId, pTitle, pThumbnail, uName, pCName, totalComments, votes}) => {
+import FormatToKMBT from './FormatToKMBT';
+
+const PostFooter = ({pId, pTitle, pThumbnail, uName, pCName, totalComments, votes, isUpvoted, isDownvoted}) => {
     const post = {
         pId,
         pTitle,
@@ -19,20 +28,21 @@ const PostFooter = ({pId, pTitle, pThumbnail, uName, pCName, totalComments, vote
         PopUpQueue(sharePopup);
     }
 
+
     return <>
-        <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+        <div className = 'post-footer'>
 
-            <button onClick = {handleShareButtonClick}>Share</button>
+            <div onClick = {handleShareButtonClick} className = 'share'>
+                <ShareIcon />
+                Share
+            </div>
 
-                {
-                    totalComments > 1 ?
-                    `${totalComments} comments`:
-                    totalComments === 0 ?
-                    'No comments':
-                    `${totalComments} comment`
-                }
+            <Link to = {`/p/${pId}#comments`} className = 'post-footer-comment'>
+                <CommentIcon />
+                <FormatToKMBT number = {totalComments} />
+            </Link>
 
-            <VotePost pId = {pId} votes = {votes} />
+            <VotePost pId = {pId} votes = {votes} isUpvoted = {isUpvoted} isDownvoted = {isDownvoted} />
         </div>
 
         <Popup />

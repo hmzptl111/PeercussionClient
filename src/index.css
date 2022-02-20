@@ -8,12 +8,27 @@
   color: var(--primary-dark-color);
 }
 
+html {
+  background: #DAE0E6;
+}
+
 #root {
-  width: 100vw;
+  max-width: 100vw;
   --white-color: #ffffff;
   --black-color: #000000;
   --primary-dark-color: #736f72;
   --primary-medium-color: #b2b2b2;
   --primary-light-color: #f1f1f1;
   --primary-lighter-color: #fafafa;
+
+  --blue-1: #041421;
+  --blue-2: #1e4a63;
+  --blue-3: #5b7f97;
+  --blue-4: #c0d2dc;
+  --blue-5: #f6f6f4;
+
+  --grey-1: #b1b1b1;
+  --grey-2: #666666;
+
+  --primary-background-color: #DAE0E6;
 }

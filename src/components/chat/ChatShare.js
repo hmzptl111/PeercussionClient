@@ -38,7 +38,7 @@ const ChatShare = ({post, community, user}) => {
 
     return <div>
             {
-                rooms.length > 0 ?
+                rooms && rooms.length > 0 ?
                 <>
                     <ul style = {{listStyleType: 'none'}}>
                         {

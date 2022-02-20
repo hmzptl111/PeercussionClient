@@ -1,8 +1,25 @@
 .user-profile-dropdown {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-profile-dropdown-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 0.25rem;
+}
+
+.user-profile-dropdown-button:hover {
+  background: var(--primary-light-color);
 }
 
 .user-profile-dropdown-list {
+  z-index: 2;
   background: var(--primary-lighter-color);
   width: 12rem;
   position: absolute;
@@ -10,46 +27,34 @@
   right: 0;
   font-size: 0.85rem;
   color: var(--primary-dark-color);
-  list-style-type: none;
 }
 
 .user-profile-dropdown-list-item {
   text-decoration: none;
-  color: var(--primary-dark-color);
-  cursor: pointer;
-}
-
-.user-profile-dropdown-list-item li {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
-}
-
-.user-profile-dropdown-list-item li:hover {
-  background-color: var(--primary-light-color);
-}
-
-.user-profile-dropdown-list-item-sign-out {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
   color: var(--primary-dark-color);
+  padding: 0.5rem;
   cursor: pointer;
 }
 
-.user-profile-dropdown-list-item-sign-out:hover {
+.user-profile-dropdown-list-item:hover {
   background-color: var(--primary-light-color);
+
 }
 
-.default-user-profile {
-  margin: 0 0.75rem;
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  background-color: var(--primary-medium-color);
-  color: var(--white-color);
+@media screen and (max-width: 536px) {
+  .user-profile-dropdown {
+    position: static;
+  }
+  
+  .user-profile-dropdown-list {
+    z-index: 2;
+    background: var(--white-color);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
 }

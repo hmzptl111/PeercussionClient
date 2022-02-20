@@ -1,0 +1,98 @@
+.container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container-auth {
+    min-width: 20rem;
+}
+
+.generic-error {
+    color: red;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.specific-error {
+    font-size: 0.8rem;
+    background: var(--blue-4);
+    color: var(--blue-2);
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+}
+
+.auth-card {
+    border: 1px solid var(--grey-1);
+    border-radius: 0.5rem;
+    background: var(--blue-5);
+    padding: 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.auth-card-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.auth-card-header-text {
+    color: var(--blue-2);
+}
+
+.auth-card-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.auth-card-item-input {
+    border: none;
+    border-radius: 0.5rem;
+    min-height: 2.5rem;
+    padding: 0.5rem;
+    flex: 1;
+}
+
+.auth-card-item-info {
+    padding-left: 0.25rem;
+}
+
+
+.auth-card-item-about {
+    min-height: 10rem;
+    resize: vertical;
+}
+
+.auth-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 3rem;
+    margin-top: 1rem;
+}
+
+.auth-footer-sign-in {
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.8rem;
+    color: var(--blue-2);
+}
+
+.auth-footer-submit {
+    border: none;
+    border-radius: 1.5rem;
+    cursor: pointer;
+    padding: 0.75rem 1.25rem;
+    color: var(--blue-5);
+    background: var(--blue-2);
+}

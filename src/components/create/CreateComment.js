@@ -1,3 +1,5 @@
+import '../../styles/Comment.css';
+
 const CreateComment = ({comment, setComment, handleCreateComment = null, handleCreateCommentReply = null, uName, replyTo = null, handleCancelCreateCommentReply = null}) => {
     const handleCommentChange = e => {
         setComment(e.target.value);
@@ -7,12 +9,12 @@ const CreateComment = ({comment, setComment, handleCreateComment = null, handleC
         <>
             {
                 handleCreateComment &&
-                <form onSubmit = {handleCreateComment}>
+                <form onSubmit = {handleCreateComment} className = 'create-comment'>
                     {
                         <>
-                            <textarea style = {{resize: 'none', width: '100%', height: '10em', padding: '0.25em'}} value = {comment} onChange = {handleCommentChange} placeholder = {`Add a comment${uName && `, ${uName}`}`}></textarea>
+                            <textarea className = 'comment-input' value = {comment} onChange = {handleCommentChange} placeholder = {`Add a comment${uName && `, ${uName}`}`}></textarea>
                             
-                            <input type = 'submit' value = 'Comment' />
+                            <input type = 'submit' value = 'Comment' className = 'comment-footer-button' />
                         </>
                     }
                 </form>
@@ -20,13 +22,13 @@ const CreateComment = ({comment, setComment, handleCreateComment = null, handleC
 
             {
                 handleCreateCommentReply &&
-                <form onSubmit = {handleCreateCommentReply}>
+                <form onSubmit = {handleCreateCommentReply} className = 'create-comment'>
                     {
                         <>
-                            <textarea style = {{resize: 'none', width: '100%', height: '5em', padding: '0.25em'}} value = {comment} onChange = {handleCommentChange} placeholder = {`Reply to ${replyTo}`}></textarea>
+                            <textarea className = 'comment-input' value = {comment} onChange = {handleCommentChange} placeholder = {`Reply to ${replyTo}`}></textarea>
                             
-                            <input type = 'submit' value = 'Comment' />
-                            <button onClick = {handleCancelCreateCommentReply}>Cancel</button>
+                            <input type = 'submit' value = 'Comment' className = 'comment-footer-button' />
+                            <div onClick = {handleCancelCreateCommentReply} className = 'comment-footer-button comment-footer-button-cancel '>Cancel</div>
                         </>
                     }
                 </form>

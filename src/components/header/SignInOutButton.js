@@ -7,11 +7,7 @@ import SignOutButton from '../reusable/SignOutButton';
 const SignInOutButton = () => {
     const {isUserSignedIn} = useContext(UserAuthStatusContext);
 
-    // const handleSignInOut = () => {
-    //     setIsUserSignedIn(!isUserSignedIn);
-    // }
-
-    return(
+    return (
         isUserSignedIn ?
         <SignOutButton />:
         <SignInButton />

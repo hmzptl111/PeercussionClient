@@ -1,15 +1,27 @@
 .menu-dropdown {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .menu-dropdown-button {
-  margin: 0 0.5rem 0 0.25rem;
   background: transparent;
   border: none;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.25rem;
+}
+
+.menu-dropdown-button:hover {
+  border-radius: 50%;
+  background: var(--primary-light-color);
 }
 
 .menu-dropdown-list {
+  z-index: 2;
   background: var(--primary-lighter-color);
   width: 12rem;
   position: absolute;
@@ -22,14 +34,103 @@
 
 .menu-dropdown-list-item {
   text-decoration: none;
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   color: var(--primary-dark-color);
-}
-
-.menu-dropdown-list-item li {
   padding: 0.5rem;
+  cursor: pointer;
 }
 
-.menu-dropdown-list-item li:hover {
+.menu-dropdown-list-item:hover {
   background-color: var(--primary-light-color);
+}
+
+.menu-dropdown-auth {
+  display: none;
+}
+
+.menu-dropdown-home {
+  display: none;
+}
+
+.menu-dropdown-chat {
+  display: none;
+}
+
+.menu-dropdown-create {
+  display: none;
+}
+
+.menu-dropdown-close {
+  display: none;
+}
+
+@media screen and (max-width: 786px) {
+  .menu-dropdown-auth {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 648px) {
+  .menu-dropdown-home {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .menu-dropdown-chat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    gap: 0.5rem;
+  }
+}
+
+@media screen and (max-width: 536px) {
+  .menu-dropdown-create {
+    display: block;
+    cursor: pointer;
+  }
+  
+  
+  .menu-dropdown-create-item {
+    background: var(--primary-light-color);
+    padding: 0 1rem;
+  }
+
+  .menu-dropdown-create-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .menu-dropdown {
+    position: static;
+  }
+  
+  .menu-dropdown-list {
+    z-index: 3;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .menu-dropdown-list-item {
+    padding: 0.5rem 1rem;
+  }
+
+  .menu-dropdown-close {
+    display: block;
+    text-align: right;
+    padding: 0.85rem 0.85rem 0.5rem 0;
+    border-bottom: 1px solid var(--primary-light-color);
+    cursor: pointer;
+  }
 }

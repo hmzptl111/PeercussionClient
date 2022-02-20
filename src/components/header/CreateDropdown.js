@@ -28,26 +28,22 @@ const CreateDropdown = () => {
         <div className='create-dropdown' ref = {dropdownRef}>
             <button className = 'create-dropdown-button' onClick = {() => setIsDropdownOpen(oldIsDropdownOpen => !oldIsDropdownOpen)}>
                 Create
-                <DropdownIcon className='dropdown-icon' />
+                <DropdownIcon className = {isDropdownOpen ? 'dropdown-icon-rotate': null} />
             </button>
 
             {
                 isDropdownOpen &&
-                <ul className='create-dropdown-list'>
+                <div className='create-dropdown-list'>
                     <Link to='/create/post' className = 'create-dropdown-list-item' onClick = {() => setIsDropdownOpen(false)}>
-                        <li>
-                            <span className='initials-pill'>p/</span>
-                            Create a post
-                        </li>
+                            {/* <span className='initials-pill'>p/</span> */}
+                            <span className = 'create-dropdown-list-item-text'>Create a post</span>
                     </Link>
 
                     <Link to = '/create/community' className = 'create-dropdown-list-item' onClick = {() => setIsDropdownOpen(false)}>
-                        <li>
-                            <span className='initials-pill'>c/</span>
-                            Create a community
-                        </li>
+                            {/* <span className='initials-pill'>c/</span> */}
+                            <span className = 'create-dropdown-list-item-text'>Create a community</span>
                     </Link>
-                </ul>
+                </div>
             }
         </div>
     );

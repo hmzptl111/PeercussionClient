@@ -1,13 +1,13 @@
+import '../../styles/create/Create.css';
+
 import {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
-// import '../../styles/create/CreatePost.css';
 
 import { useHistory } from 'react-router-dom';
 
-import {default as Head} from '../Header';
+import BackButton from '../reusable/BackButton';
 
 import EditorJs from '@editorjs/editorjs';
-// import Link from '@editorjs/link';
 import Header from '@editorjs/header';
 import List from '@editorjs/list';
 import Embed from '@editorjs/embed';
@@ -18,6 +18,11 @@ import Marker from '@editorjs/marker';
 import InlineCode from '@editorjs/inline-code';
 import Underline from '@editorjs/underline';
 import ImageTool from '@editorjs/image';
+
+import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
+import InitialsIcon from '../reusable/InitialsIcon';
+
+import {ReactComponent as RemoveIcon} from '../../images/close_small.svg';
 
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
@@ -32,9 +37,16 @@ const CreatePost = () => {
     // const postBodyRef = useRef();
 
     const [isPostCommunitySelected, setIsPostCommunitySelected] = useState(false);
+    const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(true);
+
+    const searchRef = useRef();
 
     let history = useHistory();
-    
+
+    useEffect(() => {
+        console.log(isPostCommunitySelected);
+    }, [isPostCommunitySelected]);
+
    useEffect(() => {
     initEditor();
    }, []);
@@ -43,6 +55,7 @@ const CreatePost = () => {
     editor.current = new EditorJs({
         holder: 'editorjs',
         stretched: false,
+        placeholder: 'Click on + to create a new block',
         tools: {
             header: {
                 class: Header,
@@ -134,7 +147,7 @@ const CreatePost = () => {
         })
         .then(result => {
             console.log(result);
-            setSuggestedCommunities(result.data);
+            setSuggestedCommunities(result.data.message);
         })
         .catch(err => {
             if(axios.isCancel(err)) return;
@@ -153,7 +166,12 @@ const CreatePost = () => {
         setPostTitle(e.target.value);
     }
     
-    const setAsPostCommunity = (e, cId, cName) => {
+    const setAsPostCommunity = (cId, cName) => {
+        setPostCommunity('');
+        setPostCId(null);
+        console.log(cId);
+        console.log(cName);
+        console.log('helooooooo');
         setPostCId(cId);
 
         setPostCommunity(cName);
@@ -219,44 +237,95 @@ const CreatePost = () => {
         setIsPostCommunitySelected(false);
     }
 
+    const handleSearchTextFocus = () => {
+        setIsSuggestionsOpen(true);
+
+        // searchRef.current.classList.add('search-input-focus');
+    }
+
+    const handleSearchTextBlur = () => {
+
+        // searchRef.current.classList.remove('search-input-focus');
+    }
+
+    useEffect(() => {
+        const checkIfClickedOutside = e => {
+          if(isSuggestionsOpen && searchRef.current && !searchRef.current.contains(e.target)) {
+            setIsSuggestionsOpen(true);
+            return;
+          }
+        }
+    
+        if(!isSuggestionsOpen) {
+            document.removeEventListener('mousedown', checkIfClickedOutside);
+            console.log('e l removed');
+        } else {
+            document.addEventListener('mousedown', checkIfClickedOutside);
+            console.log('e l attached');
+        }
+
+        return () => {
+          document.removeEventListener('mousedown', checkIfClickedOutside);
+        }
+    }, [isSuggestionsOpen]);
+
     return(
-        <>
-            <Head />
+        <div className = 'create-container'>
+            {/* <Head /> */}
 
-            <form onSubmit = {handleCreatePost}>
-                <input type = 'text' onChange = {handlePostTitle} placeholder = 'title' value = {postTitle} />
+            <form onSubmit = {handleCreatePost} className = 'create create-post'>
+                <div className = 'create-back'>
+                    <BackButton />
+                </div>
 
-                {
-                    isPostCommunitySelected ?
-                    <button onClick = {handleClearPostCommunity}>
-                        <span>{postCommunity}</span>
-                        <span>&times;</span>
-                    </button>:
-                    <input type = 'text' onChange = {handlePostCommunity} placeholder = 'community' value = {postCommunity} />
-                }
+                <div className = 'create-title'>Create a post</div>
 
-                {
-                    suggestedCommunities !== [] &&
-                    <ul>
+                <div className = 'create-header create-header-post'>
+                    <input type = 'text' onChange = {handlePostTitle} placeholder = 'Post title' value = {postTitle} className = 'create-input' />
+
+                    <div className = 'search' ref = {searchRef}>
                         {
-                            suggestedCommunities.map(sc => {
-                                let isSetAsPostCommunity = (sc._id === postCId);
-                                
-                                if(isSetAsPostCommunity) return null;
-                                
-                                return <li key = {sc._id} data-c_id = {sc._id} onClick = {e => setAsPostCommunity(e, sc._id, sc.cName)}>{sc.cName}</li>
-                            })
+                            isPostCommunitySelected ?
+                            <div onClick = {handleClearPostCommunity} className = 'create-post-selected-community'>
+                                <span>{postCommunity}</span>
+                                <RemoveIcon />
+                            </div>:
+                            <input type = 'text' onChange = {handlePostCommunity} placeholder = 'Search a community to post in' value = {postCommunity} className = 'search-input' onFocus = {handleSearchTextFocus} onBlur = {handleSearchTextBlur} />
                         }
-                    </ul>
-                }
 
-                <div id = 'editorjs' style = {{border: '1px solid black'}}></div>
+                        {
+                            isSuggestionsOpen && suggestedCommunities.length > 0 &&
+                            <div className = 'search-suggestions'>
+                                {
+                                    suggestedCommunities.map(sc => {
+                                        let isSetAsPostCommunity = (sc._id === postCId);
+                                        
+                                        if(isSetAsPostCommunity) return null;
+                                        
+                                        return <div key = {sc._id} onClick = {() => setAsPostCommunity(sc._id, sc.cName)} className = 'search-suggestion-item'>
+                                            {
+                                                sc.cThumbnail ?
+                                                <GeneralProfileIcon imageSource = 'communityThumbnails' imageID = {sc.cThumbnail} />:
+                                                <InitialsIcon initial = {sc.cName[0]} />
+                                            }
+                                            <div className = 'search-suggestion-text'>{sc.cName}</div>
+                                        </div>
+                                    })
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
 
-                <input type = 'submit' value = 'Create' />
+                <div id = 'editorjs'></div>
+
+                <div className = 'create-submit'>
+                    <input type = 'submit' value = 'Create' className = 'create-input create-submit-button' />
+                </div>
             </form>
 
             <Popup />
-        </>
+        </div>
     );
 };
 

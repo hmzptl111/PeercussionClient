@@ -1,17 +1,21 @@
 import {useRef, useState} from 'react';
 
+import { useHistory } from 'react-router-dom';
+
 import axios from 'axios';
 
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
-import {Link} from 'react-router-dom';
+import {ReactComponent as ViewProfilePicture} from '../../images/user_default_profile.svg';
 
 const SetUserProfileUsingLocalImage = () => {
     const imageFromDevicePreviewRef = useRef();
 
     const [hasSelected, setHasSelected] = useState(false);
     const [imageFromDevice, setImageFromDevice] = useState(false);
+
+    let history = useHistory();
     
     const handleImageFromDeviceSelected = e => {
         if(!e.target.files[0]) return;
@@ -29,6 +33,11 @@ const SetUserProfileUsingLocalImage = () => {
         }
     }
     
+    const handleViewProfilePicture = () => {
+        Popup.close();
+        history.push('/profilePicture/view');
+    }
+
     const handleSetProfilePictureFromDevice = async () => {
         const profilePicture = new FormData();
 
@@ -49,7 +58,10 @@ const SetUserProfileUsingLocalImage = () => {
         setImageFromDevice(null);
 
         let successPopup = PopUp('Profile picture updated',
-            <Link to = '/profilePicture/view'>View updated profile picture</Link>
+            <div to = '/profilePicture/view' onClick = {handleViewProfilePicture} style = {{cursor: 'pointer'}}>
+                <ViewProfilePicture />
+                View updated profile picture
+            </div>
         );
         PopUpQueue(successPopup);
     }
@@ -57,7 +69,7 @@ const SetUserProfileUsingLocalImage = () => {
     return <>
             <input type = 'file' onChange = {handleImageFromDeviceSelected} />
 
-            <img src = '' alt = '' width = '400' height = '300' name = 'profilePictureUsingLocalImage' ref = {imageFromDevicePreviewRef} style = {{display: 'none'}} />
+            <img src = '' alt = '' width = '300' height = '300' name = 'profilePictureUsingLocalImage' ref = {imageFromDevicePreviewRef} style = {{display: 'none'}} />
 
             {
                 hasSelected &&

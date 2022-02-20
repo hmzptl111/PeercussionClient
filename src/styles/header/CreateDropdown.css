@@ -4,14 +4,24 @@
 
 .create-dropdown-button {
   background: var(--white-color);
-  padding: 0.5rem;
   border: none;
+  /* border: 1px solid var(--primary-dark-color); */
+  border-radius: 0.25rem;
   cursor: pointer;
+  padding: 0.5rem 1rem;
   color: var(--primary-dark-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
 }
 
-.dropdown-icon {
-  margin-left: 0.5rem;
+.create-dropdown-button:hover {
+  background: var(--primary-light-color);
+}
+
+.dropdown-icon-rotate {
+  transform: rotate(180deg);
 }
 
 .create-dropdown-list {
@@ -19,33 +29,22 @@
   background: var(--primary-lighter-color);
   width: 12rem;
   position: absolute;
-  top: 2rem;
+  top: 105%;
   left: 0;
   font-size: 0.85rem;
   color: var(--primary-dark-color);
   list-style-type: none;
 }
 
-.initials-pill {
-  background: var(--primary-light-color);
-  margin-right: 0.5rem;
-  padding: 0.15rem 0.65rem;
-  border-radius: 2rem;
-}
-
 .create-dropdown-list-item {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
   text-decoration: none;
+  padding: 0.5rem 0.5rem;
   color: var(--primary-dark-color);
 }
 
-.create-dropdown-list-item li {
-  padding: 0.5rem;
-}
-
-.create-dropdown-list-item li:hover {
+.create-dropdown-list-item:hover {
   background-color: var(--primary-light-color);
 }
-
-/* .create-dropdown-list-item li:hover > .initials-pill {
-  background: var(--primary-medium-color);
-} */

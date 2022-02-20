@@ -1,12 +1,17 @@
 import {useState} from 'react';
 import axios from 'axios';
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 import BackButton from '../reusable/BackButton';
 
 import Popup from 'react-popup';
 
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
+
+import InfoButton from '../reusable/InfoButton';
+
+import Logo from '../header/Logo';
+import '../../styles/auth/Auth.css';
 
 const SignUp = () => {
     const [username, setUsername] = useState('');
@@ -21,6 +26,7 @@ const SignUp = () => {
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [aboutError, setAboutError] = useState('');
 
     const handleUsername = e => {
         setUsername(e.target.value);
@@ -50,10 +56,10 @@ const SignUp = () => {
         setPasswordError('');
         setConfirmPasswordError('');
         setEmailError('');
+        setAboutError('');
 
         if(username === '' || password === '' || confirmPassword === '' || email === '') {
-            console.log('please enter details');
-            setGenericError('Some or all the required fields are empty');
+            setGenericError('Some or all of the required fields are empty');
             return;
         }
 
@@ -61,28 +67,30 @@ const SignUp = () => {
         //if username starts with a digit like 3hamza, it is invalid
         const usernameRegex = /^[^\d][\w]+$/;
         if(!usernameRegex.test(username)) {
-            console.log('username must only consist of, lowercase characters; uppercase characters; digits; underscores and must not start with a digit');
-            setUsernameError('Invalid username');
+            setUsernameError('invalid username');
             return;
         }
         
         const passwordRegex = /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*]).*$/;
         if(!passwordRegex.test(password)) {
             console.log('password must contain at least one lowercase, one uppercase and one symbol');
-            setPasswordError('Invalid password');
+            setPasswordError('invalid password');
             return;
         }
 
         if(password !== confirmPassword) {
-            console.log('passwords do not match');
-            setConfirmPasswordError('Passwords don\'t match');
+            setConfirmPasswordError('passwords do not match');
             return;
         }
 
         const emailRegex = /\S+@\S+\.\S+/;
         if(!emailRegex.test(email)) {
-            console.log('invalid email');
-            setEmailError('Invalid email');
+            setEmailError('invalid email');
+            return;
+        }
+
+        if(about.length > 100) {
+            setAboutError('invalid about');
             return;
         }
 
@@ -117,46 +125,99 @@ const SignUp = () => {
 
 
     return (
-        <>
-            <BackButton />
+        <div className = 'container'>
             
-            {
-                genericError &&
-                <h4>{genericError}</h4>
-            }
+            <div className = 'container-auth'>
+                <form onSubmit = {handleSignUp} className = 'auth-card'>
+                    <BackButton />
+                    
 
-            <form onSubmit = {handleSignUp} style = {{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start'}}>
-                <input type = 'text' placeholder = 'username' value = {username} onChange = {handleUsername} />
-                {
-                    usernameError &&
-                    <span>{usernameError}</span>
-                }
+                    <div className = 'auth-card-header'>
+                        <div className = 'auth-card-header-logo'>
+                            <Logo />
+                        </div>
+                        <div className = 'auth-card-header-text'>
+                            Create an account
+                        </div>
+                    </div>
 
-                <input type = 'password' placeholder = 'password' value = {password} onChange = {handlePassword} />
-                {
-                    passwordError &&
-                    <span>{passwordError}</span>
-                }
 
-                <input type = 'password' placeholder = 'confirm password' value = {confirmPassword} onChange = {handleConfirmPassword} />
-                {
-                    confirmPasswordError &&
-                    <span>{confirmPasswordError}</span>
-                }
+                    {
+                        genericError &&
+                        <h5 className = 'generic-error'>{genericError}</h5>
+                    }
 
-                <input type = 'text' placeholder = 'email' value = {email} onChange = {handleEmail} />
-                {
-                    emailError &&
-                    <span>{emailError}</span>
-                }
 
-                <textarea placeholder = 'write something about yourself' value = {about} onChange = {handleAbout} />
+                    {
+                        usernameError &&
+                        <span className = 'specific-error'>{usernameError}</span>
+                    }
+                    <div className = 'auth-card-item'>
+                        <input type = 'text' placeholder = 'Username' value = {username} onChange = {handleUsername} className = 'auth-card-item-input' />
+                        <span className = 'auth-card-item-info'>
+                            <InfoButton content = 'Username must only consist of the english alphabet (a - z  A - Z) or underscore ( _ )' />
+                        </span>
+                    </div>
 
-                <input type = 'submit' value = 'Sign up' />
-            </form>
+
+                    {
+                        passwordError &&
+                        <span className = 'specific-error'>{passwordError}</span>
+                    }
+                    <div className = 'auth-card-item'>
+                        <input type = 'password' placeholder = 'Password' value = {password} onChange = {handlePassword} className = 'auth-card-item-input' />
+                        <span className = 'auth-card-item-info'>
+                            <InfoButton content = 'Password must consist of at least one lowercase (a - z), one uppercase (A - Z) and one special character (~ ! @ # $ % ^ & *)' />
+                        </span>
+                    </div>
+
+
+                    {
+                        confirmPasswordError &&
+                        <span className = 'specific-error'>{confirmPasswordError}</span>
+                    }
+                    <div className = 'auth-card-item'>
+                        <input type = 'password' placeholder = 'Confirm password' value = {confirmPassword} onChange = {handleConfirmPassword} className = 'auth-card-item-input' />
+                        <span className = 'auth-card-item-info'>
+                            <InfoButton content = 'Passwords must match' />
+                        </span>
+                    </div>
+
+
+                    {
+                        emailError &&
+                        <span className = 'specific-error'>{emailError}</span>
+                    }
+                    <div className = 'auth-card-item'>
+                        <input type = 'text' placeholder = 'Email' value = {email} onChange = {handleEmail} className = 'auth-card-item-input' />
+                        <span className = 'auth-card-item-info'>
+                            <InfoButton content = 'An email will be sent to your account for confirmation, make sure you have access to it' />
+                        </span>
+                    </div>
+
+
+                    {
+                        aboutError &&
+                        <span className = 'specific-error'>{aboutError}</span>
+                    }
+                    <div className = 'auth-card-item'>
+                        <textarea placeholder = 'About you' value = {about} onChange = {handleAbout} className = 'auth-card-item-input auth-card-item-about' />
+                        <span className = 'auth-card-item-info'>
+                            <InfoButton content = 'Must not exceed 100 characters' />
+                        </span>
+                    </div>
+
+
+                    <div className = 'auth-footer'>
+                        <Link to = '/signin' className = 'auth-footer-sign-in'>Sign in</Link>
+
+                        <input type = 'submit' value = 'Sign up' className = 'auth-footer-submit' />
+                    </div>
+                </form>
+            </div>
 
             <Popup />
-        </>
+        </div>
     );
 }
 

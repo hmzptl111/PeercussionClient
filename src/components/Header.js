@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import '../styles/Header.css';
 
-// import BackButton from './header/BackButton';
 import Logo from './header/Logo';
 import SearchInput from './header/SearchInput';
 import SignInOutButton from './header/SignInOutButton';
@@ -15,30 +14,43 @@ import { UserAuthStatusContext } from '../contexts/UserAuthStatus';
 const Header = () => {
     const {user, isUserSignedIn} = useContext(UserAuthStatusContext);
 
-    return(
-        <div className = 'header'>
-            <div className = 'header-left'>
-                {/* <BackButton /> */}
-                <Logo />
-                <SearchInput />
-                <CreateDropdown />
-            </div>
-            <div className = 'header-right'>
-                <div className = 'auth-buttons'>
-                    <SignInOutButton />
-                    <SignUpButton />
-                </div>
-                {
-                    user && isUserSignedIn &&
-                    <>
-                        <ChatButton />
-                        <UserProfileButton  />
-                    </>
-                }
-                <MenuButton />
-            </div>
-        </div>
-    );
-};
+    return <div className = 'header'>
+                    <div className = 'header-left'>
+                        <div className = 'header-logo'>
+                            <Logo />
+                        </div>
+                        <div className = 'header-search'>
+                            <SearchInput />
+                        </div>
+                        <div className = 'header-create'>
+                            <CreateDropdown />
+                        </div>
+                    </div>
+
+                    <div className = 'header-right'>
+                        {
+                            (user && isUserSignedIn) ?
+                            <>
+                                <UserProfileButton  />
+                                <div className = 'header-chat'>
+                                    <ChatButton />
+                                </div>
+                            </>:
+                            <>
+                                <div className = 'header-auth'>
+                                    <SignUpButton />
+                                </div>
+                            </>
+                        }
+
+                        <div className = 'header-auth'>
+                            <SignInOutButton />
+                        </div>
+
+                        <MenuButton />
+                    </div>
+
+            </div>;
+}
 
 export default Header;

@@ -1,0 +1,52 @@
+.user-comments {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 0;
+    gap: 1rem;
+}
+
+.user-comment {
+    width: 34rem;
+    background: var(--white-color);
+}
+
+.user-comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    padding: 0.25rem;
+}
+
+.user-comment-post-title {
+    font-style: italic;
+    font-weight: bold;
+}
+
+.user-comment-post-info {
+    max-width: 16rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-comment-header-link {
+    text-decoration: none;
+}
+
+.user-comment-header-link:hover {
+    text-decoration: underline;
+}
+
+.user-comment-body {
+    padding: 0.25rem 0.5rem;
+    background: var(--primary-light-color);
+}
+
+@media screen and (max-width: 576px) {
+    .user-comment {
+        width: 100%;
+    }
+}

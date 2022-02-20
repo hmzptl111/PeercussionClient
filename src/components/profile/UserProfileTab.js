@@ -26,6 +26,18 @@ const UserProfileTab = ({user}) => {
                 <UserProfileFriends uName = {user.username} />
             }
             {
+                currentTab === 'Upvoted Posts' &&
+                <UserProfileUpvotedPosts uName = {user.username} />
+            }
+            {
+                currentTab === 'Comments' &&
+                <UserProfileComments uName = {user.username} />
+            }
+            {
+                currentTab === 'Pending Requests' &&
+                <UserProfilePendingRequests />
+            }
+            {
                 currentTab === 'Moderates Communities' &&
                 <GetCommunities uName = {user.username} type = 'moderates' />
             }
@@ -33,22 +45,10 @@ const UserProfileTab = ({user}) => {
                 currentTab === 'Following Communities' &&
                 <GetCommunities uName = {user.username} type = 'following' />
             }
-            {
-                currentTab === 'Pending Requests' &&
-                <UserProfilePendingRequests />
-            }
-            {
-                currentTab === 'Upvoted Posts' &&
-                <UserProfileUpvotedPosts uName = {user.username} />
-            }
             {/* {
                 currentTab === 'Downvoted Posts' &&
                 <UserProfileDownvotedPosts />
             } */}
-            {
-                currentTab === 'Comments' &&
-                <UserProfileComments uName = {user.username} />
-            }
             {
                 currentTab === 'About' && 
                 <UserProfileAbout about = {user.about} />

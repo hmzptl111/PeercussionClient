@@ -7,6 +7,9 @@ import Follow from '../reusable/Follow';
 
 import axios from 'axios';
 
+import GeneralProfileIcon from "../reusable/GeneralProfileIcon";
+import InitialsIcon from "../reusable/InitialsIcon";
+
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
@@ -55,14 +58,23 @@ const UserProfileFriends = ({uName}) => {
             {
                 userFriends.length > 0 ?
                 userFriends.map(friend => {
-                    return <div key = {friend._id} style = {{width: '50%', border: '1px solid grey', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                <Link to = {`/u/${friend.username}`}>{friend.username}</Link>
+                    return <div className = 'list-container'>
+                                <div key = {friend._id} className = 'list'>
+                                        <Link to = {`/u/${friend.username}`} className = 'list-info'>
+                                            {
+                                                friend.profilePicture ?
+                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {user.profilePicture} />:
+                                                <InitialsIcon initial = {friend.username[0]} />
+                                            }
+                                            <span className = 'list-info-text'>{friend.username}</span>
+                                        </Link>
 
-                                {
-                                    (friend.username !== (user && user.uName)) &&
-                                    <Follow followingStatus = {friend.isFriend} setFollowingStatus = {handleSetFollowingStatus} friendsList = {true} type = 'user' target = {friend._id} />
-                                }
-                            </div>
+                                        {
+                                            (friend.username !== (user && user.uName)) &&
+                                            <Follow followingStatus = {friend.isFriend} setFollowingStatus = {handleSetFollowingStatus} friendsList = {true} type = 'user' target = {friend._id} />
+                                        }
+                                    </div>
+                    </div>
                 }):
                 'No friends'
             }

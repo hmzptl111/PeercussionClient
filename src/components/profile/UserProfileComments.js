@@ -1,3 +1,5 @@
+import '../../styles/profile/UserProfileComments.css';
+
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 
@@ -20,7 +22,7 @@ const UserProfileComments = ({uName}) => {
                 PopUpQueue(errorPopup);
                 return;
             }
-
+            console.log(comments.data.message);
             setUserComments(comments.data.message);
         }
 
@@ -29,33 +31,31 @@ const UserProfileComments = ({uName}) => {
     }, [uName]);
 
     return <>
-        <div>
+        <div className = 'user-comments'>
                 {
                     userComments.length > 0 ?
                     userComments.map(c => {
-                        return <div key = {c._id} style = {{width: '60%', border: '1px solid grey'}}>
-                            <div style = {{display: 'flex', justifyContent: 'space-between'}}>
-                                <span>
-                                    Posted on 
-                                    {   
-                                        <Link to = {`/p/${c.pId}`} style = {{paddingLeft: '0.25em'}}>{c.pTitle}</Link>
-                                    }
-                                </span>
+                        return <div key = {c._id} className = 'user-comment'>
+                                    <div className = 'user-comment-header'>
+                                            <div className = 'user-comment-post-info'>
+                                                Posted on &nbsp;
+                                                {   
+                                                    <Link to = {`/p/${c.pId}`} className = 'user-comment-header-link user-comment-post-title'>{`"${c.pTitle}"`}</Link>
+                                                }
+                                            </div>
 
-                                <span>
-                                    {
-                                        <Link to = {`/c/${c.cName}`}>c/{c.cName}</Link>
-                                    }
-                                </span>
-                            </div>
+                                            {
+                                                <Link to = {`/c/${c.cName}`} className = 'user-comment-header-link'>c/{c.cName}</Link>
+                                            }
+                                    </div>
 
-                            <div>
-                                {c.comment}
-                            </div>
-                            
-                            <button>Share</button>
-                            <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} />
-                        </div>
+                                    <div className = 'user-comment-body'>
+                                        {c.comment}
+                                    </div>
+                                    
+                                    {/* <button>Share</button> */}
+                                    <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} isUpvoted = {c.isUpvoted} isDownvoted = {c.isDownvoted} />
+                                </div>
                     }):
                     'No comments'
                 }

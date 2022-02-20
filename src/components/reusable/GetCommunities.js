@@ -1,4 +1,8 @@
+import '../../styles/reusable/GetCommunities.css';
+
 import { useEffect, useState } from "react";
+
+import {Link} from 'react-router-dom';
 
 import Follow from './Follow';
 
@@ -6,6 +10,9 @@ import axios from 'axios';
 
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
+import GeneralProfileIcon from './GeneralProfileIcon';
+import InitialsIcon from './InitialsIcon';
 
 const GetCommunities = ({uName, cName, type}) => {
     const [communities, setCommunities] = useState();
@@ -28,6 +35,7 @@ const GetCommunities = ({uName, cName, type}) => {
             }
             
             setCommunities(response.data.message);
+            console.log(response.data.message);
         }
 
         getCommunities();
@@ -47,12 +55,19 @@ const GetCommunities = ({uName, cName, type}) => {
         });
     }
 
-    return <>
+    return <div className = 'list-container'>
             {
                 communities && communities.length > 0 ?
                 communities.map(c => (
-                    <div key = {c.cName} style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '50%'}}>
-                        <span>{c.cName}</span>
+                    <div key = {c.cName} className = 'list'>
+                        <Link to = {`/c/${c.cName}`} className = 'list-info'>
+                            {
+                                c.cThumbnail ?
+                                <GeneralProfileIcon imageSource = 'communityThumbnails' imageID = {c.cThumbnail} />:
+                                <InitialsIcon initial = {c.cName[0]} />
+                            }
+                            <span className = 'list-info-text'>{c.cName}</span>
+                        </Link>
 
                         {
                             c.isFollowing &&
@@ -64,7 +79,7 @@ const GetCommunities = ({uName, cName, type}) => {
             }
 
             <Popup />
-        </>
+        </div>
 }
 
 export default GetCommunities;

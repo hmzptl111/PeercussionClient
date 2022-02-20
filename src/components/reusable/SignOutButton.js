@@ -1,11 +1,10 @@
-import { useContext, useEffect } from 'react';
+import { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
-import '../../styles/reusable/SignOutButton.css';
-import PillButton from '../reusable/PillButton';
 
-import { whiteColor } from '../../index';
+import '../../styles/auth/AuthButton.css';
 
 import axios from 'axios';
+
 import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 import {SocketContext} from '../../contexts/Socket';
 import {UserRoomsContext} from '../../contexts/UserRooms';
@@ -14,7 +13,7 @@ import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 const SignOutButton = () => {
-    const {setUser, isUserSignedIn, setIsUserSignedIn} = useContext(UserAuthStatusContext);
+    const {setUser, setIsUserSignedIn} = useContext(UserAuthStatusContext);
     const {setSocket} = useContext(SocketContext);
     const {setRooms, setCurrentChat} = useContext(UserRoomsContext);
 
@@ -40,8 +39,8 @@ const SignOutButton = () => {
     }
 
     return <>
-        <div className = 'sign-out-button' onClick = {handleSignOut} >
-            <PillButton buttonText = "Sign out" backgroundColor = {whiteColor} />
+        <div className = 'auth-button' onClick = {handleSignOut} >
+            Sign out
         </div>
 
         <Popup />

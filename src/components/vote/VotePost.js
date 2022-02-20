@@ -4,21 +4,27 @@ import axios from 'axios';
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
-const VotePost = ({pId, votes}) => {
+import Vote from './Vote';
+
+const VotePost = ({pId, votes, isUpvoted, isDownvoted}) => {
     const [postVotes, setPostVotes] = useState(votes);
+
+    const [isPostUpvoted, setIsPostUpvoted] = useState(isUpvoted);
+    const [isPostDownvoted, setIsPostDownvoted] = useState(isDownvoted);
 
     const handlePostUpvote = async () => {
         const response = await axios.put('/votePost', {
             pId: pId,
             vote: 'upvote'
         });
-
+        
         if(response.data.error) {
             let errorPopup = PopUp('Something went wrong', response.data.error);
             PopUpQueue(errorPopup);
             return;
         }
-
+        
+        setIsPostUpvoted(oldState => !oldState);
         let code = response.data.message;
         if(code === 1) {
             setPostVotes(previousState => (previousState + 1));
@@ -28,19 +34,21 @@ const VotePost = ({pId, votes}) => {
             setPostVotes(previousState => (previousState - 1));
         }
     }
-    
+
     const handlePostDownvote = async () => {
+        
         const response = await axios.put('/votePost', {
             pId: pId,
             vote: 'downvote'
         });
-
+        
         if(response.data.error) {
             let errorPopup = PopUp('Something went wrong', response.data.error);
             PopUpQueue(errorPopup);
             return;
         }
-
+        
+        setIsPostDownvoted(oldState => !oldState);
         let code = response.data.message;
         if(code === 4) {
             setPostVotes(previousState => (previousState - 1));
@@ -52,11 +60,7 @@ const VotePost = ({pId, votes}) => {
     }
     
     return <>
-        <div>
-            <button onClick = {handlePostUpvote}>Upvote</button>
-            {postVotes}
-            <button onClick = {handlePostDownvote}>Downvote</button>
-        </div>
+        <Vote handleUpvote = {handlePostUpvote} handleDownvote = {handlePostDownvote} voteCount = {postVotes} isSubjectUpvoted = {isPostUpvoted} isSubjectDownvoted = {isPostDownvoted} setIsUpvoted = {setIsPostUpvoted} setIsDownvoted = {setIsPostDownvoted} />
 
         <Popup />
     </>

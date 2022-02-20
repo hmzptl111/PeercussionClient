@@ -1,3 +1,5 @@
+import '../styles/Community.css';
+
 import {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import axios from 'axios';
@@ -44,13 +46,15 @@ const Community = () => {
 
             {
                 community && !isRestricted ?
-                <>
+                <div className = 'community'>
                     <PageBanner cName = {cName} cThumbnail = {community.cThumbnail} type = 'community' target = {community._id} />
 
                     <CommunityNav />
                     <CommunityTab community = {community} />
-                </>:
-                'You are restricted from accessing this community'
+                </div>:
+                <div>
+                    You are restricted from accessing this community
+                </div>
             }
 
             <Popup />

@@ -20,7 +20,9 @@ const Home = () => {
             if(history.location.state.isUserNew) {
                 let profilePicturePopup = PopUp('Set up your Profile Picture',
                 <Link to = {'/profilePicture/edit'}>
-                    <EditProfilePicture />
+                    <div onClick = {() => Popup.close()}>
+                        <EditProfilePicture />
+                    </div>
                 </Link>
                 );
                 PopUpQueue(profilePicturePopup);
