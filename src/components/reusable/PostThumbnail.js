@@ -13,6 +13,10 @@ import InitialsIcon from './InitialsIcon';
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
+import ScrollToTop from '../reusable/ScrollToTop';
+
+import Empty from '../reusable/Empty';
+
 const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
     const [posts, setPosts] = useState([]);
 
@@ -111,9 +115,9 @@ const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
     }, [cName, uName]);
     
     return <div className = 'posts-container'>
-            {
+            {/* {
                 loading && 'Please wait...loading'
-            }
+            } */}
             <div className = 'posts'>
                 {
                     posts.length > 0 ?
@@ -122,14 +126,17 @@ const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
                                 return <div key = {post._id} className = 'post-thumbnail'>
                                             <div ref = {lastPostRef}>
                                                 <div className = 'post-header'>
-                                                    <Link to = {`/u/${post.uName}`} className = 'post-header-link post-header-user'>
-                                                        {
-                                                            post.uProfilePicture ?
-                                                            <GeneralProfileIcon imageSource = 'profilePictures' imageID = {post.uProfilePicture} />:
-                                                            <InitialsIcon initial = {post.uName[0]} />
-                                                        }
-                                                        {post.uName}
-                                                    </Link>
+                                                    {
+                                                        !uName &&
+                                                        <Link to = {`/u/${post.uName}`} className = 'post-header-link post-header-user'>
+                                                            {
+                                                                post.uProfilePicture ?
+                                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {post.uProfilePicture} />:
+                                                                <InitialsIcon initial = {post.uName[0]} />
+                                                            }
+                                                            {post.uName}
+                                                        </Link>
+                                                    }
 
                                                     {
                                                         !cName &&
@@ -151,8 +158,9 @@ const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
                         } else {
                             return <div key = {post._id} className = 'post-thumbnail'>
                                         <div>
-                                            <div className = 'post-header'> 
-                                                <div>
+                                            <div className = 'post-header'>
+                                                {
+                                                    !uName &&
                                                     <Link to = {`/u/${post.uName}`} className = 'post-header-link post-header-user'>
                                                         {
                                                             post.uProfilePicture ?
@@ -161,7 +169,7 @@ const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
                                                         }
                                                         {post.uName}
                                                     </Link>
-                                                </div>
+                                                }
 
                                                 {
                                                     !cName &&
@@ -182,16 +190,16 @@ const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
                                     </div>
                         }
                     }):
-                    'No posts'
+                    <Empty text = 'No footprint' caption = {getUserUpvotedPosts ? 'Hello?': 'Be the first one to post here'} GIF = 'https://c.tenor.com/tK-85ZSJyvUAAAAC/hello-homer-simpson.gif' />
                 }
             </div>
 
-            {/* {
+            {
                 !hasMorePosts && posts.length > 0 &&
-                <div>
-                    You have seen all the posts
+                <div className = 'scroll-to-top'>
+                    <ScrollToTop />
                 </div>
-            } */}
+            }
 
             <Popup />
         </div>

@@ -1,4 +1,6 @@
-import {useRef, useState} from 'react';
+import '../../styles/profile/SetUserProfileUsingLocalImage.css';
+
+import {useEffect, useState} from 'react';
 
 import { useHistory } from 'react-router-dom';
 
@@ -7,43 +9,86 @@ import axios from 'axios';
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
-import {ReactComponent as ViewProfilePicture} from '../../images/user_default_profile.svg';
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
+
+import {ReactComponent as UploadIcon} from '../../images/upload.svg';
+import {ReactComponent as SubmitIcon} from '../../images/check.svg';
 
 const SetUserProfileUsingLocalImage = () => {
-    const imageFromDevicePreviewRef = useRef();
-
-    const [hasSelected, setHasSelected] = useState(false);
-    const [imageFromDevice, setImageFromDevice] = useState(false);
+    const [imageFromDevice, setImageFromDevice] = useState();
+    const [image, setImage] = useState();
+    const [crop, setCrop] = useState({
+        aspect: 1 / 1,
+        unit: '%',
+        width: 100
+    });
 
     let history = useHistory();
     
+    const getCroppedImg = (isBlob = false) => {
+        if(!image || !crop) return;
+
+        const canvas = document.createElement("canvas");
+        const scaleX = image.naturalWidth / image.width;
+        const scaleY = image.naturalHeight / image.height;
+        canvas.width = crop.width;
+        canvas.height = crop.height;
+        const ctx = canvas.getContext("2d");
+      
+        const pixelRatio = window.devicePixelRatio;
+        canvas.width = crop.width * pixelRatio;
+        canvas.height = crop.height * pixelRatio;
+        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        ctx.imageSmoothingQuality = "high";
+      
+        ctx.drawImage(
+          image,
+          crop.x * scaleX,
+          crop.y * scaleY,
+          crop.width * scaleX,
+          crop.height * scaleY,
+          0,
+          0,
+          crop.width,
+          crop.height
+        );
+      
+        if(isBlob) {
+            return new Promise((resolve, reject) => {
+                canvas.toBlob(
+                  (blob) => {
+                    resolve(blob);
+                  },
+                  "image/jpeg",
+                  1
+                );
+            });
+        } else {
+            const base64Image = canvas.toDataURL("image/jpeg");
+
+            return new Promise((resolve, reject) => {
+                resolve(base64Image);
+            });
+        }
+    }
+
     const handleImageFromDeviceSelected = e => {
         if(!e.target.files[0]) return;
         console.log(e.target.files[0]);
 
-        imageFromDevicePreviewRef.current.src = URL.createObjectURL(e.target.files[0]);
-        imageFromDevicePreviewRef.current.style.display = 'block';
-
-        setHasSelected(true);
-        setImageFromDevice(e.target.files[0]);
-
-        imageFromDevicePreviewRef.current.onload = () => {
-            //free memory after image is loaded
-            URL.revokeObjectURL(imageFromDevicePreviewRef.current.src);
-        }
+        setImageFromDevice(URL.createObjectURL(e.target.files[0]));
     }
     
-    const handleViewProfilePicture = () => {
-        Popup.close();
-        history.push('/profilePicture/view');
-    }
 
     const handleSetProfilePictureFromDevice = async () => {
-        const profilePicture = new FormData();
+        const croppedImage = await getCroppedImg();
 
-        profilePicture.set('profilePictureUsingLocalImage', imageFromDevice);
+        const payload = {
+            profilePicture: croppedImage
+        }
 
-        const response = await axios.post('/setProfilePictureUsingLocalImage', profilePicture);
+        const response = await axios.post('/setProfilePicture', payload);
 
         if(response.data.error) {
             let errorPopup = PopUp('Something went wrong', response.data.error);
@@ -51,29 +96,35 @@ const SetUserProfileUsingLocalImage = () => {
             return;
         }
 
-        imageFromDevicePreviewRef.current.src = '';
-        imageFromDevicePreviewRef.current.style.display = 'none';
-
-        setHasSelected(false);
-        setImageFromDevice(null);
-
-        let successPopup = PopUp('Profile picture updated',
-            <div to = '/profilePicture/view' onClick = {handleViewProfilePicture} style = {{cursor: 'pointer'}}>
-                <ViewProfilePicture />
-                View updated profile picture
-            </div>
-        );
-        PopUpQueue(successPopup);
+        history.push('/profilePicture/view');
     }
+
+    useEffect(() => {
+        document.querySelector('#user-uploaded-profile-picture').click();
+    }, []);
     
     return <>
-            <input type = 'file' onChange = {handleImageFromDeviceSelected} />
+            <div className = 'profile-picture-container'>
+                <label htmlFor = 'user-uploaded-profile-picture' className = 'profile-picture-header'>
+                    <UploadIcon />
+                    Upload
+                    
+                    <input type = 'file' id = 'user-uploaded-profile-picture' name = 'user-uploaded-profile-picture' onChange = {handleImageFromDeviceSelected} />
+                </label>
 
-            <img src = '' alt = '' width = '300' height = '300' name = 'profilePictureUsingLocalImage' ref = {imageFromDevicePreviewRef} style = {{display: 'none'}} />
+                <div onClick = {handleSetProfilePictureFromDevice} className = 'profile-picture-header'>
+                    <SubmitIcon />
+                    Update
+                </div>
+            </div>
 
             {
-                hasSelected &&
-                <button onClick={handleSetProfilePictureFromDevice}>Set Profile Picture</button>
+                imageFromDevice &&
+                <div className = 'preview-image-container'>
+                    <div className = 'preview-image'>
+                        <ReactCrop src = {imageFromDevice} onImageLoaded = {setImage} crop = {crop} onChange = {setCrop} onComplete = {() => console.log('done')} />
+                    </div>
+                </div>
             }
 
             <Popup />

@@ -14,6 +14,8 @@ import {PopUp, PopUpQueue} from '../reusable/PopUp';
 import GeneralProfileIcon from './GeneralProfileIcon';
 import InitialsIcon from './InitialsIcon';
 
+import Empty from './Empty';
+
 const GetCommunities = ({uName, cName, type}) => {
     const [communities, setCommunities] = useState();
 
@@ -75,7 +77,7 @@ const GetCommunities = ({uName, cName, type}) => {
                         }
                     </div>
                 )):
-                'No community found'
+                <Empty text = 'Why so lonely?' caption = {`${type === 'moderates' && 'User does not moderate any community' || type === 'following' && 'User does not follow any community' || type === 'related' && 'No related communities found'}`} GIF = 'https://c.tenor.com/skrB3dpqD-oAAAAC/waiting-alone-lonely.gif' />
             }
 
             <Popup />

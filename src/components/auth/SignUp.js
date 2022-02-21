@@ -67,30 +67,30 @@ const SignUp = () => {
         //if username starts with a digit like 3hamza, it is invalid
         const usernameRegex = /^[^\d][\w]+$/;
         if(!usernameRegex.test(username)) {
-            setUsernameError('invalid username');
+            setUsernameError('Invalid username');
             return;
         }
         
         const passwordRegex = /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*]).*$/;
         if(!passwordRegex.test(password)) {
             console.log('password must contain at least one lowercase, one uppercase and one symbol');
-            setPasswordError('invalid password');
+            setPasswordError('Invalid password');
             return;
         }
 
         if(password !== confirmPassword) {
-            setConfirmPasswordError('passwords do not match');
+            setConfirmPasswordError('Passwords do not match');
             return;
         }
 
         const emailRegex = /\S+@\S+\.\S+/;
         if(!emailRegex.test(email)) {
-            setEmailError('invalid email');
+            setEmailError('Invalid email');
             return;
         }
 
-        if(about.length > 100) {
-            setAboutError('invalid about');
+        if(about.length > 255) {
+            setAboutError('Must not exceed 255 characters');
             return;
         }
 

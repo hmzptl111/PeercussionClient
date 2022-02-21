@@ -152,6 +152,10 @@ const CreatCommunity = () => {
             let communityNameError = PopUp('Something went wrong', 'Community name cannot be empty');
             PopUpQueue(communityNameError);
             return;
+        } else if (community.desc.length <= 0 || community.desc.length > 255) {
+            let communityNameError = PopUp('Something went wrong', 'Community name cannot be empty and must not exceed 255 characters');
+            PopUpQueue(communityNameError);
+            return;
         }
 
         let newRelatedCommunities = [];
@@ -164,6 +168,7 @@ const CreatCommunity = () => {
 
         const res = await axios.post('/create/community', newCommunity);
         if(res.data.error) {
+            console.log(res.data);
             let genericError = PopUp('Something went wrong', res.data.error);
             PopUpQueue(genericError);
             return;

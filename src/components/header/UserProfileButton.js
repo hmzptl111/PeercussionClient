@@ -20,6 +20,7 @@ import InitialsIcon from '../reusable/InitialsIcon';
 import {ReactComponent as UserProfileIconSmall} from '../../images/user_default_profile_small.svg';
 import {ReactComponent as ViewUserProfilePicture} from '../../images/view_profile_picture.svg';
 import {ReactComponent as EditUserProfileIcon} from '../../images/edit_profile_picture.svg';
+
 import {ReactComponent as CommunityIcon} from '../../images/community.svg';
 // import {ReactComponent as DraftIcon} from '../../images/draft.svg';
 import {ReactComponent as ShareIcon} from '../../images/share.svg';
@@ -29,6 +30,8 @@ import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 import {ReactComponent as CloseIcon} from '../../images/close.svg';
+
+import UpdateUserProfilePicturePopup from '../reusable/UpdateUserProfilePicturePopup';
 
 const UserProfileButton = () => {
     const userProfileRef = useRef();
@@ -104,7 +107,10 @@ const UserProfileButton = () => {
 
     const handleRedirectToEditUserProfilePicture = () => {
         setIsDropdownOpen(false);
-        history.push('/profilePicture/edit');
+
+        let choice = PopUp('Set Profile Picture', <UpdateUserProfilePicturePopup />);
+        PopUpQueue(choice);
+        return;
     }
 
     const handleRedirectToViewUserProfilePicture = () => {

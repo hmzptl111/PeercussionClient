@@ -1,35 +1,45 @@
+import '../../styles/chat/ChatSideBar.css';
+
 import BackButton from '../reusable/BackButton';
 import UserStatusControl from '../reusable/UserStatusControl';
 
 import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
 import InitialsIcon from '../reusable/InitialsIcon';
 
-const ChatSideBar = ({rooms, setCurrentChat}) => {
+import {ReactComponent as CloseIcon} from '../../images/close.svg';
+
+const ChatSideBar = ({rooms, currentChat, setCurrentChat, setIsMenuOpen}) => {
 
     const handleCurrentChatChange = (user) => {
         setCurrentChat(user);
+        setIsMenuOpen(false);
     }
 
-    return <div style = {{width: '30%', height: '100vh', border: '1px solid black'}}>
-            <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+    return <div className = 'chat-sidebar'>
+            <div className = 'chat-sidebar-header'>
                 <BackButton />
                 <UserStatusControl />
+                {
+                    <div onClick = {() => setIsMenuOpen(false)} className = 'chat-sidebar-header-close'>
+                        <CloseIcon />
+                    </div>
+                }
             </div>
 
-            <div style = {{display: 'flex', flexDirection: 'column'}}>
+            <div className = 'chat-sidebar-rooms'>
                 {
                     rooms &&
                     rooms.map(u => (
-                        <div key = {u.uId} onClick = {() => handleCurrentChatChange(u)} style = {{width: '100%', border: '1px solid black', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                            <div style = {{display: 'flex', justifyContent: 'flex-start', alignItems: 'center'}}>
+                        <div key = {u.uId} onClick = {() => handleCurrentChatChange(u)} className = {`chat-sidebar-room ${currentChat && 'current-chat-room'}`}>
+                            <div className = 'chat-sidebar-room-item'>
                                 {
                                     u.uProfilePicture ?
                                     <GeneralProfileIcon imageSource = 'profilePictures' imageID = {u.uProfilePicture} />:
                                     <InitialsIcon initial = {u.uName[0]} isUpperCase = {true} />
                                 }
-                                <div>{u.uName}</div>
+                                <div className = 'chat-sidebar-room-item-text'>{u.uName}</div>
                             </div>
-                            <div>
+                            <div className = 'chat-sidebar-user-status'>
                                 {
                                     u.isUserOnline &&
                                     'Online'

@@ -19,7 +19,8 @@ import CreateCommunity from './create/CreateCommunity';
 import SignUp from './auth/SignUp';
 import SignIn from './auth/SignIn';
 import User from './User';
-import UserProfilePicture from './profile/UserProfilePicture';
+import ViewUserProfilePicture from './profile/ViewUserProfilePicture';
+import EditProfilePicture from './profile/EditProfilePicture';
 import Chat from './Chat';
 
 
@@ -46,7 +47,8 @@ function App() {
                     <Route path = '/c/:cName' component = {Community}></Route>
                     <Route path = '/p/:pId' component = {Post}></Route>
                     {/* action = [view, edit] */}
-                    <Route path = '/profilePicture/:action' component = {UserProfilePicture}></Route>
+                    <Route path = '/profilePicture/view' component = {ViewUserProfilePicture}></Route>
+                    <Route path = '/profilePicture/edit/:action' component = {EditProfilePicture}></Route>
                   </UserRoomsProvider>
                 </SocketProvider>
               </UserProfileCurrentTabProvider>

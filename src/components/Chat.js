@@ -1,4 +1,6 @@
-import {useContext} from 'react';
+import '../styles/Chat.css';
+
+import {useContext, useEffect, useState} from 'react';
 
 import { UserRoomsContext } from '../contexts/UserRooms';
 import { SocketContext } from '../contexts/Socket';
@@ -10,9 +12,21 @@ const Chat = () => {
     const {socket} = useContext(SocketContext);
     const {rooms, currentChat, setCurrentChat} = useContext(UserRoomsContext);
 
-    return <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                <ChatSideBar rooms = {rooms} setCurrentChat = {setCurrentChat} />
-                <ChatFrame socket = {socket} currentChat = {currentChat} />
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    useEffect(() => {
+        if(isMenuOpen) {
+            console.log('side bar opened');
+            document.querySelector('.chat-sidebar').classList.add('chat-sidebar-opened');
+        } else {
+            document.querySelector('.chat-sidebar').classList.remove('chat-sidebar-opened');
+            console.log('side bar closed');
+        }
+    }, [isMenuOpen]);
+
+    return <div className = 'chat'>
+                <ChatSideBar rooms = {rooms} currentChat = {currentChat} setCurrentChat = {setCurrentChat} setIsMenuOpen = {setIsMenuOpen} />
+                <ChatFrame socket = {socket} currentChat = {currentChat} setIsMenuOpen = {setIsMenuOpen} />
             </div>
 }
 

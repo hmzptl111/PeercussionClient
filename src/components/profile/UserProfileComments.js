@@ -10,20 +10,22 @@ import axios from 'axios';
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
+import Empty from '../reusable/Empty';
+
 const UserProfileComments = ({uName}) => {
     const [userComments, setUserComments] = useState([]);
 
     useEffect(() => {
         const getComments = async () => {
-            const comments = await axios.post('/getComments', {uName: uName});
+            // const comments = await axios.post('/getComments', {uName: uName});
 
-            if(comments.data.error) {
-                let errorPopup = PopUp('Something went wrong', comments.data.error);
-                PopUpQueue(errorPopup);
-                return;
-            }
-            console.log(comments.data.message);
-            setUserComments(comments.data.message);
+            // if(comments.data.error) {
+            //     let errorPopup = PopUp('Something went wrong', comments.data.error);
+            //     PopUpQueue(errorPopup);
+            //     return;
+            // }
+            // console.log(comments.data.message);
+            // setUserComments(comments.data.message);
         }
 
         getComments();
@@ -57,7 +59,7 @@ const UserProfileComments = ({uName}) => {
                                     <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} isUpvoted = {c.isUpvoted} isDownvoted = {c.isDownvoted} />
                                 </div>
                     }):
-                    'No comments'
+                    <Empty text = 'Shy?' caption = 'User has not commented in any post, yet' GIF = 'https://c.tenor.com/rec5dlPBK2cAAAAd/mr-bean-waiting.gif' />
                 }
         </div>
 

@@ -1,9 +1,13 @@
+import '../../styles/chat/ChatShare.css';
+
 import { useContext } from "react"
 import {useHistory} from 'react-router-dom';
 
 import { SocketContext } from "../../contexts/Socket"
 import { UserStatusContext } from "../../contexts/UserStatus";
 import { UserRoomsContext } from "../../contexts/UserRooms";
+
+import Popup from 'react-popup';
 
 const ChatShare = ({post, community, user}) => {
     const {socket} = useContext(SocketContext);
@@ -32,25 +36,26 @@ const ChatShare = ({post, community, user}) => {
         socket.emit('message', payload, room.room);
 
         setCurrentChat(room);
+        Popup.close();
         history.push('/chat');
     }
 
 
-    return <div>
+    return <>
             {
                 rooms && rooms.length > 0 ?
                 <>
-                    <ul style = {{listStyleType: 'none'}}>
+                    <div className = 'chat-share-popup'>
                         {
                             rooms.map(room => {
-                                return <li key = {room.room} onClick = {() => handleSharePost(room)} style = {{cursor: 'pointer'}}>{room.uName}</li>
+                                return <div key = {room.room} onClick = {() => handleSharePost(room)} className = 'chat-share-popup-item'>{room.uName}</div>
                             })
                         }
-                    </ul>
+                    </div>
                 </>:
                 'Either you don\'t have any friends or you\'re offline'
             }
-    </div>
+    </>
 }
 
 export default ChatShare;

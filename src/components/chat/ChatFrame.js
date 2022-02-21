@@ -1,3 +1,5 @@
+import '../../styles/chat/ChatFrame.css';
+
 import { useContext, useEffect, useRef, useState } from "react"
 
 import { UserRoomsContext } from "../../contexts/UserRooms";
@@ -14,7 +16,11 @@ import {Link} from 'react-router-dom';
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
-const ChatFrame = () => {
+import {ReactComponent as ImageIcon} from '../../images/gallery.svg';
+
+import {ReactComponent as MenuIcon} from '../../images/menu.svg';
+
+const ChatFrame = ({setIsMenuOpen}) => {
     const {currentChat} = useContext(UserRoomsContext);
     const [messageText, setMessageText] = useState('');
     const [messages, setMessages] = useState([]);
@@ -22,6 +28,7 @@ const ChatFrame = () => {
     const {user} = useContext(UserAuthStatusContext);
 
     const lastMessageRef = useRef();
+
 
     useEffect(() => {
         console.log(messages);
@@ -134,261 +141,159 @@ const ChatFrame = () => {
         };        
     }
 
+    
+
     return <>
         {
             user && currentChat ?
-            <div style = {{width: '70%'}}>
+            <div className = 'chat-frame'>
                 {
-                    <div style = {{height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', alignItems: 'space-between', border: '1px solid black'}}>
-                        <div style = {{width: '100%', border: '1px solid black', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                            <div style = {{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <div className = ''>
+                        <div className = 'chat-frame-header'>
+                            <div className = 'chat-frame-header-item'>
+                                <div className = 'chat-frame-header-item chat-frame-header-menu'>
+                                    {
+                                        <div onClick = {() => setIsMenuOpen(true)}>
+                                            <MenuIcon />
+                                        </div>
+                                    }
+                                </div>
+                                
                                 {
                                     currentChat &&
                                     (
                                         currentChat.uProfilePicture ?
-                                        <GeneralProfileIcon imageSource = 'profilePictures' imageID =       {currentChat.uProfilePicture} />:
+                                        <GeneralProfileIcon imageSource = 'profilePictures' imageID =       {currentChat.uProfilePicture} isBig = {true} />:
                                         <InitialsIcon initial = {currentChat.uName[0]} isUpperCase = {true} />
                                     )
                                 }
                                 
-                                {currentChat.uName}
+                                <span className = 'chat-frame-header-text'>{currentChat.uName}</span>
+
                             </div>
     
-                            <div>
+                            <div className = 'chat-frame-header-item'>
                                 {
                                     currentChat.isUserOnline &&
                                     'Online'
                                 }
                             </div>
+
                         </div>
                         
-                        <div style = {{display: 'flex', flexGrow: '1', flexDirection: 'column', overflowY: 'scroll', border: '1px solid black'}}>
+                        <div className = 'chat-body'>
+                        <div className = 'messages'>
                             {
                                 messages ?
                                 messages.map((m, i) => {
-                                    if(messages.length === i + 1) {
-                                        return <>
-                                            {
-                                                m.type === 'text' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}} ref = {lastMessageRef}>
-                                                    <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                        <div>{m.message}</div>
-                                                    </div>
-                                                </div>
-                                            }
-                                            {
-                                                m.type === 'image' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}} ref = {lastMessageRef}>
-                                                    <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                        <div>
-                                                            {
-                                                                <img src = {m.message} alt = '' height = '300' width = '100%' />
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                            {
-                                                m.type === 'post' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}} ref = {lastMessageRef}>
-                                                    <Link to = {`/p/${m.message.pId}`} style = {{border: '1px solid black', width: '50%'}}>
-                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                        <div style = {{maxWidth: '100%'}}>
-                                                            <div style = {{display: 'flex', flexDirection: 'column'}}>
-                                                                <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                                                    <div>{m.message.uName}</div>
-                                                                    <div>{`c/${m.message.cName}`}</div>
-                                                                </div>
-                                                                <div style = {{overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>
-                                                                    {
-                                                                        m.message.pTitle
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                            {
-                                                                m.message.pThumbnail &&
-                                                                <div>
-                                                                    {
-                                                                        m.message.pThumbnail &&
-                                                                        <img src = {m.message.pThumbnail} alt = '' height = '300' width = '100%' />
-                                                                    }
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </Link>
-                                                </div>
-                                            }
-                                            {
-                                                m.type === 'community' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}} ref = {lastMessageRef}>
-                                                    <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                        <Link to = {`c/${m.message.cName}`} style = {{border: '1px solid black', width: '50%'}}>
-                                                            <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                            <div style = {{maxWidth: '100%'}}>
-                                                                <div style = {{display: 'flex', justifyContent: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', flexDirection: 'column'}}>
-                                                                {/* <div>{m.message.uName}</div> */}
-                                                                    <div>Follow {`c/${m.message.cName}`}</div>
-                                                                
-                                                                {
-                                                                    m.message.cThumbnail &&
-                                                                    <div>
-                                                                        <img src = {`/uploads/communityThumbnails/${m.message.cThumbnail}`} alt = '' height = '300' width = '100%' />
-                                                                    </div>
-                                                                }
-                                                            </div>
-                                                            </div>
-                                                        </Link>
-                                                        
-                                                    </div>
-                                                </div>
-                                            }
-                                            {
-                                                m.type === 'user' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}} ref = {lastMessageRef}>
-                                                    <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                        <Link to = {`u/${m.message.uName}`} style = {{border: '1px solid black', width: '50%'}}>
-                                                            <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                            <div style = {{maxWidth: '100%'}}>
-                                                                <div style = {{display: 'flex', justifyContent: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', flexDirection: 'column'}}>
-                                                                    <div>Follow {`u/${m.message.uName}`}</div>
-                                                                
-                                                                    {
-                                                                        m.message.uProfilePicture &&
-                                                                        <div>
-                                                                            <img src = {`/uploads/profilePictures/${m.message.uProfilePicture}`} alt = '' height = '300' width = '100%' />
-                                                                        </div>
-                                                                    }
-                                                            </div>
-                                                            </div>
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </>
-                                    } else {
-                                        return <>
-                                            {
-                                                m.type === 'text' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}}>
-                                                    <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                        <div>{m.message}</div>
-                                                    </div>
-                                                </div>
-                                            }
-                                            {
-                                                m.type === 'image' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}}>
-                                                    <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                        <div>
-                                                            {
-                                                                <img src = {m.message} alt = '' height = '300' width = '100%' />
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            }
-                                            {
-                                                m.type === 'post' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}}>
-                                                    <Link to = {`/p/${m.message.pId}`} style = {{border: '1px solid black', width: '50%'}}>
-                                                        <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                        <div style = {{maxWidth: '100%'}}>
-                                                            <div style = {{display: 'flex', flexDirection: 'column'}}>
-                                                                <div style = {{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
-                                                                    <div>{m.message.uName}</div>
-                                                                    <div>{`c/${m.message.cName}`}</div>
-                                                                </div>
-                                                                <div style = {{overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>
-                                                                    {
-                                                                        m.message.pTitle
-                                                                    }
-                                                                </div>
-                                                            </div>
-                                                            {
-                                                                m.message.pThumbnail &&
-                                                                <div>
-                                                                    {
-                                                                        m.message.pThumbnail &&
-                                                                        <img src = {m.message.pThumbnail} alt = '' height = '300' width = '100%' />
-                                                                    }
-                                                                </div>
-                                                            }
-                                                        </div>
-                                                    </Link>
-                                                </div>
-                                            }
-                                            {
-                                                m.type === 'community' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}}>
-                                                    <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                        <Link to = {`c/${m.message.cName}`} style = {{border: '1px solid black', width: '50%'}}>
-                                                            <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                            <div style = {{maxWidth: '100%'}}>
-                                                                <div style = {{display: 'flex', justifyContent: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', flexDirection: 'column'}}>
-                                                                {/* <div>{m.message.uName}</div> */}
-                                                                    <div>Follow {`c/${m.message.cName}`}</div>
-                                                                
-                                                                {
-                                                                    m.message.cThumbnail &&
-                                                                    <div>
-                                                                        <img src = {`/uploads/communityThumbnails/${m.message.cThumbnail}`} alt = '' height = '300' width = '100%' />
-                                                                    </div>
-                                                                }
-                                                            </div>
-                                                            </div>
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            }
-                                            {
-                                                m.type === 'user' &&
-                                                <div key = {i} style = {{display: 'flex', flexDirection: 'column', justifyTracks: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', border: '1px solid black'}}>
-                                                    <div style = {{border: '1px solid black', maxWidth: '50%', wordWrap: 'break-word'}}>
-                                                        <Link to = {`u/${m.message.uName}`} style = {{border: '1px solid black', width: '50%'}}>
-                                                            <sup style = {{fontSize: '0.75em', display: 'flex', justifyContent: m.sender === user.uName ? 'flex-end': 'flex-start', alignItems: 'center'}}>{m.time}</sup>
-                                                            <div style = {{maxWidth: '100%'}}>
-                                                                <div style = {{display: 'flex', justifyContent: 'center', alignItems: m.sender === user.uName ? 'flex-end': 'flex-start', flexDirection: 'column'}}>
-                                                                    <div>Follow {`u/${m.message.uName}`}</div>
-                                                                
-                                                                    {
-                                                                        m.message.uProfilePicture &&
-                                                                        <div>
-                                                                            <img src = {`/uploads/profilePictures/${m.message.uProfilePicture}`} alt = '' height = '300' width = '100%' />
-                                                                        </div>
-                                                                    }
-                                                            </div>
-                                                            </div>
-                                                        </Link>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </>
+                                    return <div key = {i} className = 'message' ref = {messages.length === i + 1 ? lastMessageRef: null}>
+                                    {
+                                        m.type === 'text' &&
+                                        <div className = {m.sender === user.uName ? 'sent': 'received'}>
+                                                <sup className = {m.sender === user.uName ? 'message-time sent': 'message-time received'}>{m.time}</sup>
+                                                <div className = 'message-body'>{m.message}</div>
+                                        </div>
                                     }
+                                    {
+                                        m.type === 'image' &&
+                                        <div className = {m.sender === user.uName ? 'sent': 'received'}>
+                                                <sup className = {m.sender === user.uName ? 'message-time sent': 'message-time received'}>{m.time}</sup>
+                                                <div className = 'message-body'>
+                                                    <img src = {m.message} alt = '' className = ' message-body-image' />
+                                                </div>
+                                        </div>
+                                    }
+                                    {
+                                        m.type === 'post' &&
+                                        <div className = {m.sender === user.uName ? 'sent': 'received'}>
+                                            <sup className = {m.sender === user.uName ? 'message-time sent': 'message-time received'}>{m.time}</sup>
+                                            <Link to = {`/p/${m.message.pId}`} className = 'message-body message-body-link'>
+                                                <div className = 'message-body-item'>
+                                                    <div className = 'message-body-item-header'>
+                                                        <div>{m.message.uName}</div>
+                                                        <div>{`c/${m.message.cName}`}</div>
+                                                    </div>
+                                                    <div className = 'message-body-item-title'>
+                                                        <h4>{m.message.pTitle}</h4>
+                                                    </div>
+                                                    {
+                                                        m.message.pThumbnail &&
+                                                        <div className = 'message-body-item-thumbnail'>
+                                                            {
+                                                                m.message.pThumbnail &&
+                                                                <img src = {m.message.pThumbnail} alt = '' className = 'message-body-image' />
+                                                            }
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </Link>
+                                        </div>
+                                    }
+                                    {
+                                        m.type === 'community' &&
+                                        <div className = {m.sender === user.uName ? 'sent': 'received'}>
+                                            <sup className = {m.sender === user.uName ? 'message-time sent': 'message-time received'}>{m.time}</sup>
+                                            <Link to = {`c/${m.message.cName}`} className = 'message-body message-body-link'>
+                                                <div className = 'message-body-item'>
+                                                    <div className = 'message-body-item-header sent'>
+                                                        <div>Check this community out:
+                                                            <div className = 'message-body-header-ref'>{`c/${m.message.cName}`}</div>
+                                                        </div>
+                                                    </div>
+                                                    {
+                                                        m.message.cThumbnail &&
+                                                        <div className = 'message-body-item-thumbnail'>
+                                                            <img src = {`/uploads/communityThumbnails/${m.message.cThumbnail}`} alt = '' className = 'message-body-image' />
+                                                        </div>
+                                                    }
+                                                </div>
+                                            </Link>
+                                        </div>
+                                    }
+                                    {
+                                        m.type === 'user' &&
+                                        <div className = {m.sender === user.uName ? 'sent': 'received'}>
+                                            <sup className = {m.sender === user.uName ? 'message-time sent': 'message-time received'}>{m.time}</sup>
+                                            <Link to = {`u/${m.message.uName}`} className = 'message-body message-body-link'>
+                                                <div className = 'message-body-item'>
+                                                    <div className = 'message-body-item-header sent'>
+                                                        <div> Check this user out:
+                                                            <div className = 'message-body-header-ref'>
+                                                                {`u/${m.message.uName}`}
+                                                            </div>
+                                                        </div>
+                                                    
+                                                    </div>
+                                                        {
+                                                            m.message.uProfilePicture &&
+                                                            <div className = 'message-body-item-thumbnail'>
+                                                                <img src = {`/uploads/profilePictures/${m.message.uProfilePicture}`} alt = '' className = 'message-body-image' />
+                                                            </div>
+                                                        }
+                                                </div>
+                                            </Link>
+                                        </div>
+                                    }
+                                </div> 
                                 }):
-                                'Why so empty, say hi'
+                                'No message'
                             }
                         </div>
     
                         {
                             socket &&
-                            <div style = {{width: '100%', border: '1px solid black', display: 'flex', justifyContent: 'center', alignItems: 'space-between'}}>
-                                <div style = {{width: '80%'}}>
-                                    <input type = 'text' value = {messageText} onChange = {handleMessageTextChange} onKeyDown = {handleEnterKey} style = {{width: '100%', display: 'flex'}} />
-                                </div>
+                            <div className = 'chat-body-footer'>
+                                <input type = 'text' value = {messageText} onChange = {handleMessageTextChange} onKeyDown = {handleEnterKey} placeholder = 'Message' className = 'chat-body-footer-input-text' />
     
-                                <div style = {{width: '20%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                    <label htmlFor = 'chat-share-file' style = {{width: '50%', border: '1px solid black'}}>File
-                                        <input type = 'file' id = 'chat-share-file' name = 'chat-share-file' style = {{display: 'none'}} onChange = {handleShareFile} accept="image/png, image/jpeg" />
-                                    </label>
-                        
-                                    <button style = {{width: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center'}} onClick = {handleMessageSend}>Send</button>
-                                </div>
+                                <label htmlFor = 'chat-share-file' className = 'chat-body-footer-share-file-container'>
+                                    <ImageIcon />
+                                    <input type = 'file' id = 'chat-share-file' name = 'chat-share-file' style = {{display: 'none'}} onChange = {handleShareFile} accept="image/png, image/jpeg" />
+                                </label>
+                    
+                                <button onClick = {handleMessageSend} className = 'chat-body-footer-send'>Send</button>
                             </div>
                         }
+                        </div>
                     </div>
                 }
     

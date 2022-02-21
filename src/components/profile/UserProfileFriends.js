@@ -13,6 +13,8 @@ import InitialsIcon from "../reusable/InitialsIcon";
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
+import Empty from "../reusable/Empty";
+
 const UserProfileFriends = ({uName}) => {
     const [userFriends, setUserFriends] = useState([]);
     const {user} = useContext(UserAuthStatusContext);
@@ -58,8 +60,8 @@ const UserProfileFriends = ({uName}) => {
             {
                 userFriends.length > 0 ?
                 userFriends.map(friend => {
-                    return <div className = 'list-container'>
-                                <div key = {friend._id} className = 'list'>
+                    return <div key = {friend._id} className = 'list-container'>
+                                <div className = 'list'>
                                         <Link to = {`/u/${friend.username}`} className = 'list-info'>
                                             {
                                                 friend.profilePicture ?
@@ -76,7 +78,7 @@ const UserProfileFriends = ({uName}) => {
                                     </div>
                     </div>
                 }):
-                'No friends'
+                <Empty text = 'Seems shy!' caption = 'User has no friends' GIF = 'https://c.tenor.com/skrB3dpqD-oAAAAC/waiting-alone-lonely.gif' />
             }
         </div>
 

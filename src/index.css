@@ -13,6 +13,7 @@ html {
 }
 
 #root {
+  scroll-behavior: smooth;
   max-width: 100vw;
   --white-color: #ffffff;
   --black-color: #000000;

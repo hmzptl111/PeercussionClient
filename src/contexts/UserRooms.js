@@ -31,6 +31,9 @@ export const UserRoomsProvider = ({children}) => {
 
         console.log(response.data.message);
         setRooms(response.data.message);
+        if(response.data.message) {
+            setCurrentChat(response.data.message[0]);
+        }
     }
 
     useEffect(() => {

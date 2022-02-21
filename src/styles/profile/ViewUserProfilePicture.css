@@ -1,6 +1,7 @@
-.back-button {
-    cursor: pointer;
+.profile-picture-view {
+    max-width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-top: 1rem;
 }

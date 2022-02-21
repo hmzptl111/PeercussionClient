@@ -1,3 +1,5 @@
+import '../../styles/profile/SetUserProfileUsingCamera.css';
+
 import {useEffect, useRef, useState} from 'react';
 
 import { useHistory } from 'react-router-dom';
@@ -7,7 +9,8 @@ import axios from 'axios';
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
-import {ReactComponent as ViewProfilePicture} from '../../images/user_default_profile.svg';
+import {ReactComponent as CameraIcon} from '../../images/camera.svg';
+import {ReactComponent as SubmitIcon} from '../../images/check.svg';
 
 const SetUserProfileUsingCamera = () => {
     navigator.getMedia =    navigator.getUserMedia ||
@@ -16,12 +19,12 @@ const SetUserProfileUsingCamera = () => {
 
     const videoRef = useRef();
     const canvasRef = useRef();
-    const imageRef = useRef();
     
     const [hasCaptured, setHasCaptured] = useState(false);
     const [isUserProfileSet, setIsUserProfileSet] = useState(false);
     
     let history = useHistory();
+
 
     useEffect(() => {
         let streamTrack;
@@ -43,10 +46,17 @@ const SetUserProfileUsingCamera = () => {
         return () => streamTrack.getTracks().forEach(track => track.stop());
     }, []);
 
+
     const handleCapture = () => {
         console.log('image captured');
         const context = canvasRef.current.getContext('2d');
         context.drawImage(videoRef.current, 0, 0, videoRef.current.width, videoRef.current.height);        
+
+        console.log(videoRef.current.width);
+        console.log(videoRef.current.height);
+        console.log(canvasRef.current.width);
+        console.log(canvasRef.current.width);
+
 
         if(hasCaptured) {
             //recapture
@@ -54,8 +64,7 @@ const SetUserProfileUsingCamera = () => {
             setIsUserProfileSet(false);
             videoRef.current.play();
             
-            imageRef.current.style.display = 'none';
-            imageRef.current.setAttribute('src', '');
+            canvasRef.current.style.display = 'none';
             videoRef.current.style.display = 'block';
         } else {
             //capture
@@ -64,22 +73,19 @@ const SetUserProfileUsingCamera = () => {
             videoRef.current.pause();
             
             videoRef.current.style.display = 'none';
-            imageRef.current.setAttribute('src', canvasRef.current.toDataURL('image/png'));
-            imageRef.current.style.display = 'block';
+            canvasRef.current.style.display = 'block';
+
+            console.log(canvasRef.current.toDataURL('image/jpeg'));
         }
         
-    }
 
-    const handleViewProfilePicture = () => {
-        Popup.close();
-        history.push('/profilePicture/view');
     }
 
     const handleSetProfilePicture = async () => {
         const payload = {
             profilePicture: canvasRef.current.toDataURL('image/jpeg')
         }
-        const response = await axios.post('/setProfilePictureFromCamera', payload);
+        const response = await axios.post('/setProfilePicture', payload);
 
         if(response.data.error) {
             let errorPopup = PopUp('Something went wrong', response.data.error);
@@ -87,37 +93,36 @@ const SetUserProfileUsingCamera = () => {
             return;
         }
 
-        setIsUserProfileSet(true);
-        let successPopup = PopUp('Profile picture updated',
-            <div to = '/profilePicture/view' onClick = {handleViewProfilePicture} style = {{cursor: 'pointer'}}>
-                <ViewProfilePicture />
-                View updated profile picture
-            </div>
-        );
-        PopUpQueue(successPopup);
-        return;
+        history.push('/profilePicture/view');
     }
 
     return <>
-            <video ref = {videoRef} width = '300' height = '300'></video>
-
-            <canvas ref = {canvasRef} width = '300' height = '300' style = {{display: 'none'}}></canvas>
-            
-            <img ref = {imageRef} width = '300' height = '300' style = {{display: 'none'}} alt = ''></img>
-            
-            <button onClick = {handleCapture}>
+            <div className = 'profile-picture-container'>
+                <div onClick = {handleCapture} className = 'profile-picture-header'>
+                    <CameraIcon />
+                    {
+                        hasCaptured ?
+                        'Recapture':
+                        'Capture'
+                    }
+                </div>
+                
                 {
-                    hasCaptured ?
-                    'Recapture':
-                    'Capture'
+                    hasCaptured && !isUserProfileSet &&
+                    <div onClick={handleSetProfilePicture} className = 'profile-picture-header'>
+                        <SubmitIcon />
+                        Update
+                    </div>
                 }
-            </button>
-            
-            {
-                hasCaptured && !isUserProfileSet &&
-                <button onClick={handleSetProfilePicture}>Set Profile Picture</button>
-            }
+            </div>
 
+
+            <div className = 'preview-capture-container'>
+                <video ref = {videoRef} width = '300px' height = '300px' />
+
+                <canvas ref = {canvasRef} width = '300px' height = '300px' style = {{display: 'none'}} />
+            </div>
+            
             <Popup />
         </>
 }

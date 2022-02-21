@@ -18,6 +18,8 @@ import { PopUp, PopUpQueue } from '../reusable/PopUp';
 import {ReactComponent as RestrictIcon} from '../../images/restricted.svg';
 import {ReactComponent as UnrestrictIcon} from '../../images/unrestricted.svg';
 
+import Empty from '../reusable/Empty';
+
 const CommunityRestrictedUsers = ({cName, isModerator}) => {
     const {user} = useContext(UserAuthStatusContext);
 
@@ -236,7 +238,7 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
                         ))
                     }
                 </div>:
-                'No users restricted'
+                <Empty text = 'Arms, wide open!' caption = 'No one is restricted from this community' GIF = 'https://c.tenor.com/bGgv8ew9uNAAAAAC/mr-bean.gif' />
             }
 
             <Popup />

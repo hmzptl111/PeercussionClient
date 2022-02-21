@@ -1,0 +1,26 @@
+.chat {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-body {
+    /* margin-top: 5rem; */
+    top: 4rem;
+    bottom: 4rem;
+    left: 25%;
+    width: 75%;
+    position: fixed;
+    overflow-x: hidden;
+}
+
+@media screen and (max-width: 786px) {
+    .chat-body {
+      left: 0;
+      width: 100%;
+    }
+
+}

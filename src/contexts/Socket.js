@@ -27,7 +27,7 @@ export const SocketProvider = ({children}) => {
     useEffect(() => {       
         if(!user) return; 
         if(isUserOnline) {
-            const response = io('http://localhost:3001/', {
+            const response = io('http://192.168.0.195:3001/', {
                 transports : ['websocket', 'polling', 'flashsocket']
             });
             console.log(response);

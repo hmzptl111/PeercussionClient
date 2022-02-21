@@ -1,0 +1,18 @@
+.empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 100%;
+    /* border: 5px solid red; */
+    padding: 0.5rem;
+    gap: 0.5rem;
+}
+
+.empty-caption {
+    font-size: 0.75rem;
+}
+
+.empty-gif {
+    max-width: 100%;
+}

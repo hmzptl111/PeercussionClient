@@ -1,20 +1,28 @@
+import '../../styles/profile/ViewUserProfilePicture.css';
+
 import {useContext, useEffect, useRef, useState} from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import {UserAuthStatusContext} from '../../contexts/UserAuthStatus';
 
-import BackButton from '../reusable/BackButton';
+// import BackButton from '../reusable/BackButton';
+import {ReactComponent as RemoveIcon} from '../../images/remove.svg';
+import {ReactComponent as UpdateIcon} from '../../images/update.svg';
 
 import axios from 'axios';
 
 import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
+import UpdateUserProfilePicturePopup from '../reusable/UpdateUserProfilePicturePopup';
+
 const ViewUserProfilePicture = () => {
     const [doesUserHaveProfilePicture, setDoesUserHaveProfilePicture] = useState(false);
     const userProfilePictureRef = useRef();
 
     const {user} = useContext(UserAuthStatusContext);
+
+    let history = useHistory();
 
     useEffect(() => {
         if(!user) return;
@@ -57,24 +65,34 @@ const ViewUserProfilePicture = () => {
         setDoesUserHaveProfilePicture(false);
     }
 
+    const handleUpdateProfilePicture = () => {
+        let choice = PopUp('Set Profile Picture', <UpdateUserProfilePicturePopup />);
+        PopUpQueue(choice);
+        return;
+    }
+
     return <>
-                <BackButton />
+                {/* <BackButton /> */}
 
-                <div style = {{display: 'grid', placeItems: 'center'}}>
+                <div className = 'profile-picture-container'>
                     {
-                        
                         doesUserHaveProfilePicture ?
-                        <div style = {{display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column'}}>
-                            <img ref = {userProfilePictureRef} alt = '' height = '300' width = '300'></img>
-                            <button onClick = {handleRemoveProfilePicture} style = {{marginTop: '1em'}}>Remove Profile Picture</button>
+                        <div className = 'profile-picture-header' onClick = {handleRemoveProfilePicture}>
+                            <RemoveIcon />
+                            Remove
                         </div>:
-                        <div>
-                            Ooh, so empty!
-                            <div style = {{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-                                <Link to = '/profilePicture/edit'>Set profile picture</Link>
-                            </div>
+                        <div className = 'profile-picture-header' onClick = {handleUpdateProfilePicture}>
+                            <UpdateIcon />
+                            Update
                         </div>
+                    }
+                </div>
 
+                <div className = 'profile-picture-view'>
+                    {
+                        doesUserHaveProfilePicture ?
+                        <img ref = {userProfilePictureRef} alt = '' height = '300' width = '300'></img>:
+                        <div>Why so empty?</div>
                     }
                 </div>
 

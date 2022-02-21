@@ -1,0 +1,40 @@
+.profile-picture-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#user-uploaded-profile-picture {
+    display: none;
+}
+
+.profile-picture-header {
+    border: 10px solid var(--primary-lighter-color);
+    width: 100%;
+    /* border: 1px solid var(--primary-medium-color); */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    gap: 0.5rem;
+}
+
+.profile-picture-header:hover {
+    background: var(--primary-light-color);
+}
+
+.preview-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.preview-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 75%;
+}

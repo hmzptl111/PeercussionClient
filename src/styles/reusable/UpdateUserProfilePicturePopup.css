@@ -1,0 +1,24 @@
+
+.edit-user-profile-picture-popup {
+    /* border: 1px solid red; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .edit-user-profile-picture-popup-item {
+    flex-basis: 50%;
+    padding: 0.5rem 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.25rem;
+    /* border: 1px solid green; */
+    cursor: pointer;
+  }
+  
+  .edit-user-profile-picture-popup-item:hover {
+    background: var(--primary-light-color);
+  }
