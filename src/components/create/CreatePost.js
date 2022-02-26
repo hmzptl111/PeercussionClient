@@ -195,8 +195,8 @@ const CreatePost = () => {
         const handleCreatePost = async (e) => {
             e.preventDefault();
 
-        if(postTitle === '') {
-            let postTitleError = PopUp('Something went wrong', 'Post title cannot be empty');
+        if(postTitle.length <= 0) {
+            let postTitleError = PopUp('Something went wrong', 'Post title should not be empty');
             PopUpQueue(postTitleError);
             return;
         } else if(postTitle.length > 100) {

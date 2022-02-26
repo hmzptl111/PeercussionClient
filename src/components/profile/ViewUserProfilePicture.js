@@ -1,7 +1,6 @@
 import '../../styles/profile/ViewUserProfilePicture.css';
 
 import {useContext, useEffect, useRef, useState} from 'react';
-import { useHistory } from 'react-router-dom';
 
 import {UserAuthStatusContext} from '../../contexts/UserAuthStatus';
 
@@ -21,8 +20,6 @@ const ViewUserProfilePicture = () => {
     const userProfilePictureRef = useRef();
 
     const {user} = useContext(UserAuthStatusContext);
-
-    let history = useHistory();
 
     useEffect(() => {
         if(!user) return;

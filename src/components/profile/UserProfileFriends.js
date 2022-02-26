@@ -65,7 +65,7 @@ const UserProfileFriends = ({uName}) => {
                                         <Link to = {`/u/${friend.username}`} className = 'list-info'>
                                             {
                                                 friend.profilePicture ?
-                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {user.profilePicture} />:
+                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {friend.profilePicture} />:
                                                 <InitialsIcon initial = {friend.username[0]} />
                                             }
                                             <span className = 'list-info-text'>{friend.username}</span>

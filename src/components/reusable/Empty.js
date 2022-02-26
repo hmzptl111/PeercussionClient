@@ -6,7 +6,7 @@ const Empty = ({text, caption, GIF}) => {
             <h3>{text}</h3>
             <p className = 'empty-caption'>{caption}</p>
             {/* <EmptyIcon /> */}
-            <img src = {GIF} className = 'empty-gif' />
+            <img src = {GIF} alt = '' className = 'empty-gif' />
         </div>
 }
 

@@ -17,15 +17,15 @@ const UserProfileComments = ({uName}) => {
 
     useEffect(() => {
         const getComments = async () => {
-            // const comments = await axios.post('/getComments', {uName: uName});
+            const comments = await axios.post('/getComments', {uName: uName});
 
-            // if(comments.data.error) {
-            //     let errorPopup = PopUp('Something went wrong', comments.data.error);
-            //     PopUpQueue(errorPopup);
-            //     return;
-            // }
-            // console.log(comments.data.message);
-            // setUserComments(comments.data.message);
+            if(comments.data.error) {
+                let errorPopup = PopUp('Something went wrong', comments.data.error);
+                PopUpQueue(errorPopup);
+                return;
+            }
+            console.log(comments.data.message);
+            setUserComments(comments.data.message);
         }
 
         getComments();

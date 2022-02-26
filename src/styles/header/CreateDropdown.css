@@ -29,7 +29,7 @@
   background: var(--primary-lighter-color);
   width: 12rem;
   position: absolute;
-  top: 105%;
+  top: 2.5rem;
   left: 0;
   font-size: 0.85rem;
   color: var(--primary-dark-color);

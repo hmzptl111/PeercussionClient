@@ -37,7 +37,7 @@ const ChatShare = ({post, community, user}) => {
 
         setCurrentChat(room);
         Popup.close();
-        history.push('/chat');
+        // history.push('/chat');
     }
 
 

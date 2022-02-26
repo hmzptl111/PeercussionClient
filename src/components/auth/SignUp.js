@@ -66,15 +66,14 @@ const SignUp = () => {
         //if there's any non-word character(anything except [a-zA-Z0-9_]), username is invalid
         //if username starts with a digit like 3hamza, it is invalid
         const usernameRegex = /^[^\d][\w]+$/;
-        if(!usernameRegex.test(username)) {
-            setUsernameError('Invalid username');
+        if(!usernameRegex.test(username) || username.length > 32) {
+            setUsernameError('Invalid username, please click on the corresponding (i) icon');
             return;
         }
         
         const passwordRegex = /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*]).*$/;
-        if(!passwordRegex.test(password)) {
-            console.log('password must contain at least one lowercase, one uppercase and one symbol');
-            setPasswordError('Invalid password');
+        if(!passwordRegex.test(password) || password.length > 64) {
+            setPasswordError('Invalid password, please click on the corresponding (i) icon');
             return;
         }
 
@@ -85,12 +84,12 @@ const SignUp = () => {
 
         const emailRegex = /\S+@\S+\.\S+/;
         if(!emailRegex.test(email)) {
-            setEmailError('Invalid email');
+            setEmailError('Invalid email, please click on the corresponding (i) icon');
             return;
         }
 
         if(about.length > 255) {
-            setAboutError('Must not exceed 255 characters');
+            setAboutError('Invalid about, please click on the corresponding (i) icon');
             return;
         }
 
@@ -108,7 +107,6 @@ const SignUp = () => {
             PopUpQueue(errorPopup);
             return;
         }
-        console.log(result.data);
 
         setUsername('');
         setPassword('');
@@ -155,7 +153,7 @@ const SignUp = () => {
                     <div className = 'auth-card-item'>
                         <input type = 'text' placeholder = 'Username' value = {username} onChange = {handleUsername} className = 'auth-card-item-input' />
                         <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'Username must only consist of the english alphabet (a - z  A - Z) or underscore ( _ )' />
+                            <InfoButton content = 'Username should only consist of the english alphabet (a - z  A - Z) and underscore ( _ ), and should not exceed 32 characters' />
                         </span>
                     </div>
 
@@ -167,7 +165,7 @@ const SignUp = () => {
                     <div className = 'auth-card-item'>
                         <input type = 'password' placeholder = 'Password' value = {password} onChange = {handlePassword} className = 'auth-card-item-input' />
                         <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'Password must consist of at least one lowercase (a - z), one uppercase (A - Z) and one special character (~ ! @ # $ % ^ & *)' />
+                            <InfoButton content = 'Password should consist of at least one lowercase (a - z), one uppercase (A - Z) and one special character (~ ! @ # $ % ^ & *). It should consist of at least 8 characters and should not exceed 64 characters' />
                         </span>
                     </div>
 
@@ -191,7 +189,7 @@ const SignUp = () => {
                     <div className = 'auth-card-item'>
                         <input type = 'text' placeholder = 'Email' value = {email} onChange = {handleEmail} className = 'auth-card-item-input' />
                         <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'An email will be sent to your account for confirmation, make sure you have access to it' />
+                            <InfoButton content = 'An email will be sent to your account for confirmation, make sure it is valid and you have access to it' />
                         </span>
                     </div>
 
@@ -203,7 +201,7 @@ const SignUp = () => {
                     <div className = 'auth-card-item'>
                         <textarea placeholder = 'About you' value = {about} onChange = {handleAbout} className = 'auth-card-item-input auth-card-item-about' />
                         <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'Must not exceed 100 characters' />
+                            <InfoButton content = 'Write about yourself in under 255 characters' />
                         </span>
                     </div>
 

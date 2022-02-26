@@ -10,7 +10,7 @@ export const SocketContext = createContext();
 export const SocketProvider = ({children}) => {
     const [socket, setSocket] = useState();
     const {isUserOnline} = useContext(UserStatusContext);
-    const {user} = useContext(UserAuthStatusContext);
+    const {isUserSignedIn, user} = useContext(UserAuthStatusContext);
 
     useEffect(() => {
         if(!socket) return;
@@ -25,9 +25,10 @@ export const SocketProvider = ({children}) => {
     }, [socket]);
 
     useEffect(() => {       
-        if(!user) return; 
+        if(!user || !isUserSignedIn) return; 
         if(isUserOnline) {
-            const response = io('http://192.168.0.195:3001/', {
+            //do not replace localhost to host ip address, for some reason, it does not work
+            const response = io('http://localhost:3001/', {
                 transports : ['websocket', 'polling', 'flashsocket']
             });
             console.log(response);
@@ -39,7 +40,7 @@ export const SocketProvider = ({children}) => {
         }
 
         //eslint-disable-next-line
-    }, [user, isUserOnline]);
+    }, [user, isUserSignedIn, isUserOnline]);
     
 
     return (

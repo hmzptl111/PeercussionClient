@@ -77,7 +77,7 @@ const GetCommunities = ({uName, cName, type}) => {
                         }
                     </div>
                 )):
-                <Empty text = 'Why so lonely?' caption = {`${type === 'moderates' && 'User does not moderate any community' || type === 'following' && 'User does not follow any community' || type === 'related' && 'No related communities found'}`} GIF = 'https://c.tenor.com/skrB3dpqD-oAAAAC/waiting-alone-lonely.gif' />
+                <Empty text = 'Why so lonely?' caption = {`${(type === 'moderates' && 'User does not moderate any community') || (type === 'following' && 'User does not follow any community') || (type === 'related' && 'No related communities found')}`} GIF = 'https://c.tenor.com/skrB3dpqD-oAAAAC/waiting-alone-lonely.gif' />
             }
 
             <Popup />
