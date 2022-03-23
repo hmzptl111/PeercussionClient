@@ -1,23 +1,22 @@
-import {createContext, useContext, useEffect, useState} from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 import { SocketContext } from './Socket';
-import {UserStatusContext} from '../contexts/UserStatus';
-import {UserAuthStatusContext} from '../contexts/UserAuthStatus';
+import { UserStatusContext } from './UserStatus';
+import { UserAuthStatusContext } from './UserAuthStatus';
 
 import axios from 'axios';
 
-import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../components/reusable/PopUp';
 
 export const UserRoomsContext = createContext();
 
+
 export const UserRoomsProvider = ({children}) => {
     const [rooms, setRooms] = useState([]);
     const [currentChat, setCurrentChat] = useState();
+
     const {isUserOnline} = useContext(UserStatusContext);
-
     const {socket} = useContext(SocketContext);
-
     const {user} = useContext(UserAuthStatusContext);
 
     const getRooms = async () => {
@@ -29,8 +28,8 @@ export const UserRoomsProvider = ({children}) => {
             return;
         }
 
-        console.log(response.data.message);
         setRooms(response.data.message);
+
         if(response.data.message) {
             setCurrentChat(response.data.message[0]);
         }
@@ -47,10 +46,10 @@ export const UserRoomsProvider = ({children}) => {
                 }
                 return updatedRooms;
             });
-        } else {
-            getRooms();
+            return;
         }
 
+        getRooms();
         //eslint-disable-next-line
     }, [isUserOnline]);
 
@@ -58,7 +57,6 @@ export const UserRoomsProvider = ({children}) => {
         if(!socket) return;
 
         socket.on('status', status => {
-            console.log(status);
             setRooms(rooms => {
                 let updatedRooms = [...rooms];
                 for(let i = 0; i < updatedRooms.length; i++) {
@@ -91,9 +89,6 @@ export const UserRoomsProvider = ({children}) => {
     }, [user]);
 
     return <UserRoomsContext.Provider value = {{rooms, setRooms, currentChat, setCurrentChat}}>
-            {
-                children
-            }
-            <Popup />
-        </UserRoomsContext.Provider>
+    { children }
+</UserRoomsContext.Provider>
 }

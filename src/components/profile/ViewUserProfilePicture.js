@@ -1,25 +1,24 @@
 import '../../styles/profile/ViewUserProfilePicture.css';
 
-import {useContext, useEffect, useRef, useState} from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 
-import {UserAuthStatusContext} from '../../contexts/UserAuthStatus';
+import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 
-// import BackButton from '../reusable/BackButton';
-import {ReactComponent as RemoveIcon} from '../../images/remove.svg';
-import {ReactComponent as UpdateIcon} from '../../images/update.svg';
+import { ReactComponent as RemoveIcon } from '../../images/remove.svg';
+import { ReactComponent as UpdateIcon } from '../../images/update.svg';
 
 import axios from 'axios';
 
-import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 import UpdateUserProfilePicturePopup from '../reusable/UpdateUserProfilePicturePopup';
 
 const ViewUserProfilePicture = () => {
     const [doesUserHaveProfilePicture, setDoesUserHaveProfilePicture] = useState(false);
-    const userProfilePictureRef = useRef();
-
+    
     const {user} = useContext(UserAuthStatusContext);
+    
+    const userProfilePictureRef = useRef();
 
     useEffect(() => {
         if(!user) return;
@@ -29,7 +28,6 @@ const ViewUserProfilePicture = () => {
                 uName: user.uName
             }
             const response = await axios.post('/getProfilePicture',  payload);
-            console.log(response.data);
 
             if(response.data.error) {
                 let errorPopup = PopUp('Something went wrong', response.data.error);
@@ -69,8 +67,6 @@ const ViewUserProfilePicture = () => {
     }
 
     return <>
-                {/* <BackButton /> */}
-
                 <div className = 'profile-picture-container'>
                     {
                         doesUserHaveProfilePicture ?
@@ -92,8 +88,6 @@ const ViewUserProfilePicture = () => {
                         <div>Why so empty?</div>
                     }
                 </div>
-
-                <Popup />
         </>
 }
 

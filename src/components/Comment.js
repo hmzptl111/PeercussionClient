@@ -1,7 +1,7 @@
 import '../styles/Comment.css';
 
-import {useContext, useEffect, useRef, useState} from 'react';
-import {Link, useHistory} from 'react-router-dom';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 
 import {UserAuthStatusContext} from '../contexts/UserAuthStatus';
 
@@ -9,28 +9,26 @@ import axios from 'axios';
 
 import CreateComment from './create/CreateComment';
 import VoteComment from './vote/VoteComment';
-
 import GeneralProfileIcon from './reusable/GeneralProfileIcon';
 import InitialsIcon from './reusable/InitialsIcon';
 
-import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from './reusable/PopUp';
 
+
 const Comment = ({pId, pTitle, cId, cName, setPost}) => {
-    const {user} = useContext(UserAuthStatusContext);
-    
     const [postComments, setPostComments] = useState([]);
     const [commentsOffset, setCommentsOffset] = useState(0);
     const totalCommentsReturnedInCurrentBatch = useRef(0);
     const [hasMoreComments, setHasMoreComments] = useState(true);
-
     const [comment, setComment] = useState('');
-
     const [commentReply, setCommentReply] = useState('');
+    
+    const {user} = useContext(UserAuthStatusContext);
+
     const replyTo = useRef('');
+    const commentsSectionRef = useRef();
 
     let history = useHistory();
-    const commentsSectionRef = useRef();
 
     useEffect(() => {
         handleLoadMoreComments();
@@ -203,98 +201,92 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
         setCommentReply('');
     }
 
-    useEffect(() => {
-        console.log(postComments);
-    }, [postComments]);
 
-    return <>
-        <div ref = {commentsSectionRef} className = 'comments-container'>
-            <CreateComment comment = {comment} setComment = {setComment} handleCreateComment = {handleCreateComment} uName = {user && user.uName} />
+    return <div ref = {commentsSectionRef} className = 'comments-container'>
+    <CreateComment comment = {comment} setComment = {setComment} handleCreateComment = {handleCreateComment} uName = {user && user.uName} />
 
-            {
-                postComments.map(c => {
-                    return <div className = 'comments'>
-                                <div className = 'comment'>
-                                    <div className = 'comment-body'>
-                                        <Link to = {`/u/${c.uName}`} className = 'commenter-link'>
-                                            {
-                                                c.uProfilePicture ?
-                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {c.uProfilePicture} />:
-                                                <InitialsIcon initial = {c.uName[0]} />
-                                            }
-                                        </Link>
+    {
+        postComments.map(c => {
+            return <div className = 'comments'>
+                        <div className = 'comment'>
+                            <div className = 'comment-body'>
+                                <Link to = {`/u/${c.uName}`} className = 'commenter-link'>
+                                    {
+                                        c.uProfilePicture ?
+                                        <GeneralProfileIcon imageSource = 'profilePictures' imageID = {c.uProfilePicture} />:
+                                        <InitialsIcon initial = {c.uName[0]} />
+                                    }
+                                </Link>
 
-                                        <div className = 'comment-text'>
-                                            <Link to = {`/u/${c.uName}`} className = 'commenter-link'>
-                                                <span className = 'commenter-name'>{c.uName}</span>
-                                            </Link>
-                                            
-                                            <div className = 'comment-text-content'>{c.comment}</div>
-                                        </div>
-                                    </div>
+                                <div className = 'comment-text'>
+                                    <Link to = {`/u/${c.uName}`} className = 'commenter-link'>
+                                        <span className = 'commenter-name'>{c.uName}</span>
+                                    </Link>
+                                    
+                                    <div className = 'comment-text-content'>{c.comment}</div>
+                                </div>
+                            </div>
 
-                                    <div className = 'comment-footer'>
-                                        <div onClick = {e => c.replies.length !== 0 && handleLoadCommentReplies(e, c)} className = 'comment-footer-button'>
-                                            {c.replies.length === 0 ? `No`: c.replies.length} Replies
-                                        </div>
-                                        <div onClick = {e => handleCommentReply(e, c._id)} className = 'comment-footer-button'>
-                                            Reply
-                                        </div>
-                                        
-                                        <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} isUpvoted = {c.isUpvoted} isDownvoted = {c.isDownvoted} />
-                                    </div>
+                            <div className = 'comment-footer'>
+                                <div onClick = {e => c.replies.length !== 0 && handleLoadCommentReplies(e, c)} className = 'comment-footer-button'>
+                                    {c.replies.length === 0 ? `No`: c.replies.length} Replies
+                                </div>
+                                <div onClick = {e => handleCommentReply(e, c._id)} className = 'comment-footer-button'>
+                                    Reply
                                 </div>
                                 
-                                <div id = {`${c._id}-reply`} className = 'comment-reply' style = {{display: 'none'}}>
-                                    <CreateComment comment = {commentReply} setComment = {setCommentReply} handleCreateCommentReply = {e => handleCreateCommentReply(e, c)} uName = {user && user.uName} replyTo = {c.uName} handleCancelCreateCommentReply = {e => handleCancelCreateCommentReply(e, c._id)} />
-                                </div>
+                                <VoteComment cId = {c._id} votes = {c.upvotes - c.downvotes} isUpvoted = {c.isUpvoted} isDownvoted = {c.isDownvoted} />
+                            </div>
+                        </div>
+                        
+                        <div id = {`${c._id}-reply`} className = 'comment-reply' style = {{display: 'none'}}>
+                            <CreateComment comment = {commentReply} setComment = {setCommentReply} handleCreateCommentReply = {e => handleCreateCommentReply(e, c)} uName = {user && user.uName} replyTo = {c.uName} handleCancelCreateCommentReply = {e => handleCancelCreateCommentReply(e, c._id)} />
+                        </div>
 
+                        {
+                            c.replies !== [] &&
+                            <div style = {{paddingLeft: '1em'}}>
                                 {
-                                    c.replies !== [] &&
-                                    <div style = {{paddingLeft: '1em'}}>
-                                        {
-                                            c.replies.map(reply => {
-                                                if(!reply.comment) return null;
-                                                return <div className = 'comment reply'>
-                                                    <div className = 'comment-body'>
-                                                        <Link to = {`/u/${reply.uName}`} className = 'commenter-link'>
-                                                            {
-                                                                reply.uProfilePicture ?
-                                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {reply.uProfilePicture} />:
-                                                                <InitialsIcon initial = {c.uName[0]} />
-                                                            }
-                                                            </Link>
+                                    c.replies.map(reply => {
+                                        if(!reply.comment) return null;
+                                        return <div className = 'comment reply'>
+                                            <div className = 'comment-body'>
+                                                <Link to = {`/u/${reply.uName}`} className = 'commenter-link'>
+                                                    {
+                                                        reply.uProfilePicture ?
+                                                        <GeneralProfileIcon imageSource = 'profilePictures' imageID = {reply.uProfilePicture} />:
+                                                        <InitialsIcon initial = {c.uName[0]} />
+                                                    }
+                                                    </Link>
 
-                                                        <div className = 'comment-text'>
-                                                            <Link to = {`/u/${reply.uName}`} className = 'commenter-link'>
-                                                                    <span className = 'commenter-name'>{reply.uName}</span>
-                                                            </Link>
-                                                            
-                                                            <div className = 'comment-text-content'>
-                                                                {reply.comment}
-                                                            </div>
-                                                        </div>
+                                                <div className = 'comment-text'>
+                                                    <Link to = {`/u/${reply.uName}`} className = 'commenter-link'>
+                                                            <span className = 'commenter-name'>{reply.uName}</span>
+                                                    </Link>
+                                                    
+                                                    <div className = 'comment-text-content'>
+                                                        {reply.comment}
                                                     </div>
-
-                                                    <VoteComment cId = {reply._id} votes = {reply.upvotes - reply.downvotes} isUpvoted = {reply.isUpvoted} isDownvoted = {reply.isDownvoted} />
                                                 </div>
-                                            })
-                                        }
-                                    </div>
-                                }
-                            </div>;
-                })
-            }
-            {
-                hasMoreComments &&
-                <div onClick = {handleLoadMoreComments} className = 'load-more-comments'>
-                    <div className = 'load-more-comments-button'>Load more</div>
-                </div>
-            }
-        </div>
+                                            </div>
 
-        <Popup />
-    </>
+                                            <VoteComment cId = {reply._id} votes = {reply.upvotes - reply.downvotes} isUpvoted = {reply.isUpvoted} isDownvoted = {reply.isDownvoted} />
+                                        </div>
+                                    })
+                                }
+                            </div>
+                        }
+                    </div>;
+        })
+    }
+    
+    {
+        hasMoreComments &&
+        <div onClick = {handleLoadMoreComments} className = 'load-more-comments'>
+            <div className = 'load-more-comments-button'>Load more</div>
+        </div>
+    }
+</div>
 }
 
 export default Comment;

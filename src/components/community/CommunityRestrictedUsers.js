@@ -2,38 +2,47 @@ import '../../styles/reusable/GetCommunities.css';
 import '../../styles/community/CommunityRestrictedUsers.css';
 
 import React, { useContext, useEffect, useRef, useState } from 'react';
-
 import { Link } from 'react-router-dom';
+
+import axios from 'axios';
 
 import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 
 import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
 import InitialsIcon from '../reusable/InitialsIcon';
-
-import axios from 'axios';
-
-import Popup from 'react-popup';
-import { PopUp, PopUpQueue } from '../reusable/PopUp';
+import Empty from '../reusable/Empty';
 
 import {ReactComponent as RestrictIcon} from '../../images/restricted.svg';
 import {ReactComponent as UnrestrictIcon} from '../../images/unrestricted.svg';
+import {ReactComponent as EditIcon} from '../../images/edit.svg';
 
-import Empty from '../reusable/Empty';
+import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
-const CommunityRestrictedUsers = ({cName, isModerator}) => {
-    const {user} = useContext(UserAuthStatusContext);
 
+const CommunityRestrictedUsers = ({cName, isOwner, setCommunity}) => {
     const [restrictedUsers, setRestrictedUsers] = useState([]);
-
     const [searchText, setSearchText] = useState('');
     const [userSuggestions, setUserSuggestions] = useState([]);
     const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+    
+    const {user} = useContext(UserAuthStatusContext);
 
     const searchRef = useRef();
 
     const handleSearchTextChange = e => {
         setSearchText(e.target.value);
     }
+
+    useEffect(() => {
+        setCommunity(previousState => {
+            return {
+                ...previousState,
+                restrictedUsers: restrictedUsers
+            }
+        });
+        //eslint-disable-next-line
+    }, [restrictedUsers]);
     
     useEffect(() => {
         const getRestrictedUsers = async () => {
@@ -118,6 +127,7 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
             restrictUId: user._id,
             cName: cName
         }
+
         if(user.isRestricted) {
             const response = await axios.post('/restrictUser/unrestrict', payload);
             
@@ -157,6 +167,7 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
             restrictUId: user._id,
             cName: cName
         }
+
         const response = await axios.post('/restrictUser/unrestrict', payload);
 
         if(response.data.error) {
@@ -171,79 +182,87 @@ const CommunityRestrictedUsers = ({cName, isModerator}) => {
         });
       }
 
-    return(
-        <>
-            {
-                isModerator &&
-                <div ref = {searchRef}>
-                    <input type = 'text' placeholder = 'Search user to restrict' onChange = {handleSearchTextChange} value = {searchText} onFocus={handleSearchTextFocus} className = 'search-input' />
-        
-                    {
-                        searchText && isSuggestionsOpen &&
-                        <div>      
-                            {
-                                userSuggestions && userSuggestions.length > 0 &&
-                                <div className = 'list-container'>
-                                    {
-                                        userSuggestions.map(user => (
-                                            !user.isRestricted &&
-                                                <div className = 'list' key = {user.username} onClick={handleSuggestionClicked}>
-                                                    <Link to = {`/u/${user.username}`} className = 'list-info'>
-                                                        {
-                                                            user.profilePicture ?
-                                                            <GeneralProfileIcon imageSource = 'profilePictures' imageID = {user.profilePicture} />:
-                                                            <InitialsIcon initial = {user.username[0]} />
-                                                        }
-                                                        <span className = 'list-info-text'>{user.username}</span>
-                                                    </Link>
+    const handleEdit = () => {
+        setIsEditing(previousState => !previousState);
+    }
 
-                                                    {
-                                                        <div className = 'list-button' onClick = {() => handleUserRestrict(user)}>
-                                                            Restrict
-                                                            <RestrictIcon />
-                                                        </div>
-                                                    }
+    return <div className = 'tab-content-container'>
+    {
+        isOwner === 'yes' &&
+        <div className = 'edit' onClick = {handleEdit}>
+            <EditIcon />
+        </div>
+    }
+
+    {
+        isEditing &&
+        <div ref = {searchRef} className = 'search'>
+            <input type = 'text' placeholder = 'Search user to restrict' onChange = {handleSearchTextChange} value = {searchText} onFocus={handleSearchTextFocus} className = 'search-input search-input-small' />
+            
+            {
+                searchText && isSuggestionsOpen &&
+                <div>      
+                    {
+                        userSuggestions && userSuggestions.length > 0 &&
+                        <div className = 'list-container'>
+                            {
+                                userSuggestions.map(user => (
+                                    !user.isRestricted &&
+                                        <div className = 'list' key = {user.username} onClick={handleSuggestionClicked}>
+                                            <Link to = {`/u/${user.username}`} className = 'list-info'>
+                                                {
+                                                    user.profilePicture ?
+                                                    <GeneralProfileIcon imageSource = 'profilePictures' imageID = {user.profilePicture} />:
+                                                    <InitialsIcon initial = {user.username[0]} />
+                                                }
+                                                <span className = 'list-info-text'>{user.username}</span>
+                                            </Link>
+
+                                            {
+                                                <div className = 'list-button' onClick = {() => handleUserRestrict(user)}>
+                                                    Restrict
+                                                    <RestrictIcon />
                                                 </div>
-                                        ))
-                                    }
-                                </div>
+                                            }
+                                        </div>
+                                ))
                             }
                         </div>
                     }
                 </div>
             }
-            {
-                restrictedUsers.length > 0 ?
-                <div className = 'list-container'>
-                    {
-                        restrictedUsers.map(u => (
-                            <div className = 'list' key = {u._id}>
-                                <Link to = {`/u/${u.username}`} className = 'list-info'>
-                                    {
-                                        u.profilePicture ?
-                                        <GeneralProfileIcon imageSource = 'profilePictures' imageID = {u.profilePicture} />:
-                                        <InitialsIcon initial = {u.username[0]} />
-                                    }
-                                    <span className = 'list-info-text'>{u.username}</span>
-                                </Link>
-                                    
-                                {
-                                    isModerator &&
-                                    <div onClick = {() => handleUserUnrestrict(u)} className = 'list-button'>
-                                        Unrestrict
-                                        <UnrestrictIcon />
-                                    </div>
-                                }
-                            </div>
-                        ))
-                    }
-                </div>:
-                <Empty text = 'Arms, wide open!' caption = 'No one is restricted from this community' GIF = 'https://c.tenor.com/bGgv8ew9uNAAAAAC/mr-bean.gif' />
-            }
+        </div>
+    }
 
-            <Popup />
-        </>
-    );
+    {
+        restrictedUsers.length > 0 ?
+        <div className = 'list-container'>
+            {
+                restrictedUsers.map(u => (
+                    <div className = 'list' key = {u._id}>
+                        <Link to = {`/u/${u.username}`} className = 'list-info'>
+                            {
+                                u.profilePicture ?
+                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {u.profilePicture} />:
+                                <InitialsIcon initial = {u.username[0]} />
+                            }
+                            <span className = 'list-info-text'>{u.username}</span>
+                        </Link>
+                            
+                        {
+                            isOwner &&
+                            <div onClick = {() => handleUserUnrestrict(u)} className = 'list-button'>
+                                Unrestrict
+                                <UnrestrictIcon />
+                            </div>
+                        }
+                    </div>
+                ))
+            }
+        </div>:
+        <Empty text = 'Arms, wide open!' caption = 'No one is restricted from this community' GIF = 'https://c.tenor.com/bGgv8ew9uNAAAAAC/mr-bean.gif' />
+    }
+</div>
 };
 
 export default CommunityRestrictedUsers;

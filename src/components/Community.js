@@ -2,21 +2,26 @@ import '../styles/Community.css';
 
 import {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
+
 import axios from 'axios';
 
 import Header from './Header';
 import PageBanner from './reusable/PageBanner';
-
 import CommunityNav from './community/CommunityNav';
 import CommunityTab from './community/CommunityTab';
 
-import Popup from 'react-popup';
+import {ReactComponent as RestrictedIcon} from '../images/restricted_community.svg';
+
 import {PopUp, PopUpQueue} from './reusable/PopUp';
+
 
 const Community = () => {
     const {cName} = useParams();
+
     const [community, setCommunity] = useState();
     const [isRestricted, setIsRestricted] = useState(false);
+    const [followingStatus, setFollowingStatus] = useState();
+    const [isOwner, setIsOwner] = useState();
     
     useEffect(() => {
         const getCommunityInfo = async () => {
@@ -26,6 +31,7 @@ const Community = () => {
                 setIsRestricted(true);
                 return;
             }
+            setIsRestricted(false);
 
             if(community.data.error) {
                 let errorPopup = PopUp('Something went wrong', community.data.error);
@@ -40,26 +46,46 @@ const Community = () => {
         // eslint-disable-next-line
     }, [cName]);
 
-    return (
-        <>
-            <Header />
-
-            {
-                community && !isRestricted ?
-                <div className = 'community'>
-                    <PageBanner cName = {cName} cThumbnail = {community.cThumbnail} type = 'community' target = {community._id} />
-
-                    <CommunityNav />
-                    <CommunityTab community = {community} />
-                </div>:
-                <div>
-                    You are restricted from accessing this community
-                </div>
+    useEffect(() => {
+        if(!community) return;
+        const getFollowStatus = async () => {
+            const payload = {
+                type: 'community',
+                target: community._id
             }
 
-            <Popup />
-        </>
-    )
+            const response = await axios.post('/followStatus', payload);
+            if(response.data.error) {
+                let errorPopup = PopUp('Something went wrong', response.data.error);
+                PopUpQueue(errorPopup);
+                return;
+            }
+
+            setIsOwner(response.data.message.isOwner);
+            setFollowingStatus(response.data.message.isFollowing);
+        }
+
+        getFollowStatus();
+        // eslint-disable-next-line
+    }, [community, isOwner, followingStatus]);
+
+    return <>
+    <Header />
+
+    {
+        community && !isRestricted ?
+        <div className = 'community'>
+            <PageBanner cName = {cName} cThumbnail = {community.cThumbnail} type = 'community' target = {community._id} isOwner = {isOwner} followingStatus = {followingStatus} setFollowingStatus = {setFollowingStatus} />
+
+            <CommunityNav />
+            <CommunityTab community = {community} isOwner = {isOwner} setCommunity = {setCommunity} />
+        </div>:
+        <div className = 'restriction-message'>
+            <RestrictedIcon />
+            You are restricted from accessing this community
+        </div>
+    }
+</>
 };
 
 export default Community;

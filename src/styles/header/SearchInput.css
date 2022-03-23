@@ -8,6 +8,10 @@
   position: relative;
 }
 
+.search-input-small {
+  max-width: 25rem;
+}
+
 .search-input {
   width: 100%;
   height: 100%;

@@ -1,25 +1,21 @@
+import '../../styles/reusable/PostThumbnail.css';
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom"
-
-import '../../styles/reusable/PostThumbnail.css';
 
 import axios from "axios";
 
 import PostFooter from "./PostFooter"
-
 import GeneralProfileIcon from './GeneralProfileIcon';
 import InitialsIcon from './InitialsIcon';
-
-import Popup from 'react-popup';
-import {PopUp, PopUpQueue} from '../reusable/PopUp';
-
 import ScrollToTop from '../reusable/ScrollToTop';
-
 import Empty from '../reusable/Empty';
 
-const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
-    const [posts, setPosts] = useState([]);
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
+
+const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false, isOwner, setCommunity}) => {
+    const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [hasMorePosts, setHasMorePosts] = useState(true);
 
@@ -62,8 +58,7 @@ const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
             return;
         }
         
-        postsOffset.current += newPosts.data.message.length;        
-        console.log(newPosts.data.message);
+        postsOffset.current += newPosts.data.message.length;
 
         setPosts(previousState => {
             return [
@@ -115,94 +110,89 @@ const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false}) => {
     }, [cName, uName]);
     
     return <div className = 'posts-container'>
-            {/* {
-                loading && 'Please wait...loading'
-            } */}
-            <div className = 'posts'>
-                {
-                    posts.length > 0 ?
-                    posts.map((post, index) => {
-                        if(posts.length === index + 1) {
-                                return <div key = {post._id} className = 'post-thumbnail'>
-                                            <div ref = {lastPostRef}>
-                                                <div className = 'post-header'>
+    <div className = 'posts'>
+        {
+            posts.length > 0 ?
+            posts.map((post, index) => {
+                if(posts.length === index + 1) {
+                        return <div key = {post._id} className = 'post-thumbnail'>
+                                    <div ref = {lastPostRef}>
+                                        <div className = 'post-header'>
+                                            {
+                                                !uName &&
+                                                <Link to = {`/u/${post.uName}`} className = 'post-header-link post-header-user'>
                                                     {
-                                                        !uName &&
-                                                        <Link to = {`/u/${post.uName}`} className = 'post-header-link post-header-user'>
-                                                            {
-                                                                post.uProfilePicture ?
-                                                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {post.uProfilePicture} />:
-                                                                <InitialsIcon initial = {post.uName[0]} />
-                                                            }
-                                                            {post.uName}
-                                                        </Link>
+                                                        post.uProfilePicture ?
+                                                        <GeneralProfileIcon imageSource = 'profilePictures' imageID = {post.uProfilePicture} />:
+                                                        <InitialsIcon initial = {post.uName[0]} />
                                                     }
-
-                                                    {
-                                                        !cName &&
-                                                        <Link to = {`/c/${post.cName}`} className = 'post-header-community'>
-                                                            {`c/${post.cName}`}
-                                                        </Link>
-                                                    }
-                                                </div>
-                                                
-                                                <Link to = {'/p/' + post._id} className = 'post-body'>
-                                                    <h3 className = 'post-body-title'>{post.title}</h3>
-                                                    
-                                                    {renderThumbnailImage(post)}
+                                                    {post.uName}
                                                 </Link>
-                                            </div>
+                                            }
 
-                                            <PostFooter pId = {post._id} pTitle = {post.title} pThumbnail = {post.thumbnail} uName = {post.uName} pCName = {post.cName} totalComments = {post.totalComments} votes = {post.upvotes - post.downvotes} isUpvoted = {post.isUpvoted} isDownvoted = {post.isDownvoted} />
+                                            {
+                                                !cName &&
+                                                <Link to = {`/c/${post.cName}`} className = 'post-header-community'>
+                                                    {`c/${post.cName}`}
+                                                </Link>
+                                            }
                                         </div>
-                        } else {
-                            return <div key = {post._id} className = 'post-thumbnail'>
-                                        <div>
-                                            <div className = 'post-header'>
-                                                {
-                                                    !uName &&
-                                                    <Link to = {`/u/${post.uName}`} className = 'post-header-link post-header-user'>
-                                                        {
-                                                            post.uProfilePicture ?
-                                                            <GeneralProfileIcon imageSource = 'profilePictures' imageID = {post.uProfilePicture} />:
-                                                            <InitialsIcon initial = {post.uName[0]} />
-                                                        }
-                                                        {post.uName}
-                                                    </Link>
-                                                }
-
-                                                {
-                                                    !cName &&
-                                                    <Link to = {`/c/${post.cName}`} className = 'post-header-community'>
-                                                            {`c/${post.cName}`}
-                                                    </Link>
-                                                }
-                                            </div>
+                                        
+                                        <Link to = {'/p/' + post._id} className = 'post-body'>
+                                            <h3 className = 'post-body-title'>{post.title}</h3>
                                             
-                                            <Link to = {'/p/' + post._id} className = 'post-body'>
-                                                <h3 className = 'post-body-title'>{post.title}</h3>
-                                                
-                                                {renderThumbnailImage(post)}
-                                            </Link>
-                                        </div>
-
-                                        <PostFooter pId = {post._id} pTitle = {post.title} pThumbnail = {post.thumbnail} uName = {post.uName} pCName = {post.cName} totalComments = {post.totalComments} votes = {post.upvotes - post.downvotes} isUpvoted = {post.isUpvoted} isDownvoted = {post.isDownvoted} />
+                                            {renderThumbnailImage(post)}
+                                        </Link>
                                     </div>
-                        }
-                    }):
-                    <Empty text = 'No footprint' caption = {getUserUpvotedPosts ? 'Hello?': 'Be the first one to post here'} GIF = 'https://c.tenor.com/tK-85ZSJyvUAAAAC/hello-homer-simpson.gif' />
+
+                                    <PostFooter pId = {post._id} pTitle = {post.title} pThumbnail = {post.thumbnail} uName = {post.uName} pCName = {post.cName} totalComments = {post.totalComments} votes = {post.upvotes - post.downvotes} isUpvoted = {post.isUpvoted} isDownvoted = {post.isDownvoted} isOwner = {isOwner} posts = {posts} setPosts = {setPosts} />
+                                </div>
+                } else {
+                    return <div key = {post._id} className = 'post-thumbnail'>
+                                <div>
+                                    <div className = 'post-header'>
+                                        {
+                                            !uName &&
+                                            <Link to = {`/u/${post.uName}`} className = 'post-header-link post-header-user'>
+                                                {
+                                                    post.uProfilePicture ?
+                                                    <GeneralProfileIcon imageSource = 'profilePictures' imageID = {post.uProfilePicture} />:
+                                                    <InitialsIcon initial = {post.uName[0]} />
+                                                }
+                                                {post.uName}
+                                            </Link>
+                                        }
+
+                                        {
+                                            !cName &&
+                                            <Link to = {`/c/${post.cName}`} className = 'post-header-community'>
+                                                    {`c/${post.cName}`}
+                                            </Link>
+                                        }
+                                    </div>
+                                    
+                                    <Link to = {'/p/' + post._id} className = 'post-body'>
+                                        <h3 className = 'post-body-title'>{post.title}</h3>
+                                        
+                                        {renderThumbnailImage(post)}
+                                    </Link>
+                                </div>
+
+                                <PostFooter pId = {post._id} pTitle = {post.title} pThumbnail = {post.thumbnail} uName = {post.uName} pCName = {post.cName} totalComments = {post.totalComments} votes = {post.upvotes - post.downvotes} isUpvoted = {post.isUpvoted} isDownvoted = {post.isDownvoted} isOwner = {isOwner} posts = {posts} setPosts = {setPosts} />
+                            </div>
                 }
-            </div>
+            }):
+            <Empty text = 'No footprint' caption = {getUserUpvotedPosts ? 'Hello?': 'Be the first one to post here'} GIF = 'https://c.tenor.com/tK-85ZSJyvUAAAAC/hello-homer-simpson.gif' />
+        }
+    </div>
 
-            {
-                !hasMorePosts && posts.length > 0 &&
-                <div className = 'scroll-to-top'>
-                    <ScrollToTop />
-                </div>
-            }
-
-            <Popup />
+    {
+        !hasMorePosts && posts.length > 0 &&
+        <div className = 'scroll-to-top'>
+            <ScrollToTop />
         </div>
+    }
+</div>
 }
 
 export default PostThumbnail;

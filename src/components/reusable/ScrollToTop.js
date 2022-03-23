@@ -1,4 +1,5 @@
 import '../../styles/reusable/ScrollToTop.css';
+
 import {ReactComponent as ScrollToTopIcon} from '../../images/scroll_to_top.svg';
 
 const handleScrollToTop = () => {
@@ -7,8 +8,8 @@ const handleScrollToTop = () => {
 
 const ScrollToTop = () => {
     return <div className = 'scroll-to-top' onClick = {handleScrollToTop}>
-                <ScrollToTopIcon />
-            </div>;
+    <ScrollToTopIcon />
+</div>;
 }
 
 export default ScrollToTop;

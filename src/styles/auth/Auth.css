@@ -8,7 +8,7 @@
 }
 
 .container-auth {
-    min-width: 20rem;
+    width: 27.5rem;
 }
 
 .generic-error {
@@ -73,19 +73,39 @@
     resize: vertical;
 }
 
-.auth-footer {
+.auth-footer, .auth-footer-right-aligned-submit {
     display: flex;
     justify-content: space-between;
     align-items: center;
     min-height: 3rem;
-    margin-top: 1rem;
+    margin-top: 0.25rem;
 }
 
-.auth-footer-sign-in {
+.auth-footer-right-aligned-submit {
+    justify-content: flex-end;
+}
+
+.auth-footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.auth-footer-sign-in, .auth-footer-sign-up {
     text-decoration: none;
     font-weight: bold;
     font-size: 0.8rem;
     color: var(--blue-2);
+}
+
+.auth-footer-forgot-password {
+    text-decoration: none;
+    font-size: 0.65rem;
+    color: var(--blue-2);
+}
+
+.auth-footer-forgot-password:hover {
+    text-decoration: underline;
 }
 
 .auth-footer-submit {
@@ -95,4 +115,10 @@
     padding: 0.75rem 1.25rem;
     color: var(--blue-5);
     background: var(--blue-2);
+}
+
+@media screen and (min-width: 27.5rem) {
+    .container-auth {
+        max-width: 100%;
+    }
 }

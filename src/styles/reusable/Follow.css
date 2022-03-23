@@ -1,5 +1,4 @@
 .follow {
-    /* border: 1px solid red; */
     font-size: 0.8rem;
     padding: 0.5rem;
     cursor: pointer;
@@ -15,31 +14,3 @@
 .follow:hover {
     opacity: 1;
 }
-
-
-
-
-
-
-
-/* .follow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    margin: 0 1rem;
-    align-self: flex-end;
-    font-size: 0.8rem;
-    padding: 0.25rem 0.5rem;
-    cursor: pointer;
-    border-radius: 0.1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--primary-light-color);
-    opacity: 0.6;
-}
-
-.follow:hover {
-    opacity: 1;
-} */

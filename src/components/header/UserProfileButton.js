@@ -1,37 +1,31 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { UserProfileCurrentTabContext } from '../../contexts/UserProfileCurrentTab';
-import { useHistory } from 'react-router-dom';
 import '../../styles/header/UserProfileButton.css';
 
-import ChatShare from '../chat/ChatShare';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 
-import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
-
-import axios from 'axios';
-
-// import {ReactComponent as UserProfileIcon} from '../../images/user_default_profile.svg';
+import { UserProfileCurrentTabContext } from '../../contexts/UserProfileCurrentTab';
 import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 import {SocketContext} from '../../contexts/Socket';
 import {UserRoomsContext} from '../../contexts/UserRooms';
 
+import axios from 'axios';
 
+import ChatShare from '../chat/ChatShare';
+import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
 import InitialsIcon from '../reusable/InitialsIcon';
+import UpdateUserProfilePicturePopup from '../reusable/UpdateUserProfilePicturePopup';
 
 import {ReactComponent as UserProfileIconSmall} from '../../images/user_default_profile_small.svg';
 import {ReactComponent as ViewUserProfilePicture} from '../../images/view_profile_picture.svg';
 import {ReactComponent as EditUserProfileIcon} from '../../images/edit_profile_picture.svg';
-
+import {ReactComponent as ChangeIcon} from '../../images/reset.svg';
 import {ReactComponent as CommunityIcon} from '../../images/community.svg';
-// import {ReactComponent as DraftIcon} from '../../images/draft.svg';
 import {ReactComponent as ShareIcon} from '../../images/share.svg';
 import {ReactComponent as SignOutIcon} from '../../images/sign_out.svg';
-
-import Popup from 'react-popup';
-import {PopUp, PopUpQueue} from '../reusable/PopUp';
-
 import {ReactComponent as CloseIcon} from '../../images/close.svg';
 
-import UpdateUserProfilePicturePopup from '../reusable/UpdateUserProfilePicturePopup';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 
 const UserProfileButton = () => {
     const userProfileRef = useRef();
@@ -118,6 +112,11 @@ const UserProfileButton = () => {
         history.push('/profilePicture/view');
     }
 
+    const handleRedirectToChangePassword = () => {
+        setIsDropdownOpen(false);
+        history.push('/changePassword');
+    }
+
     const handleShare = () => {
         const shareUserProfile = {
             uName: user.uName,
@@ -128,61 +127,60 @@ const UserProfileButton = () => {
         PopUpQueue(sharePopup);
     }
 
-    return <>
+    return user && isUserSignedIn &&
+<div className = 'user-profile-dropdown' ref = {userProfileRef}>
+    <div onClick = {() => setIsDropdownOpen(oldState => !oldState)} className = 'user-profile-dropdown-button'>
         {
-            user && isUserSignedIn &&
-            <div className = 'user-profile-dropdown' ref = {userProfileRef}>
-                <div onClick = {() => setIsDropdownOpen(oldState => !oldState)} className = 'user-profile-dropdown-button'>
-                    {
-                        profilePicture ?
-                        <GeneralProfileIcon imageSource = 'profilePictures' imageID = {profilePicture} />:
-                        <InitialsIcon initial = {user.uName[0]} />
-                    }
-                </div>
-                {
-                    isdropdownOpen &&
-                    <div className = 'user-profile-dropdown-list'>
-                        <div className='menu-dropdown-close' onClick = {() => setIsDropdownOpen(false)}>
-                            <CloseIcon />
-                        </div>
-
-                        <div onClick = {handleRedirectToUserProfile} className = 'user-profile-dropdown-list-item'>
-                            User Profile
-                            <UserProfileIconSmall />
-                        </div>
-                        <div onClick = {handleRedirectToUserProfileFriendsTab} className = 'user-profile-dropdown-list-item'>
-                            Friends
-                            <CommunityIcon />
-                        </div>
-                        <div onClick = {handleRedirectToViewUserProfilePicture} className = 'user-profile-dropdown-list-item'>
-                            View Profile Picture
-                            <ViewUserProfilePicture />
-                        </div>
-                        <div onClick = {handleRedirectToEditUserProfilePicture} className = 'user-profile-dropdown-list-item'>
-                            Edit Profile Picture
-                            <EditUserProfileIcon />
-                        </div>
-                        {/* <Link to = '/#' className = 'user-profile-dropdown-list-item'>
-                            <li>
-                                Drafts
-                                <DraftIcon />
-                            </li>
-                        </Link> */}
-                        <div className = 'user-profile-dropdown-list-item' onClick = {handleShare}>
-                            Share Profile
-                            <ShareIcon />
-                        </div>
-                        <div className = 'user-profile-dropdown-list-item user-profile-dropdown-list-item-sign-out' onClick = {handleSignOut}>
-                            Sign out
-                            <SignOutIcon />
-                        </div>
-                    </div>
-                }
-            </div>
+            profilePicture ?
+            <GeneralProfileIcon imageSource = 'profilePictures' imageID = {profilePicture} />:
+            <InitialsIcon initial = {user.uName[0]} />
         }
+    </div>
 
-        <Popup />
-    </>
+    {
+        isdropdownOpen &&
+        <div className = 'user-profile-dropdown-list'>
+            <div className='menu-dropdown-close' onClick = {() => setIsDropdownOpen(false)}>
+                <CloseIcon />
+            </div>
+
+            <div onClick = {handleRedirectToUserProfile} className = 'user-profile-dropdown-list-item'>
+                User Profile
+                <UserProfileIconSmall />
+            </div>
+
+            <div onClick = {handleRedirectToUserProfileFriendsTab} className = 'user-profile-dropdown-list-item'>
+                Friends
+                <CommunityIcon />
+            </div>
+
+            <div onClick = {handleRedirectToViewUserProfilePicture} className = 'user-profile-dropdown-list-item'>
+                View Profile Picture
+                <ViewUserProfilePicture />
+            </div>
+
+            <div onClick = {handleRedirectToEditUserProfilePicture} className = 'user-profile-dropdown-list-item'>
+                Edit Profile Picture
+                <EditUserProfileIcon />
+            </div>
+
+            <div onClick = {handleRedirectToChangePassword} className = 'user-profile-dropdown-list-item'>
+                Change Password
+                <ChangeIcon />
+            </div>
+
+            <div className = 'user-profile-dropdown-list-item' onClick = {handleShare}>
+                Share Profile
+                <ShareIcon />
+            </div>
+            
+            <div className = 'user-profile-dropdown-list-item user-profile-dropdown-list-item-sign-out' onClick = {handleSignOut}>
+                Sign out
+                <SignOutIcon />
+            </div>
+        </div>
+    }
+</div>
 };
 
 export default UserProfileButton;

@@ -1,22 +1,21 @@
 import '../../styles/reusable/GetCommunities.css';
 
-import { useEffect, useState } from "react";
-
-import {Link} from 'react-router-dom';
-
-import Follow from './Follow';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import axios from 'axios';
 
-import Popup from 'react-popup';
-import {PopUp, PopUpQueue} from '../reusable/PopUp';
-
+import Follow from './Follow';
 import GeneralProfileIcon from './GeneralProfileIcon';
 import InitialsIcon from './InitialsIcon';
-
 import Empty from './Empty';
 
-const GetCommunities = ({uName, cName, type}) => {
+import {ReactComponent as RemoveIcon} from '../../images/close_small.svg';
+
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
+
+const GetCommunities = ({uName, cName, type, isEditing, updatedRelatedCommunities, setUpdatedRelatedCommunities}) => {
     const [communities, setCommunities] = useState();
 
     useEffect(() => {
@@ -42,7 +41,7 @@ const GetCommunities = ({uName, cName, type}) => {
 
         getCommunities();
         // eslint-disable-next-line
-    }, [uName, cName, type]);
+    }, [uName, cName, type, updatedRelatedCommunities]);
 
     const handleSetFollowingStatus = (newFollowingStatus, cId) => {
         setCommunities(previousState => {
@@ -57,31 +56,67 @@ const GetCommunities = ({uName, cName, type}) => {
         });
     }
 
+    const handleRemove = async (cId) => {
+        const payload = {
+            action: 'remove',
+            cName: cName,
+            body: cId,
+            field: 'relatedCommunities',
+            schema: 'community'
+        }
+
+        const response = await axios.post('/update', payload);
+
+        if(response.data.error) {
+            let errorPopup = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(errorPopup);
+            return;
+        }
+
+        setCommunities(previousState => {
+            let newState = previousState.filter(c => c.cId !== cId);
+            return newState;
+        });
+
+        setUpdatedRelatedCommunities(previousState => {
+            let newState = previousState.filter(c => c !== cId);
+            return newState;
+        });
+    }
+
     return <div className = 'list-container'>
-            {
-                communities && communities.length > 0 ?
-                communities.map(c => (
-                    <div key = {c.cName} className = 'list'>
-                        <Link to = {`/c/${c.cName}`} className = 'list-info'>
-                            {
-                                c.cThumbnail ?
-                                <GeneralProfileIcon imageSource = 'communityThumbnails' imageID = {c.cThumbnail} />:
-                                <InitialsIcon initial = {c.cName[0]} />
-                            }
-                            <span className = 'list-info-text'>{c.cName}</span>
-                        </Link>
+    {
+        communities && communities.length > 0 ?
+        communities.map(c => (
+            <div key = {c.cName} className = 'list'>
+                <Link to = {`/c/${c.cName}`} className = 'list-info'>
+                    {
+                        c.cThumbnail ?
+                        <GeneralProfileIcon imageSource = 'communityThumbnails' imageID = {c.cThumbnail} />:
+                        <InitialsIcon initial = {c.cName[0]} />
+                    }
+                    <span className = 'list-info-text'>{c.cName}</span>
+                </Link>
 
-                        {
-                            c.isFollowing &&
-                            <Follow followingStatus = {c.isFollowing} setFollowingStatus = {handleSetFollowingStatus} type = 'community' target = {c.cId} />
-                        }
-                    </div>
-                )):
-                <Empty text = 'Why so lonely?' caption = {`${(type === 'moderates' && 'User does not moderate any community') || (type === 'following' && 'User does not follow any community') || (type === 'related' && 'No related communities found')}`} GIF = 'https://c.tenor.com/skrB3dpqD-oAAAAC/waiting-alone-lonely.gif' />
-            }
+                <div className='list-buttons' onClick = {() => handleRemove(c.cId)}>
+                    {
+                        isEditing &&
+                        <div className = 'list-button'>
+                            Remove
+                            <RemoveIcon />
+                        </div>
+                    }
 
-            <Popup />
-        </div>
+                    {
+                        c.isFollowing &&
+                        <Follow followingStatus = {c.isFollowing} setFollowingStatus = {handleSetFollowingStatus} type = 'community' target = {c.cId} />
+                    }
+                </div>
+            </div>
+        )):
+        <Empty text = 'Why so lonely?' caption = {`${(type === 'moderates' && 'User does not moderate any community') || (type === 'following' && 'User does not follow any community') || (type === 'related' && 'No related communities found')}`} GIF = 'https://c.tenor.com/skrB3dpqD-oAAAAC/waiting-alone-lonely.gif' />
+    }
+</div>
 }
 
 export default GetCommunities;

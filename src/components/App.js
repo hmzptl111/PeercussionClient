@@ -1,5 +1,6 @@
-import React from 'react';
 import '../styles/App.css';
+
+import React from 'react';
 
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
@@ -10,7 +11,6 @@ import {CommunityCurrentTabProvider} from '../contexts/CommunityCurrentTab';
 import {UserRoomsProvider} from '../contexts/UserRooms';
 import {SocketProvider} from '../contexts/Socket';
 
-// import Header from './Header';
 import Home from './Home';
 import Post from './Post';
 import Community from './Community';
@@ -21,34 +21,40 @@ import SignIn from './auth/SignIn';
 import User from './User';
 import ViewUserProfilePicture from './profile/ViewUserProfilePicture';
 import EditProfilePicture from './profile/EditProfilePicture';
+import ChangePassword from './auth/ChangePassword';
+import ForgotPassword from './auth/ForgotPassword';
+import ResetPassword from './auth/ResetPassword';
 import Chat from './Chat';
+
+import 'react-popup/dist/index.css';
+import Popup from 'react-popup';
 
 
 function App() {
-
   return (
     <Router>
       <>
         <UserAuthStatusProvider>
           <UserStatusProvider>
-            {/* <Header /> */}
             <Switch>
-              <Route exact path = '/signup' component = {SignUp}></Route>
-              <Route exact path = '/signin' component = {SignIn}></Route>
+              <Route exact path = '/signup' component = {SignUp} />
+              <Route exact path = '/signin' component = {SignIn} />
               <CommunityCurrentTabProvider>
               <UserProfileCurrentTabProvider>
                 <SocketProvider>
                   <UserRoomsProvider>
-                    <Route exact path = '/' component = {Home}></Route>
-                    <Route exact path = '/create/post' component = {CreatePost}></Route>
-                    <Route exact path = '/create/community' component = {CreateCommunity}></Route>
-                    <Route exact path = '/chat' component = {Chat}></Route>
-                    <Route path = '/u/:uName' component = {User}></Route>
-                    <Route path = '/c/:cName' component = {Community}></Route>
-                    <Route path = '/p/:pId' component = {Post}></Route>
-                    {/* action = [view, edit] */}
-                    <Route path = '/profilePicture/view' component = {ViewUserProfilePicture}></Route>
-                    <Route path = '/profilePicture/edit/:action' component = {EditProfilePicture}></Route>
+                    <Route exact path = '/' component = {Home} />
+                    <Route exact path = '/create/post' component = {CreatePost} />
+                    <Route exact path = '/create/community' component = {CreateCommunity} />
+                    <Route exact path = '/chat' component = {Chat} />
+                    <Route path = '/u/:uName' component = {User} />
+                    <Route path = '/c/:cName' component = {Community} />
+                    <Route path = '/p/:pId' component = {Post} />
+                    <Route path = '/profilePicture/view' component = {ViewUserProfilePicture} />
+                    <Route path = '/profilePicture/edit/:action' component = {EditProfilePicture} />
+                    <Route path = '/resetPassword/:token' component = {ResetPassword} />
+                    <Route path = '/changePassword' component = {ChangePassword} />
+                    <Route path = '/forgotPassword' component = {ForgotPassword} />
                   </UserRoomsProvider>
                 </SocketProvider>
               </UserProfileCurrentTabProvider>
@@ -56,6 +62,8 @@ function App() {
             </Switch>
           </UserStatusProvider>
         </UserAuthStatusProvider>
+      
+        <Popup />
       </>
     </Router>
   );

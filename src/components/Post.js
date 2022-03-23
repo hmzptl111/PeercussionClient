@@ -1,24 +1,22 @@
 import '../styles/Post.css';
 
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 import axios from 'axios';
 
 import Header from './Header';
 import Comment from './Comment';
-
 import PostFooter from './reusable/PostFooter';
-
-import Popup from 'react-popup';
-import { PopUp, PopUpQueue } from './reusable/PopUp';
-
 import GeneralProfileIcon from './reusable/GeneralProfileIcon';
 import InitialsIcon from './reusable/InitialsIcon';
 
+import { PopUp, PopUpQueue } from './reusable/PopUp';
+
+
 const Post = () => {
     const {pId} = useParams();
+
     const [postLoaded, setPostLoaded] = useState(false);
     const [post, setPost] = useState();
 
@@ -32,7 +30,6 @@ const Post = () => {
                 return;
             }
 
-            console.log(result.data.message);
             setPost(result.data.message);
             setPostLoaded(true);
         }
@@ -154,7 +151,6 @@ const Post = () => {
                                 <div className = 'post-body-quote-author'>{`-${block.data.caption}`}</div>
                             </div>
                         </div>;  
-
             default:
                 return null;
         }
@@ -203,8 +199,6 @@ const Post = () => {
                     </>
                 }
             </div>
-
-            <Popup />
         </>
     );
 }

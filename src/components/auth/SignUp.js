@@ -1,17 +1,17 @@
-import {useState} from 'react';
+import '../../styles/auth/Auth.css';
+
+import { useContext, useEffect, useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
+
+import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
+
 import axios from 'axios';
-import { Link, useHistory } from "react-router-dom";
 
-import BackButton from '../reusable/BackButton';
-
-import Popup from 'react-popup';
+import Logo from '../header/Logo';
+import InfoButton from '../reusable/InfoButton';
 
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
-import InfoButton from '../reusable/InfoButton';
-
-import Logo from '../header/Logo';
-import '../../styles/auth/Auth.css';
 
 const SignUp = () => {
     const [username, setUsername] = useState('');
@@ -19,7 +19,6 @@ const SignUp = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [email, setEmail] = useState('');
     const [about, setAbout] = useState('');
-    let history = useHistory();
 
     const [genericError, setGenericError] = useState('');
     const [usernameError, setUsernameError] = useState('');
@@ -27,6 +26,18 @@ const SignUp = () => {
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [aboutError, setAboutError] = useState('');
+    
+    const {isUserSignedIn} = useContext(UserAuthStatusContext);
+
+    let history = useHistory();
+
+    
+    useEffect(() => {
+        if(isUserSignedIn) {
+            history.replace('/');
+        }
+        //eslint-disable-next-line
+    }, [isUserSignedIn]);
 
     const handleUsername = e => {
         setUsername(e.target.value);
@@ -66,14 +77,14 @@ const SignUp = () => {
         //if there's any non-word character(anything except [a-zA-Z0-9_]), username is invalid
         //if username starts with a digit like 3hamza, it is invalid
         const usernameRegex = /^[^\d][\w]+$/;
-        if(!usernameRegex.test(username) || username.length > 32) {
-            setUsernameError('Invalid username, please click on the corresponding (i) icon');
+        if(username.length > 32 || !usernameRegex.test(username)) {
+            setUsernameError('Invalid username, click on the (i) icon to follow the accepted format');
             return;
         }
         
         const passwordRegex = /^(?=.{8,})(?=.*[a-z])(?=.*[A-Z])(?=.*[~!@#$%^&*]).*$/;
-        if(!passwordRegex.test(password) || password.length > 64) {
-            setPasswordError('Invalid password, please click on the corresponding (i) icon');
+        if(password.length > 64 || !passwordRegex.test(password)) {
+            setPasswordError('Invalid password, click on the (i) icon to follow the accepted format');
             return;
         }
 
@@ -83,13 +94,13 @@ const SignUp = () => {
         }
 
         const emailRegex = /\S+@\S+\.\S+/;
-        if(!emailRegex.test(email)) {
-            setEmailError('Invalid email, please click on the corresponding (i) icon');
+        if(email.length > 320 || !emailRegex.test(email)) {
+            setEmailError('Invalid email, click on the (i) icon to follow the accepted format');
             return;
         }
 
         if(about.length > 255) {
-            setAboutError('Invalid about, please click on the corresponding (i) icon');
+            setAboutError('Invalid about, click on the (i) icon to follow the accepted format');
             return;
         }
 
@@ -122,101 +133,87 @@ const SignUp = () => {
     }
 
 
-    return (
-        <div className = 'container'>
-            
-            <div className = 'container-auth'>
-                <form onSubmit = {handleSignUp} className = 'auth-card'>
-                    <BackButton />
-                    
-
-                    <div className = 'auth-card-header'>
-                        <div className = 'auth-card-header-logo'>
-                            <Logo />
-                        </div>
-                        <div className = 'auth-card-header-text'>
-                            Create an account
-                        </div>
-                    </div>
-
-
-                    {
-                        genericError &&
-                        <h5 className = 'generic-error'>{genericError}</h5>
-                    }
-
-
-                    {
-                        usernameError &&
-                        <span className = 'specific-error'>{usernameError}</span>
-                    }
-                    <div className = 'auth-card-item'>
-                        <input type = 'text' placeholder = 'Username' value = {username} onChange = {handleUsername} className = 'auth-card-item-input' />
-                        <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'Username should only consist of the english alphabet (a - z  A - Z) and underscore ( _ ), and should not exceed 32 characters' />
-                        </span>
-                    </div>
-
-
-                    {
-                        passwordError &&
-                        <span className = 'specific-error'>{passwordError}</span>
-                    }
-                    <div className = 'auth-card-item'>
-                        <input type = 'password' placeholder = 'Password' value = {password} onChange = {handlePassword} className = 'auth-card-item-input' />
-                        <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'Password should consist of at least one lowercase (a - z), one uppercase (A - Z) and one special character (~ ! @ # $ % ^ & *). It should consist of at least 8 characters and should not exceed 64 characters' />
-                        </span>
-                    </div>
-
-
-                    {
-                        confirmPasswordError &&
-                        <span className = 'specific-error'>{confirmPasswordError}</span>
-                    }
-                    <div className = 'auth-card-item'>
-                        <input type = 'password' placeholder = 'Confirm password' value = {confirmPassword} onChange = {handleConfirmPassword} className = 'auth-card-item-input' />
-                        <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'Passwords must match' />
-                        </span>
-                    </div>
-
-
-                    {
-                        emailError &&
-                        <span className = 'specific-error'>{emailError}</span>
-                    }
-                    <div className = 'auth-card-item'>
-                        <input type = 'text' placeholder = 'Email' value = {email} onChange = {handleEmail} className = 'auth-card-item-input' />
-                        <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'An email will be sent to your account for confirmation, make sure it is valid and you have access to it' />
-                        </span>
-                    </div>
-
-
-                    {
-                        aboutError &&
-                        <span className = 'specific-error'>{aboutError}</span>
-                    }
-                    <div className = 'auth-card-item'>
-                        <textarea placeholder = 'About you' value = {about} onChange = {handleAbout} className = 'auth-card-item-input auth-card-item-about' />
-                        <span className = 'auth-card-item-info'>
-                            <InfoButton content = 'Write about yourself in under 255 characters' />
-                        </span>
-                    </div>
-
-
-                    <div className = 'auth-footer'>
-                        <Link to = '/signin' className = 'auth-footer-sign-in'>Sign in</Link>
-
-                        <input type = 'submit' value = 'Sign up' className = 'auth-footer-submit' />
-                    </div>
-                </form>
+    return <div className = 'container'>
+    <div className = 'container-auth'>
+        <form onSubmit = {handleSignUp} className = 'auth-card'>
+            <div className = 'auth-card-header'>
+                <div className = 'auth-card-header-logo'>
+                    <Logo />
+                </div>
+                <div className = 'auth-card-header-text'>
+                    Create an account
+                </div>
             </div>
 
-            <Popup />
-        </div>
-    );
+            {
+                genericError &&
+                <h5 className = 'generic-error'>{genericError}</h5>
+            }
+
+            {
+                usernameError &&
+                <span className = 'specific-error'>{usernameError}</span>
+            }
+            <div className = 'auth-card-item'>
+                <input type = 'text' placeholder = 'Username' value = {username} onChange = {handleUsername} className = 'auth-card-item-input' />
+                <span className = 'auth-card-item-info'>
+                    <InfoButton content = 'Username should only consist of the english alphabet (a - z  A - Z) and underscore ( _ ), and should not exceed 32 characters' />
+                </span>
+            </div>
+
+            {
+                passwordError &&
+                <span className = 'specific-error'>{passwordError}</span>
+            }
+            <div className = 'auth-card-item'>
+                <input type = 'password' placeholder = 'Password' value = {password} onChange = {handlePassword} className = 'auth-card-item-input' />
+                <span className = 'auth-card-item-info'>
+                    <InfoButton content = 'Password should consist of at least one lowercase (a - z), one uppercase (A - Z) and one special character (~ ! @ # $ % ^ & *). It should consist of at least 8 characters and should not exceed 64 characters' />
+                </span>
+            </div>
+
+            {
+                confirmPasswordError &&
+                <span className = 'specific-error'>{confirmPasswordError}</span>
+            }
+            <div className = 'auth-card-item'>
+                <input type = 'password' placeholder = 'Confirm password' value = {confirmPassword} onChange = {handleConfirmPassword} className = 'auth-card-item-input' />
+                <span className = 'auth-card-item-info'>
+                    <InfoButton content = 'Passwords must match' />
+                </span>
+            </div>
+
+            {
+                emailError &&
+                <span className = 'specific-error'>{emailError}</span>
+            }
+            <div className = 'auth-card-item'>
+                <input type = 'text' placeholder = 'Email' value = {email} onChange = {handleEmail} className = 'auth-card-item-input' />
+                <span className = 'auth-card-item-info'>
+                    <InfoButton content = 'An email will be sent to your account for confirmation, make sure it is valid and you have access to it' />
+                </span>
+            </div>
+
+            {
+                aboutError &&
+                <span className = 'specific-error'>{aboutError}</span>
+            }
+            <div className = 'auth-card-item'>
+                <textarea placeholder = 'About you' value = {about} onChange = {handleAbout} className = 'auth-card-item-input auth-card-item-about' />
+                <span className = 'auth-card-item-info'>
+                    <InfoButton content = 'Write about yourself in under 255 characters' />
+                </span>
+            </div>
+
+
+            <div className = 'auth-footer'>
+                <Link to = '/signin' className = 'auth-footer-sign-in'>Sign in</Link>
+
+                <input type = 'submit' value = 'Sign up' className = 'auth-footer-submit' />
+            </div>
+        </form>
+    </div>
+</div>
 }
 
 export default SignUp;

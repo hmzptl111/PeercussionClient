@@ -1,16 +1,15 @@
 import '../../styles/profile/SetUserProfileUsingCamera.css';
 
-import {useEffect, useRef, useState} from 'react';
-
+import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
 
-import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 import {ReactComponent as CameraIcon} from '../../images/camera.svg';
 import {ReactComponent as SubmitIcon} from '../../images/check.svg';
+
 
 const SetUserProfileUsingCamera = () => {
     navigator.getMedia =    navigator.getUserMedia ||
@@ -48,15 +47,8 @@ const SetUserProfileUsingCamera = () => {
 
 
     const handleCapture = () => {
-        console.log('image captured');
         const context = canvasRef.current.getContext('2d');
-        context.drawImage(videoRef.current, 0, 0, videoRef.current.width, videoRef.current.height);        
-
-        console.log(videoRef.current.width);
-        console.log(videoRef.current.height);
-        console.log(canvasRef.current.width);
-        console.log(canvasRef.current.width);
-
+        context.drawImage(videoRef.current, 0, 0, videoRef.current.width, videoRef.current.height);
 
         if(hasCaptured) {
             //recapture
@@ -74,17 +66,14 @@ const SetUserProfileUsingCamera = () => {
             
             videoRef.current.style.display = 'none';
             canvasRef.current.style.display = 'block';
-
-            console.log(canvasRef.current.toDataURL('image/jpeg'));
         }
-        
-
     }
 
     const handleSetProfilePicture = async () => {
         const payload = {
             profilePicture: canvasRef.current.toDataURL('image/jpeg')
         }
+
         const response = await axios.post('/setProfilePicture', payload);
 
         if(response.data.error) {
@@ -93,38 +82,37 @@ const SetUserProfileUsingCamera = () => {
             return;
         }
 
-        history.push('/profilePicture/view');
+        history.replace('/profilePicture/view');
     }
 
+
     return <>
-            <div className = 'profile-picture-container'>
-                <div onClick = {handleCapture} className = 'profile-picture-header'>
-                    <CameraIcon />
-                    {
-                        hasCaptured ?
-                        'Recapture':
-                        'Capture'
-                    }
-                </div>
-                
-                {
-                    hasCaptured && !isUserProfileSet &&
-                    <div onClick={handleSetProfilePicture} className = 'profile-picture-header'>
-                        <SubmitIcon />
-                        Update
-                    </div>
-                }
+    <div className = 'profile-picture-container'>
+        <div onClick = {handleCapture} className = 'profile-picture-header'>
+            <CameraIcon />
+            {
+                hasCaptured ?
+                'Recapture':
+                'Capture'
+            }
+        </div>
+        
+        {
+            hasCaptured && !isUserProfileSet &&
+            <div onClick={handleSetProfilePicture} className = 'profile-picture-header'>
+                <SubmitIcon />
+                Update
             </div>
+        }
+    </div>
 
 
-            <div className = 'preview-capture-container'>
-                <video ref = {videoRef} width = '300px' height = '300px' />
+    <div className = 'preview-capture-container'>
+        <video ref = {videoRef} width = '300px' height = '300px' />
 
-                <canvas ref = {canvasRef} width = '300px' height = '300px' style = {{display: 'none'}} />
-            </div>
-            
-            <Popup />
-        </>
+        <canvas ref = {canvasRef} width = '300px' height = '300px' style = {{display: 'none'}} />
+    </div>
+</>
 }
 
 export default SetUserProfileUsingCamera;

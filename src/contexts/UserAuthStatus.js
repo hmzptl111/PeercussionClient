@@ -1,15 +1,13 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from 'react';
+
 import axios from 'axios';
 
 export const UserAuthStatusContext = createContext();
 
+
 export const UserAuthStatusProvider = ({children}) => {
     const [user, setUser] = useState();
     const [isUserSignedIn, setIsUserSignedIn] = useState(false);
-
-    useEffect(() => {
-        console.log(user);
-    }, [user]);
 
     useEffect(() => {
         const checkUserAuthStatus = async () => {
@@ -17,12 +15,14 @@ export const UserAuthStatusProvider = ({children}) => {
 
             if(response.data.error) {
                 setUser(null);
+
                 setIsUserSignedIn(false);
             } else if(response.data.message && response.data.message.isAuth) {
                 setUser({
                     uId: response.data.message.uId,
                     uName: response.data.message.uName
                 });
+
                 setIsUserSignedIn(true);
             }
         }   
@@ -30,9 +30,7 @@ export const UserAuthStatusProvider = ({children}) => {
         checkUserAuthStatus();
     }, []);
 
-    return(
-        <UserAuthStatusContext.Provider value = {{user, setUser, isUserSignedIn, setIsUserSignedIn}}>
-            {children}
-        </UserAuthStatusContext.Provider>
-    );
+    return <UserAuthStatusContext.Provider value = {{user, setUser, isUserSignedIn, setIsUserSignedIn}}>
+    {children}
+</UserAuthStatusContext.Provider>
 };

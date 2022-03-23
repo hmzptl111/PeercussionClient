@@ -1,4 +1,5 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
+
 import { UserAuthStatusContext } from '../../contexts/UserAuthStatus';
 
 import SignInButton from '../reusable/SignInButton';

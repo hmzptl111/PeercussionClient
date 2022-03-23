@@ -1,36 +1,36 @@
-import React, { createRef, useContext, useEffect} from 'react';
 import '../../styles/reusable/UserStatusControl.css';
-import { UserStatusContext } from '../../contexts/UserStatus';
 
-import { primaryDarkColor, primaryMediumColor } from '../../index';
+import { useContext, useEffect, useRef } from 'react';
+
+import { UserStatusContext } from '../../contexts/UserStatus';
 
 const UserStatusControl = () => {
     const {isUserOnline, setIsUserOnline} = useContext(UserStatusContext);
 
-    const userStatusControlPill = createRef();
-    const userStatusControlCircle = createRef();
+    const userStatusControlPill = useRef();
+    const userStatusControlCircle = useRef();
 
     useEffect(() => {
         if(!isUserOnline) {
             userStatusControlPill.current.style.justifyContent = 'left';
-            userStatusControlCircle.current.style.backgroundColor = primaryMediumColor;
+            userStatusControlCircle.current.style.backgroundColor = '#b2b2b2';
         } else {
             userStatusControlPill.current.style.justifyContent = 'right';
-            userStatusControlCircle.current.style.backgroundColor = primaryDarkColor;
+            userStatusControlCircle.current.style.backgroundColor = '#666666';
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isUserOnline]);
 
-    return <div className = 'user-status-control' onClick = {() => {setIsUserOnline(!isUserOnline)}}>
-                {
-                    isUserOnline ?
-                    <span>Online</span>:
-                    <span>Offline</span>
-                }
-                <div ref = {userStatusControlPill} className = 'user-status-control-pill'>
-                    <span ref = {userStatusControlCircle} className = 'user-status-control-circle'></span>
-                </div>
-            </div>
+    return <div className = 'status-control' onClick = {() => {setIsUserOnline(!isUserOnline)}}>
+    {
+        isUserOnline ?
+        <span>Online</span>:
+        <span>Offline</span>
+    }
+    <div ref = {userStatusControlPill} className = 'status-control-pill'>
+        <span ref = {userStatusControlCircle} className = 'status-control-circle'></span>
+    </div>
+</div>
 };
 
 export default UserStatusControl;

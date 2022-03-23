@@ -1,12 +1,8 @@
 import PostThumbnail from '../reusable/PostThumbnail';
 
-const CommunityPosts = ({cName}) => {
-    return <>
-                {
-                    cName &&
-                    <PostThumbnail cName = {cName} />
-                }
-            </>
+const CommunityPosts = ({cName, isOwner}) => {
+    return cName &&
+    <PostThumbnail cName = {cName} isOwner = {isOwner} />
 }
 
 export default CommunityPosts;

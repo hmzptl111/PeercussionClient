@@ -1,20 +1,16 @@
 import '../../styles/create/Create.css';
 
 import React, {useEffect, useRef, useState} from 'react';
-import axios from 'axios';
-
 import { useHistory } from 'react-router-dom';
 
-// import Header from '../Header';
-import {ReactComponent as RemoveIcon} from '../../images/close_small.svg';
+import axios from 'axios';
 
 import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
 import InitialsIcon from '../reusable/InitialsIcon';
 
-import Popup from 'react-popup';
-import {PopUp, PopUpQueue} from '../reusable/PopUp';
+import {ReactComponent as RemoveIcon} from '../../images/close_small.svg';
 
-import BackButton from '../reusable/BackButton';
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 const CreatCommunity = () => {
     const [community, setCommunity] = useState({
@@ -225,9 +221,6 @@ const CreatCommunity = () => {
             {/* <Header /> */}
 
             <form onSubmit = {handleCreateCommunity} className = 'create'>
-                <div className = 'create-back'>
-                    <BackButton />
-                </div>
 
                 <div className = 'create-title'>Create a community</div>
                 
@@ -284,8 +277,6 @@ const CreatCommunity = () => {
                     }
                 </div>
             }
-
-            <Popup />
         </div>
     );
 };

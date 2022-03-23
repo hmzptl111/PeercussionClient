@@ -1,9 +1,9 @@
+import '../../styles/reusable/InfoButton.css';
+
 import {ReactComponent as InfoButtonIcon} from '../../images/info.svg';
 
-import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from './PopUp';
 
-import '../../styles/reusable/InfoButton.css';
 
 const InfoButton = ({content}) => {
     const handleInfoButtonClick = () => {
@@ -14,10 +14,8 @@ const InfoButton = ({content}) => {
     }
 
     return <div className = 'info'>
-                <InfoButtonIcon onClick = {handleInfoButtonClick} />
-
-                <Popup />
-            </div>
+    <InfoButtonIcon onClick = {handleInfoButtonClick} />
+</div>
 }
 
 export default InfoButton;

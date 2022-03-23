@@ -1,11 +1,9 @@
 import '../../styles/create/Create.css';
 
-import {useEffect, useRef, useState} from 'react';
-import axios from 'axios';
-
+import { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import BackButton from '../reusable/BackButton';
+import axios from 'axios';
 
 import EditorJs from '@editorjs/editorjs';
 import Header from '@editorjs/header';
@@ -24,7 +22,6 @@ import InitialsIcon from '../reusable/InitialsIcon';
 
 import {ReactComponent as RemoveIcon} from '../../images/close_small.svg';
 
-import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 const CreatePost = () => {
@@ -274,10 +271,6 @@ const CreatePost = () => {
             {/* <Head /> */}
 
             <form onSubmit = {handleCreatePost} className = 'create create-post'>
-                <div className = 'create-back'>
-                    <BackButton />
-                </div>
-
                 <div className = 'create-title'>Create a post</div>
 
                 <div className = 'create-header create-header-post'>
@@ -323,8 +316,6 @@ const CreatePost = () => {
                     <input type = 'submit' value = 'Create' className = 'create-input create-submit-button' />
                 </div>
             </form>
-
-            <Popup />
         </div>
     );
 };

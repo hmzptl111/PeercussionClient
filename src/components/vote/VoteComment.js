@@ -1,15 +1,14 @@
-import {useState} from 'react';
+import { useState } from 'react';
+
 import axios from 'axios';
 
 import Vote from './Vote';
 
-import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
 const VoteComment = ({cId, votes, isUpvoted, isDownvoted}) => {
     const [commentVotes, setCommentVotes] = useState(votes);
-
     const [isCommentUpvoted, setIsCommentUpvoted] = useState(isUpvoted);
     const [isCommentDownvoted, setIsCommentDownvoted] = useState(isDownvoted);
 
@@ -59,11 +58,7 @@ const VoteComment = ({cId, votes, isUpvoted, isDownvoted}) => {
         }
     }
     
-    return <>
-            <Vote handleUpvote = {handleCommentUpvote} handleDownvote = {handleCommentDownvote} voteCount = {commentVotes} isSubjectUpvoted = {isCommentUpvoted} isSubjectDownvoted = {isCommentDownvoted} setIsUpvoted = {setIsCommentUpvoted} setIsDownvoted = {setIsCommentDownvoted} />
-
-            <Popup />
-        </>
+    return <Vote handleUpvote = {handleCommentUpvote} handleDownvote = {handleCommentDownvote} voteCount = {commentVotes} isSubjectUpvoted = {isCommentUpvoted} isSubjectDownvoted = {isCommentDownvoted} setIsUpvoted = {setIsCommentUpvoted} setIsDownvoted = {setIsCommentDownvoted} />
 }
 
 export default VoteComment;

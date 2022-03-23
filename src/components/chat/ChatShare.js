@@ -1,11 +1,10 @@
 import '../../styles/chat/ChatShare.css';
 
-import { useContext } from "react"
-import {useHistory} from 'react-router-dom';
+import { useContext } from 'react';
 
-import { SocketContext } from "../../contexts/Socket"
-import { UserStatusContext } from "../../contexts/UserStatus";
-import { UserRoomsContext } from "../../contexts/UserRooms";
+import { SocketContext } from '../../contexts/Socket';
+import { UserStatusContext } from '../../contexts/UserStatus';
+import { UserRoomsContext } from '../../contexts/UserRooms';
 
 import Popup from 'react-popup';
 
@@ -13,8 +12,6 @@ const ChatShare = ({post, community, user}) => {
     const {socket} = useContext(SocketContext);
     const {isUserOnline, setIsUserOnline} = useContext(UserStatusContext);
     const {rooms, setCurrentChat} = useContext(UserRoomsContext);
-
-    let history = useHistory();
 
     const handleSharePost = (room) => {
         if(!room) return;
@@ -37,7 +34,6 @@ const ChatShare = ({post, community, user}) => {
 
         setCurrentChat(room);
         Popup.close();
-        // history.push('/chat');
     }
 
 

@@ -1,14 +1,14 @@
 import '../../styles/reusable/Follow.css';
 
-import {ReactComponent as FollowIcon} from '../../images/plus.svg';
-import { ReactComponent as UnfollowIcon } from '../../images/close_small.svg';
-
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 
 import axios from "axios";
 
-import Popup from 'react-popup';
+import { ReactComponent as FollowIcon } from '../../images/plus.svg';
+import { ReactComponent as UnfollowIcon } from '../../images/close_small.svg';
+
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 
 const Follow = ({followingStatus, setFollowingStatus, type, target}) => {
     const [buttonText, setButtonText] = useState();
@@ -92,20 +92,14 @@ const Follow = ({followingStatus, setFollowingStatus, type, target}) => {
 
     }
 
-    return <>
-        <div onClick = {handleFollow} className = 'follow'>
-            {
-                buttonText
-            }
-            {
-
-                followingStatus === 'yes' ?
-                <UnfollowIcon />:
-                <FollowIcon />
-            }
-        </div>
-        <Popup />
-    </>
+    return <div onClick = {handleFollow} className = 'follow'>
+    { buttonText }
+    {
+        followingStatus === 'yes' ?
+        <UnfollowIcon />:
+        <FollowIcon />
+    }
+</div>
 }
 
 export default Follow;

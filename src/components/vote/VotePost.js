@@ -1,14 +1,14 @@
-import {useState} from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 
-import Popup from 'react-popup';
-import {PopUp, PopUpQueue} from '../reusable/PopUp';
+import axios from 'axios';
 
 import Vote from './Vote';
 
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
+
 const VotePost = ({pId, votes, isUpvoted, isDownvoted}) => {
     const [postVotes, setPostVotes] = useState(votes);
-
     const [isPostUpvoted, setIsPostUpvoted] = useState(isUpvoted);
     const [isPostDownvoted, setIsPostDownvoted] = useState(isDownvoted);
 
@@ -36,7 +36,6 @@ const VotePost = ({pId, votes, isUpvoted, isDownvoted}) => {
     }
 
     const handlePostDownvote = async () => {
-        
         const response = await axios.put('/votePost', {
             pId: pId,
             vote: 'downvote'
@@ -59,11 +58,7 @@ const VotePost = ({pId, votes, isUpvoted, isDownvoted}) => {
         }
     }
     
-    return <>
-        <Vote handleUpvote = {handlePostUpvote} handleDownvote = {handlePostDownvote} voteCount = {postVotes} isSubjectUpvoted = {isPostUpvoted} isSubjectDownvoted = {isPostDownvoted} setIsUpvoted = {setIsPostUpvoted} setIsDownvoted = {setIsPostDownvoted} />
-
-        <Popup />
-    </>
+    return <Vote handleUpvote = {handlePostUpvote} handleDownvote = {handlePostDownvote} voteCount = {postVotes} isSubjectUpvoted = {isPostUpvoted} isSubjectDownvoted = {isPostDownvoted} setIsUpvoted = {setIsPostUpvoted} setIsDownvoted = {setIsPostDownvoted} />
 }
 
 export default VotePost;

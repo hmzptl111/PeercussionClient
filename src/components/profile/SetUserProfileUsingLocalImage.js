@@ -1,19 +1,18 @@
 import '../../styles/profile/SetUserProfileUsingLocalImage.css';
 
-import {useEffect, useState} from 'react';
-
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
-
-import Popup from 'react-popup';
-import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
 import {ReactComponent as UploadIcon} from '../../images/upload.svg';
 import {ReactComponent as SubmitIcon} from '../../images/check.svg';
+
+import {PopUp, PopUpQueue} from '../reusable/PopUp';
+
 
 const SetUserProfileUsingLocalImage = () => {
     const [imageFromDevice, setImageFromDevice] = useState();
@@ -26,6 +25,7 @@ const SetUserProfileUsingLocalImage = () => {
 
     let history = useHistory();
     
+
     const getCroppedImg = (isBlob = false) => {
         if(!image || !crop) return;
 
@@ -75,7 +75,6 @@ const SetUserProfileUsingLocalImage = () => {
 
     const handleImageFromDeviceSelected = e => {
         if(!e.target.files[0]) return;
-        console.log(e.target.files[0]);
 
         setImageFromDevice(URL.createObjectURL(e.target.files[0]));
     }
@@ -96,7 +95,7 @@ const SetUserProfileUsingLocalImage = () => {
             return;
         }
 
-        history.push('/profilePicture/view');
+        history.replace('/profilePicture/view');
     }
 
     useEffect(() => {
@@ -104,31 +103,29 @@ const SetUserProfileUsingLocalImage = () => {
     }, []);
     
     return <>
-            <div className = 'profile-picture-container'>
-                <label htmlFor = 'user-uploaded-profile-picture' className = 'profile-picture-header'>
-                    <UploadIcon />
-                    Upload
-                    
-                    <input type = 'file' id = 'user-uploaded-profile-picture' name = 'user-uploaded-profile-picture' onChange = {handleImageFromDeviceSelected} />
-                </label>
+    <div className = 'profile-picture-container'>
+        <label htmlFor = 'user-uploaded-profile-picture' className = 'profile-picture-header'>
+            <UploadIcon />
+            Upload
+            
+            <input type = 'file' id = 'user-uploaded-profile-picture' name = 'user-uploaded-profile-picture' onChange = {handleImageFromDeviceSelected} />
+        </label>
 
-                <div onClick = {handleSetProfilePictureFromDevice} className = 'profile-picture-header'>
-                    <SubmitIcon />
-                    Update
-                </div>
+        <div onClick = {handleSetProfilePictureFromDevice} className = 'profile-picture-header'>
+            <SubmitIcon />
+            Update
+        </div>
+    </div>
+
+    {
+        imageFromDevice &&
+        <div className = 'preview-image-container'>
+            <div className = 'preview-image'>
+                <ReactCrop src = {imageFromDevice} onImageLoaded = {setImage} crop = {crop} onChange = {setCrop} onComplete = {() => console.log('done')} />
             </div>
-
-            {
-                imageFromDevice &&
-                <div className = 'preview-image-container'>
-                    <div className = 'preview-image'>
-                        <ReactCrop src = {imageFromDevice} onImageLoaded = {setImage} crop = {crop} onChange = {setCrop} onComplete = {() => console.log('done')} />
-                    </div>
-                </div>
-            }
-
-            <Popup />
-        </>
+        </div>
+    }
+</>
 }
 
 export default SetUserProfileUsingLocalImage;

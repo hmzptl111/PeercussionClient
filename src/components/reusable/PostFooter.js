@@ -1,20 +1,23 @@
 import '../../styles/reusable/PostFooter.css';
 
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-import {ReactComponent as ShareIcon} from '../../images/share.svg';
-import {ReactComponent as CommentIcon} from '../../images/comment.svg';
+import axios from 'axios';
 
 import VotePost from '../vote/VotePost';
-
 import ChatShare from '../chat/ChatShare';
-
-import Popup from 'react-popup';
-import {PopUp, PopUpQueue} from './PopUp';
 
 import FormatToKMBT from './FormatToKMBT';
 
-const PostFooter = ({pId, pTitle, pThumbnail, uName, pCName, totalComments, votes, isUpvoted, isDownvoted}) => {
+import {ReactComponent as ShareIcon} from '../../images/share.svg';
+import {ReactComponent as CommentIcon} from '../../images/comment.svg';
+import {ReactComponent as BinIcon} from '../../images/bin.svg';
+
+import {PopUp, PopUpQueue} from './PopUp';
+
+
+const PostFooter = ({pId, pTitle, pThumbnail, uName, pCName, totalComments, votes, isUpvoted, isDownvoted, isOwner, posts, setPosts}) => {
     const post = {
         pId,
         pTitle,
@@ -28,25 +31,51 @@ const PostFooter = ({pId, pTitle, pThumbnail, uName, pCName, totalComments, vote
         PopUpQueue(sharePopup);
     }
 
+    const handleRemove = async () => {
+        const payload = {
+            pId: pId,
+            pCName: pCName,
+            pUName: uName,
+            schema: 'post'
+        }
 
-    return <>
-        <div className = 'post-footer'>
+        const response = await axios.post('/update', payload);
 
-            <div onClick = {handleShareButtonClick} className = 'share'>
-                <ShareIcon />
-                Share
-            </div>
+        if(response.data.error) {
+            let errorPopup = PopUp('Something went wrong', response.data.error);
+            PopUpQueue(errorPopup);
+            return;
+        }
 
-            <Link to = {`/p/${pId}#comments`} className = 'post-footer-comment'>
-                <CommentIcon />
-                <FormatToKMBT number = {totalComments} />
-            </Link>
+        const updatedPosts = posts.filter(p => p._id !== pId);
+        setPosts(updatedPosts);
 
-            <VotePost pId = {pId} votes = {votes} isUpvoted = {isUpvoted} isDownvoted = {isDownvoted} />
+        let successPopup = PopUp('Update', response.data.message);
+        PopUpQueue(successPopup);
+        return;
+    }
+
+    return <div className = 'post-footer'>
+
+    <div onClick = {handleShareButtonClick} className = 'share'>
+        <ShareIcon />
+        Share
+    </div>
+
+    <Link to = {`/p/${pId}#comments`} className = 'post-footer-comment'>
+        <CommentIcon />
+        <FormatToKMBT number = {totalComments} />
+    </Link>
+
+    <VotePost pId = {pId} votes = {votes} isUpvoted = {isUpvoted} isDownvoted = {isDownvoted} />
+    
+    {
+        isOwner === 'yes' &&
+        <div onClick = {handleRemove} className = 'remove-post'>
+            <BinIcon />
         </div>
-
-        <Popup />
-    </>
+    }
+</div>
 }
 
 export default PostFooter;

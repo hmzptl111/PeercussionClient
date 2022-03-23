@@ -37,3 +37,13 @@
 .post-footer-comment:hover {
     background: var(--primary-light-color);
 }
+
+.remove-post {
+    cursor: pointer;
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+}
+
+.remove-post:hover {
+    background: var(--primary-light-color);
+}
