@@ -10,6 +10,7 @@ import {UserRoomsContext} from '../../contexts/UserRooms';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -39,8 +40,10 @@ const SignOutButton = () => {
         history.push('/');
     }
 
-    return <div className = 'auth-button' onClick = {handleSignOut} >
+    return <div className = 'auth-button' onClick = {handleSignOut}>
     Sign out
+
+    <Popup />
 </div>
 };
 

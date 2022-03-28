@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 import {ReactComponent as CameraIcon} from '../../images/camera.svg';
@@ -112,6 +113,8 @@ const SetUserProfileUsingCamera = () => {
 
         <canvas ref = {canvasRef} width = '300px' height = '300px' style = {{display: 'none'}} />
     </div>
+
+    <Popup />
 </>
 }
 

@@ -14,24 +14,12 @@ export const SocketProvider = ({children}) => {
     const {isUserOnline} = useContext(UserStatusContext);
     const {isUserSignedIn, user} = useContext(UserAuthStatusContext);
 
-    // useEffect(() => {
-    //     if(!socket) return;
-
-    //     socket.on('connect', () => {
-    //         console.log(socket.id);
-    //     });
-            
-    //     socket.on('disconnect', () => {
-    //         console.log(`${socket.id}, connection disconnected`);
-    //     });
-    // }, [socket]);
-
     useEffect(() => {       
         if(!user || !isUserSignedIn) return;
 
         if(isUserOnline) {
             //do not replace localhost to host ip address, for some reason, it does not work
-            const response = io('http://localhost:3001/', {
+            const response = io('ws://localhost:3001/', {
                 transports : ['websocket', 'polling', 'flashsocket']
             });
 

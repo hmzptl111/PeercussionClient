@@ -12,6 +12,7 @@ import VoteComment from './vote/VoteComment';
 import GeneralProfileIcon from './reusable/GeneralProfileIcon';
 import InitialsIcon from './reusable/InitialsIcon';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from './reusable/PopUp';
 
 
@@ -187,7 +188,6 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
         setCommentReply('');
         replyTo.current = cId;
         for(let x = 0; x < document.getElementsByClassName('comment-reply').length; x++) {
-            console.log(document.getElementsByClassName('comment-reply')[x]);
             document.getElementsByClassName('comment-reply')[x].style.display = 'none';
         }
         document.getElementById(`${cId}-reply`).style.display = 'block';
@@ -207,7 +207,7 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
 
     {
         postComments.map(c => {
-            return <div className = 'comments'>
+            return <div className = 'comments' key = {c._id}>
                         <div className = 'comment'>
                             <div className = 'comment-body'>
                                 <Link to = {`/u/${c.uName}`} className = 'commenter-link'>
@@ -228,7 +228,7 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
                             </div>
 
                             <div className = 'comment-footer'>
-                                <div onClick = {e => c.replies.length !== 0 && handleLoadCommentReplies(e, c)} className = 'comment-footer-button'>
+                                <div onClick = {e => handleLoadCommentReplies(e, c)} className = 'comment-footer-button'>
                                     {c.replies.length === 0 ? `No`: c.replies.length} Replies
                                 </div>
                                 <div onClick = {e => handleCommentReply(e, c._id)} className = 'comment-footer-button'>
@@ -249,7 +249,8 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
                                 {
                                     c.replies.map(reply => {
                                         if(!reply.comment) return null;
-                                        return <div className = 'comment reply'>
+
+                                        return <div className = 'comment reply' key = {reply._id}>
                                             <div className = 'comment-body'>
                                                 <Link to = {`/u/${reply.uName}`} className = 'commenter-link'>
                                                     {
@@ -286,6 +287,8 @@ const Comment = ({pId, pTitle, cId, cName, setPost}) => {
             <div className = 'load-more-comments-button'>Load more</div>
         </div>
     }
+
+    <Popup />
 </div>
 }
 

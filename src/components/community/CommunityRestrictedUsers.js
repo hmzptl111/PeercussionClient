@@ -16,6 +16,7 @@ import {ReactComponent as RestrictIcon} from '../../images/restricted.svg';
 import {ReactComponent as UnrestrictIcon} from '../../images/unrestricted.svg';
 import {ReactComponent as EditIcon} from '../../images/edit.svg';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 
@@ -262,6 +263,8 @@ const CommunityRestrictedUsers = ({cName, isOwner, setCommunity}) => {
         </div>:
         <Empty text = 'Arms, wide open!' caption = 'No one is restricted from this community' GIF = 'https://c.tenor.com/bGgv8ew9uNAAAAAC/mr-bean.gif' />
     }
+
+    <Popup />
 </div>
 };
 

@@ -8,6 +8,7 @@ import axios from 'axios';
 
 import Empty from "../reusable/Empty";
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 import {ReactComponent as EditIcon} from '../../images/edit.svg';
@@ -136,6 +137,8 @@ const UserProfileAbout = ({about, targetUser, setUser}) => {
             <div className = 'update-btn' onClick = {handleUpdate}>Update</div>
         }
     </div>
+
+    <Popup />
 </div>
 }
 

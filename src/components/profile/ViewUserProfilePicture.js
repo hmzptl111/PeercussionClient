@@ -9,6 +9,7 @@ import { ReactComponent as UpdateIcon } from '../../images/update.svg';
 
 import axios from 'axios';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 import UpdateUserProfilePicturePopup from '../reusable/UpdateUserProfilePicturePopup';
@@ -88,6 +89,8 @@ const ViewUserProfilePicture = () => {
                         <div>Why so empty?</div>
                     }
                 </div>
+
+                <Popup />
         </>
 }
 

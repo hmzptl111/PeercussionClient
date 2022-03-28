@@ -30,6 +30,8 @@ const UpdateUserProfilePicturePopup = () => {
         <UploadIcon />
         Upload
     </div>
+
+    <Popup />
 </div>
 }
 

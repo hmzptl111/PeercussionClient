@@ -8,6 +8,7 @@ import axios from 'axios';
 import VoteComment from '../vote/VoteComment';
 import Empty from '../reusable/Empty';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -23,7 +24,6 @@ const UserProfileComments = ({uName}) => {
                 PopUpQueue(errorPopup);
                 return;
             }
-            console.log(comments.data.message);
             setUserComments(comments.data.message);
         }
 
@@ -58,6 +58,8 @@ const UserProfileComments = ({uName}) => {
         }):
         <Empty text = 'Shy?' caption = 'User has not commented in any post, yet' GIF = 'https://c.tenor.com/rec5dlPBK2cAAAAd/mr-bean-waiting.gif' />
     }
+
+    <Popup />
 </div>
 }
 

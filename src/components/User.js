@@ -10,6 +10,7 @@ import PageBanner from './reusable/PageBanner';
 
 import {ReactComponent as PrivateIcon} from '../images/private.svg';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from './reusable/PopUp';
 
 
@@ -90,6 +91,8 @@ const User = () => {
                     This account is private
                 </div>
             }
+
+            <Popup />
         </>
     );
 }

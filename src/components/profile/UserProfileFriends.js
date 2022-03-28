@@ -10,6 +10,7 @@ import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
 import InitialsIcon from '../reusable/InitialsIcon';
 import Empty from "../reusable/Empty";
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -21,7 +22,6 @@ const UserProfileFriends = ({uName}) => {
         const controller = new AbortController();
 
         const getFriends = async () => {
-            console.log(uName);
             const {signal} = controller;
             const response = await axios.post('/getFriends', {uName: uName}, {signal: signal});
             
@@ -31,7 +31,6 @@ const UserProfileFriends = ({uName}) => {
                 return;
             }
 
-            console.log(response.data.message);
             setUserFriends(response.data.message);
         }
 
@@ -77,6 +76,8 @@ const UserProfileFriends = ({uName}) => {
         }):
         <Empty text = 'Seems shy!' caption = 'User has no friends' GIF = 'https://c.tenor.com/skrB3dpqD-oAAAAC/waiting-alone-lonely.gif' />
     }
+
+    <Popup />
 </>
 }
 

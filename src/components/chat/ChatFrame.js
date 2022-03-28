@@ -15,6 +15,7 @@ import InitialsIcon from '../reusable/InitialsIcon';
 import {ReactComponent as ImageIcon} from '../../images/gallery.svg';
 import {ReactComponent as MenuIcon} from '../../images/menu.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -124,7 +125,7 @@ const ChatFrame = ({setIsMenuOpen}) => {
     }
     
 
-    return user && currentChat &&
+    return user && currentChat ?
 <div className = 'chat-frame'>
     {
         <div className = ''>
@@ -275,7 +276,9 @@ const ChatFrame = ({setIsMenuOpen}) => {
         </div>
     }
 
-</div>
+<Popup />
+</div>:
+null
 }
 
 export default ChatFrame;

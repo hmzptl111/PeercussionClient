@@ -10,6 +10,7 @@ import InitialsIcon from '../reusable/InitialsIcon';
 import {ReactComponent as EditIcon} from '../../images/edit.svg';
 import {ReactComponent as PlusIcon} from '../../images/plus.svg';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 
@@ -167,6 +168,8 @@ const CommunityRelatedCommunities = ({cId, cName, relatedCommunities, isOwner, s
         updatedRelatedCommunities &&
         <GetCommunities cName = {cName} type = 'related' isEditing = {isEditing} updatedRelatedCommunities = {updatedRelatedCommunities} setUpdatedRelatedCommunities = {setUpdatedRelatedCommunities} />
     }
+
+    <Popup />
 </div>
 }
 

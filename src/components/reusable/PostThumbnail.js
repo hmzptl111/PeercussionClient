@@ -11,10 +11,11 @@ import InitialsIcon from './InitialsIcon';
 import ScrollToTop from '../reusable/ScrollToTop';
 import Empty from '../reusable/Empty';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
-const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false, isOwner, setCommunity}) => {
+const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false, isOwner}) => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [hasMorePosts, setHasMorePosts] = useState(true);
@@ -192,6 +193,8 @@ const PostThumbnail = ({cName, uName, home, getUserUpvotedPosts = false, isOwner
             <ScrollToTop />
         </div>
     }
+
+    <Popup />
 </div>
 }
 

@@ -1,6 +1,5 @@
 import '../../styles/reusable/PostFooter.css';
 
-import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 import axios from 'axios';
@@ -14,6 +13,7 @@ import {ReactComponent as ShareIcon} from '../../images/share.svg';
 import {ReactComponent as CommentIcon} from '../../images/comment.svg';
 import {ReactComponent as BinIcon} from '../../images/bin.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from './PopUp';
 
 
@@ -56,7 +56,6 @@ const PostFooter = ({pId, pTitle, pThumbnail, uName, pCName, totalComments, vote
     }
 
     return <div className = 'post-footer'>
-
     <div onClick = {handleShareButtonClick} className = 'share'>
         <ShareIcon />
         Share
@@ -75,6 +74,8 @@ const PostFooter = ({pId, pTitle, pThumbnail, uName, pCName, totalComments, vote
             <BinIcon />
         </div>
     }
+
+    <Popup />
 </div>
 }
 

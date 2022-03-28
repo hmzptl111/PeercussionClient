@@ -4,6 +4,7 @@ import axios from 'axios';
 
 import Vote from './Vote';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -58,7 +59,11 @@ const VotePost = ({pId, votes, isUpvoted, isDownvoted}) => {
         }
     }
     
-    return <Vote handleUpvote = {handlePostUpvote} handleDownvote = {handlePostDownvote} voteCount = {postVotes} isSubjectUpvoted = {isPostUpvoted} isSubjectDownvoted = {isPostDownvoted} setIsUpvoted = {setIsPostUpvoted} setIsDownvoted = {setIsPostDownvoted} />
+    return <>
+    <Vote handleUpvote = {handlePostUpvote} handleDownvote = {handlePostDownvote} voteCount = {postVotes} isSubjectUpvoted = {isPostUpvoted} isSubjectDownvoted = {isPostDownvoted} setIsUpvoted = {setIsPostUpvoted} setIsDownvoted = {setIsPostDownvoted} />
+
+    <Popup />    
+</>
 }
 
 export default VotePost;

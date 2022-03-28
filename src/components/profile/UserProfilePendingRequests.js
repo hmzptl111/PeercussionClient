@@ -9,6 +9,7 @@ import Empty from "../reusable/Empty";
 
 import {ReactComponent as TickIcon} from '../../images/tick.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -50,29 +51,35 @@ const UserProfilePendingRequests = () => {
         });
     }
 
-    return pendingFriendRequests.length > 0 ?
-<div className = 'list-container'>
+    return <>
     {
-        pendingFriendRequests.map(user => {
-            return <div key = {user._id} className = 'list'>
-                        <Link to = {`/u/${user.username}`} className = 'list-info'>
-                            {
-                                user.profilePicture ?
-                                <GeneralProfileIcon imageSource = 'profilePictures' imageID = {user.profilePicture} />:
-                                <InitialsIcon initial = {user.username[0]} />
-                            }
-                            <span className = 'list-info-text'>{user.username}</span>
-                        </Link>
-
-                        <div onClick = {() => handleAcceptFriendRequest(user._id)} className = 'list-button'>
-                            Accept Request
-                            <TickIcon />
+        pendingFriendRequests.length > 0 ?
+        <div className = 'list-container'>
+            {
+                pendingFriendRequests.map(user => {
+                    return <div key = {user._id} className = 'list'>
+                                <Link to = {`/u/${user.username}`} className = 'list-info'>
+                                    {
+                                        user.profilePicture ?
+                                        <GeneralProfileIcon imageSource = 'profilePictures' imageID = {user.profilePicture} />:
+                                        <InitialsIcon initial = {user.username[0]} />
+                                    }
+                                    <span className = 'list-info-text'>{user.username}</span>
+                                </Link>
+        
+                                <div onClick = {() => handleAcceptFriendRequest(user._id)} className = 'list-button'>
+                                    Accept Request
+                                    <TickIcon />
+                                </div>
                         </div>
-                </div>
-        })
+                })
+            }
+        </div>:
+        <Empty text = 'Nothing here, come back later' caption = 'No pending requests to accept' GIF = 'https://c.tenor.com/bGgv8ew9uNAAAAAC/mr-bean.gif' />
     }
-</div>:
-<Empty text = 'Nothing here, come back later' caption = 'No pending requests to accept' GIF = 'https://c.tenor.com/bGgv8ew9uNAAAAAC/mr-bean.gif' />
+
+    <Popup />
+</>
 }
 
 export default UserProfilePendingRequests;

@@ -13,7 +13,6 @@ const GeneralProfileIcon = ({imageSource, imageID}) => {
             try {
                 await axios.get(`/uploads/${imageSource}/${imageID}`);
             } catch(e) {
-                console.log(e);
                 setIsImageAvailable(false);
             }
         }

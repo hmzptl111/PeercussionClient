@@ -11,6 +11,7 @@ import ChatShare from '../chat/ChatShare';
 import {ReactComponent as ShareIcon} from '../../images/post_share_small.svg';
 import {ReactComponent as EditIcon} from '../../images/edit.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from './PopUp';
 
 const PageBanner = ({cName, cThumbnail, uName, uProfilePicture, type, target, isOwner, followingStatus, setFollowingStatus}) => {
@@ -19,14 +20,12 @@ const PageBanner = ({cName, cThumbnail, uName, uProfilePicture, type, target, is
     const pageBannerUpdateRef = useRef();
 
     useEffect(() => {
-        console.log(cThumbnail);
         setCommunityThumbnail(cThumbnail);
 
     }, [cThumbnail]);
 
 
     const handleImageFromDeviceSelected = async (e) => {
-        console.log(e.target.files[0]);
 
         const communityThumbnail = new FormData();
         communityThumbnail.set('cName', cName);
@@ -115,6 +114,8 @@ const PageBanner = ({cName, cThumbnail, uName, uProfilePicture, type, target, is
 
         </div>
     }
+
+    <Popup />
 </div>
 }
 

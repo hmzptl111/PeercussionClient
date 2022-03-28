@@ -10,6 +10,7 @@ import InitialsIcon from '../reusable/InitialsIcon';
 
 import {ReactComponent as RemoveIcon} from '../../images/close_small.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 const CreatCommunity = () => {
@@ -82,7 +83,6 @@ const CreatCommunity = () => {
             cancelToken: new axios.CancelToken(c => cancelRequestToken = c)
         })
         .then(result => {
-            console.log(result);
             setSuggestedCommunities(result.data.message);
         })
         .catch(err => {
@@ -125,7 +125,6 @@ const CreatCommunity = () => {
     };
 
     const removeFromRelatedCommunities = (relatedCommunityCID) => {
-        console.log('remove');
         let tempRelatedCommunities = [];
         community.relatedCommunities.forEach(relatedCommunity => {
             if(relatedCommunity.cId !== relatedCommunityCID) {
@@ -164,7 +163,6 @@ const CreatCommunity = () => {
 
         const res = await axios.post('/create/community', newCommunity);
         if(res.data.error) {
-            console.log(res.data);
             let genericError = PopUp('Something went wrong', res.data.error);
             PopUpQueue(genericError);
             return;
@@ -183,32 +181,21 @@ const CreatCommunity = () => {
 
     const handleSearchTextFocus = () => {
         setIsSuggestionsOpen(true);
-
-        // searchRef.current.classList.add('search-input-focus');
     }
 
-    const handleSearchTextBlur = () => {
-
-        // searchRef.current.classList.remove('search-input-focus');
-    }
 
     useEffect(() => {
         const checkIfClickedOutside = e => {
-            console.log(e.target);
           if(isSuggestionsOpen && searchRef.current && !searchRef.current.contains(e.target)) {
             setIsSuggestionsOpen(false);
-            console.log('closed');
             return;
           }
-          console.log('clicked inside');
         }
     
         if(!isSuggestionsOpen) {
             document.removeEventListener('mousedown', checkIfClickedOutside);
-            console.log('e l removed');
         } else {
             document.addEventListener('mousedown', checkIfClickedOutside);
-            console.log('e l attached');
         }
 
         return () => {
@@ -218,8 +205,6 @@ const CreatCommunity = () => {
 
     return(
         <div className = 'create-container'>
-            {/* <Header /> */}
-
             <form onSubmit = {handleCreateCommunity} className = 'create'>
 
                 <div className = 'create-title'>Create a community</div>
@@ -228,7 +213,7 @@ const CreatCommunity = () => {
                     <input type = 'text' onChange = {handleCommunityName} value = {community.cName} placeholder = 'Community name' className = 'create-input' />
 
                     <div className = 'search' ref = {searchRef}>
-                        <input type = 'text' onChange = {handleRelatedCommunities} value = {currentRelatedCommunity} placeholder = 'Search to add related communities' ref = {currentRelatedCommunityRef} className = 'search-input' onFocus = {handleSearchTextFocus} onBlur = {handleSearchTextBlur} />
+                        <input type = 'text' onChange = {handleRelatedCommunities} value = {currentRelatedCommunity} placeholder = 'Search to add related communities' ref = {currentRelatedCommunityRef} className = 'search-input' onFocus = {handleSearchTextFocus} />
 
                         {
                             isSuggestionsOpen && suggestedCommunities.length > 0 &&
@@ -277,6 +262,8 @@ const CreatCommunity = () => {
                     }
                 </div>
             }
+
+            <Popup />
         </div>
     );
 };

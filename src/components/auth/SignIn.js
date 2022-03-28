@@ -9,6 +9,7 @@ import axios from 'axios';
 
 import Logo from '../header/Logo';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 
@@ -62,7 +63,6 @@ const SignIn = () => {
         setGenericError('');
         
         if(username === '' || password === '') {
-            console.log('please enter details');
             setGenericError('Some or all of the required fields are empty');
             return;
         }
@@ -71,7 +71,7 @@ const SignIn = () => {
             username: username,
             password: password
         }
-
+        
         const result = await axios.post('/signIn', payload);
         if(result.data.message) {
             setUser({
@@ -124,6 +124,8 @@ const SignIn = () => {
             </div>
         </form>
     </div>
+
+    <Popup />
 </div>
 };
 

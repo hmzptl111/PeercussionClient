@@ -38,6 +38,7 @@ const MenuButton = () => {
         }
       }, [isMenuOpen]);
 
+
     return <div className = 'menu-dropdown' ref = {menuRef}>
     <button className = 'menu-dropdown-button' onClick = {() => setIsMenuOpen(oldMenuState => !oldMenuState)}>
         <MenuIcon />
@@ -65,7 +66,6 @@ const MenuButton = () => {
                     <Link to = '/chat' className='menu-dropdown-list-item menu-dropdown-chat'>
                         Chat
                         <ChatIconSmall />
-                        {/* <ChatButton isSmall = {true} /> */}
                     </Link>
 
                     <div className='menu-dropdown-list-item menu-dropdown-create'>

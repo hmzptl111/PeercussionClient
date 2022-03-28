@@ -7,6 +7,7 @@ import axios from "axios";
 import { ReactComponent as FollowIcon } from '../../images/plus.svg';
 import { ReactComponent as UnfollowIcon } from '../../images/close_small.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -99,6 +100,8 @@ const Follow = ({followingStatus, setFollowingStatus, type, target}) => {
         <UnfollowIcon />:
         <FollowIcon />
     }
+
+    <Popup />
 </div>
 }
 

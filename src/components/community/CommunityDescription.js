@@ -7,6 +7,7 @@ import Empty from '../reusable/Empty';
 
 import {ReactComponent as EditIcon} from '../../images/edit.svg';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 const CommunityDescription = ({cName, desc, isOwner, setCommunity}) => {
@@ -82,6 +83,8 @@ const CommunityDescription = ({cName, desc, isOwner, setCommunity}) => {
             <div className = 'update-btn' onClick = {handleUpdate}>Update</div>
         }
     </div>
+
+    <Popup />
 </div>
 }
 

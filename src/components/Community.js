@@ -12,6 +12,7 @@ import CommunityTab from './community/CommunityTab';
 
 import {ReactComponent as RestrictedIcon} from '../images/restricted_community.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from './reusable/PopUp';
 
 
@@ -85,6 +86,8 @@ const Community = () => {
             You are restricted from accessing this community
         </div>
     }
+
+    <Popup />
 </>
 };
 

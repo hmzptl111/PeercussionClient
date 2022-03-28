@@ -8,6 +8,7 @@ import axios from 'axios';
 import GeneralProfileIcon from '../reusable/GeneralProfileIcon';
 import InitialsIcon from '../reusable/InitialsIcon';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -136,6 +137,8 @@ const SearchInput = () => {
             }
         </div>
         }
+
+        <Popup />
 </div>
 };
 

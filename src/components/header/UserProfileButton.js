@@ -24,6 +24,7 @@ import {ReactComponent as ShareIcon} from '../../images/share.svg';
 import {ReactComponent as SignOutIcon} from '../../images/sign_out.svg';
 import {ReactComponent as CloseIcon} from '../../images/close.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
@@ -75,7 +76,6 @@ const UserProfileButton = () => {
     }
 
     const handleSignOut = async () => {
-        console.log('sign out clicked');
         const response = await axios.post('/signOut');
         
         if(response.data.error) {
@@ -180,6 +180,8 @@ const UserProfileButton = () => {
             </div>
         </div>
     }
+
+    <Popup />
 </div>
 };
 

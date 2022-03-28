@@ -5,6 +5,7 @@ import Header from './Header';
 import PostThumbnail from './reusable/PostThumbnail';
 import UpdateUserProfilePicturePopup from './reusable/UpdateUserProfilePicturePopup';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../components/reusable/PopUp';
 
 
@@ -36,6 +37,8 @@ const Home = () => {
     <Header />
 
     <PostThumbnail home = {true} />
+
+    <Popup />
 </>
 };
 

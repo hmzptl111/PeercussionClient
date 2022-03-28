@@ -10,6 +10,7 @@ import axios from 'axios';
 import Logo from '../header/Logo';
 import InfoButton from '../reusable/InfoButton';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 
@@ -124,8 +125,6 @@ const SignUp = () => {
         setConfirmPassword('');
         setEmail('');
         setAbout('');
-        
-        console.log('signed in successfully');
 
         if(result.status === 200) {
             history.push("/signin", {from: 'SignUp', message: result.data.message});
@@ -213,6 +212,8 @@ const SignUp = () => {
             </div>
         </form>
     </div>
+
+    <Popup />
 </div>
 }
 

@@ -51,6 +51,8 @@ const ChatShare = ({post, community, user}) => {
                 </>:
                 'Either you don\'t have any friends or you\'re offline'
             }
+
+        <Popup />
     </>
 }
 

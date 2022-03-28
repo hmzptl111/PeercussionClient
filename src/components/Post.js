@@ -11,6 +11,7 @@ import PostFooter from './reusable/PostFooter';
 import GeneralProfileIcon from './reusable/GeneralProfileIcon';
 import InitialsIcon from './reusable/InitialsIcon';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from './reusable/PopUp';
 
 
@@ -63,7 +64,10 @@ const Post = () => {
             case 'image':
                 return <div key = {block.id} className = 'post-body-image-container'>
                             <img src = {block.data.file.url} alt = {block.data.caption} className = 'post-body-image'></img>
-                            <div className = 'post-body-image-caption'><i>{block.data.caption}</i></div>
+                            {
+                                block.data.caption &&
+                                <div className = 'post-body-image-caption'><i>{block.data.caption}</i></div>
+                            }
                     </div>;
 
             case 'list':
@@ -199,6 +203,8 @@ const Post = () => {
                     </>
                 }
             </div>
+
+            <Popup />
         </>
     );
 }

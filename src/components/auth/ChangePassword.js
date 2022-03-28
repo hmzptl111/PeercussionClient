@@ -6,6 +6,7 @@ import axios from 'axios';
 import Logo from '../header/Logo';
 import InfoButton from '../reusable/InfoButton';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 
@@ -101,6 +102,8 @@ const ChangePassword = () => {
             </div>
         </form>
     </div>
+
+    <Popup />
 </div>
 }
 

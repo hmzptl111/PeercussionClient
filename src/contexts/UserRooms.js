@@ -60,7 +60,6 @@ export const UserRoomsProvider = ({children}) => {
             setRooms(rooms => {
                 let updatedRooms = [...rooms];
                 for(let i = 0; i < updatedRooms.length; i++) {
-                    console.log(updatedRooms[i].uId);
                     if(updatedRooms[i].uId === status.uId) {
                         updatedRooms[i].isUserOnline = status.isUserOnline;
                     }

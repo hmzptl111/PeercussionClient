@@ -1,11 +1,11 @@
 import {useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
 
-import BackButton from '../reusable/BackButton';
 import Logo from '../header/Logo';
 
 import InfoButton from '../reusable/InfoButton';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 import axios from 'axios';
@@ -24,7 +24,6 @@ const ResetPassword = () => {
 
     const handleResetPassword = async (e) => {
         e.preventDefault();
-        console.log(newPassword);
 
         setPasswordError('');
 
@@ -41,7 +40,6 @@ const ResetPassword = () => {
         // const result = await axios.post(`http://localhost:3001/resetPassword/${token}`, payload);
         const result = await axios.post(`/resetPassword/${token}`, payload);
         if(result.data.message) {
-            console.log(result.data.message);
             history.replace('/signin', {from: 'ResetPassword', message: result.data.message});
             return;
         } else {
@@ -53,8 +51,6 @@ const ResetPassword = () => {
     return <div className = 'container'>
         <div className = 'container-auth'>
             <form onSubmit = {handleResetPassword} className = 'auth-card'>
-                <BackButton />
-
                 <div className = 'auth-card-header'>
                     <div className = 'auth-card-header-logo'>
                         <Logo />
@@ -80,6 +76,8 @@ const ResetPassword = () => {
                 </div>
             </form>
         </div>
+
+        <Popup />
     </div>
 }
 

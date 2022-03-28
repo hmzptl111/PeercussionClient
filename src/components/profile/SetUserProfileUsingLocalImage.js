@@ -1,6 +1,6 @@
 import '../../styles/profile/SetUserProfileUsingLocalImage.css';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
@@ -11,16 +11,20 @@ import 'react-image-crop/dist/ReactCrop.css';
 import {ReactComponent as UploadIcon} from '../../images/upload.svg';
 import {ReactComponent as SubmitIcon} from '../../images/check.svg';
 
+import Popup from 'react-popup';
 import {PopUp, PopUpQueue} from '../reusable/PopUp';
 
 
 const SetUserProfileUsingLocalImage = () => {
-    const [imageFromDevice, setImageFromDevice] = useState();
+    const [imageFromDevice, setImageFromDevice] = useState(null);
     const [image, setImage] = useState();
     const [crop, setCrop] = useState({
         aspect: 1 / 1,
         unit: '%',
-        width: 100
+        width: 50,
+        height: 50,
+        x: 25,
+        y: 25
     });
 
     let history = useHistory();
@@ -57,7 +61,7 @@ const SetUserProfileUsingLocalImage = () => {
         if(isBlob) {
             return new Promise((resolve, reject) => {
                 canvas.toBlob(
-                  (blob) => {
+                    (blob) => {
                     resolve(blob);
                   },
                   "image/jpeg",
@@ -98,9 +102,10 @@ const SetUserProfileUsingLocalImage = () => {
         history.replace('/profilePicture/view');
     }
 
-    useEffect(() => {
-        document.querySelector('#user-uploaded-profile-picture').click();
-    }, []);
+    const handleImageLoaded = e => {
+        setImage(e.target);
+    }
+
     
     return <>
     <div className = 'profile-picture-container'>
@@ -121,10 +126,14 @@ const SetUserProfileUsingLocalImage = () => {
         imageFromDevice &&
         <div className = 'preview-image-container'>
             <div className = 'preview-image'>
-                <ReactCrop src = {imageFromDevice} onImageLoaded = {setImage} crop = {crop} onChange = {setCrop} onComplete = {() => console.log('done')} />
+                <ReactCrop src = {imageFromDevice} aspect = {1 / 1} crop = {crop} onChange = {setCrop}>
+                    <img src = {imageFromDevice} onLoad = {handleImageLoaded} alt = '' />
+                </ReactCrop>
             </div>
         </div>
     }
+
+    <Popup />
 </>
 }
 

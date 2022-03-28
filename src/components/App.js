@@ -55,6 +55,7 @@ function App() {
                     <Route path = '/resetPassword/:token' component = {ResetPassword} />
                     <Route path = '/changePassword' component = {ChangePassword} />
                     <Route path = '/forgotPassword' component = {ForgotPassword} />
+                    <Popup />
                   </UserRoomsProvider>
                 </SocketProvider>
               </UserProfileCurrentTabProvider>
@@ -63,7 +64,6 @@ function App() {
           </UserStatusProvider>
         </UserAuthStatusProvider>
       
-        <Popup />
       </>
     </Router>
   );

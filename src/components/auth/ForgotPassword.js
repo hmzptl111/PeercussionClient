@@ -2,9 +2,11 @@ import {useState} from 'react';
 
 import Logo from '../header/Logo';
 
+import Popup from 'react-popup';
 import { PopUp, PopUpQueue } from '../reusable/PopUp';
 
 import axios from 'axios';
+
 
 const ForgotPassword = () => {
     const [username, setUsername] = useState('');
@@ -72,6 +74,8 @@ const ForgotPassword = () => {
             </div>
         </form>
     </div>
+
+    <Popup />
 </div>
 }
 
